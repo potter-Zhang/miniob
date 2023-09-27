@@ -196,6 +196,11 @@ public:
   RC create_file(const char *file_name);
 
   /**
+   * 删除分页文件
+  */
+  RC drop_file();
+
+  /**
    * 根据文件名打开一个分页文件
    */
   RC open_file(const char *file_name);
@@ -308,6 +313,7 @@ public:
   ~BufferPoolManager();
 
   RC create_file(const char *file_name);
+  RC drop_file(const char *file_name);
   RC open_file(const char *file_name, DiskBufferPool *&bp);
   RC close_file(const char *file_name);
 

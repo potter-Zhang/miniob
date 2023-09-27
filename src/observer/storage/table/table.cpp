@@ -122,6 +122,54 @@ RC Table::create(int32_t table_id,
   return rc;
 }
 
+RC Table::drop(int32_t table_id, 
+               const char *path, 
+               const char *name, 
+               const char *base_dir)
+{
+  if (common::is_blank(name)) {
+    LOG_WARN("Name cannot be empty");
+    return RC::INVALID_ARGUMENT;
+  }
+  LOG_INFO("Begin to drop table %s:%s", base_dir, name);
+
+  RC rc = RC::SUCCESS;
+
+  // 删除所有索引
+  for (Index* index : indexes_){
+    index->drop();
+  }
+
+  // 删除record_handler
+  delete record_handler_;
+  record_handler_= nullptr;
+
+  // 删除data文件
+  std::string data_file = table_data_file(base_dir, name);
+  BufferPoolManager &bpm = BufferPoolManager::instance();
+  rc = bpm.drop_file(data_file.c_str());
+  if (rc != RC::SUCCESS) {
+    LOG_ERROR("Failed to drop data file. file name=%s", data_file.c_str());
+    return rc;
+  }  
+
+  // 使用 table_name.table删除一个表的元数据
+  // 判断表文件是否已经存在
+  int fd = ::remove(path);
+  if (fd < 0) {
+    if (ENOENT== errno) {
+      LOG_ERROR("Failed to drop table file, it has not been created. %s, ENOENT, %s", path, strerror(errno));
+      return RC::SCHEMA_TABLE_EXIST;
+    }
+    LOG_ERROR("Drop table file failed. filename=%s, errmsg=%d:%s", path, errno, strerror(errno));
+    return RC::IOERR_REMOVE;
+  } 
+
+  //base_dir_ = base_dir;
+  LOG_INFO("Successfully drop table %s:%s", base_dir, name);
+  return rc;
+}
+
 RC Table::open(const char *meta_file, const char *base_dir)
 {
   // 加载元数据文件

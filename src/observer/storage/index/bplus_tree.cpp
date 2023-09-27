@@ -816,6 +816,20 @@ RC BplusTreeHandler::create(const char *file_name, AttrType attr_type, int attr_
   return RC::SUCCESS;
 }
 
+RC BplusTreeHandler::drop()
+{
+  RC rc;
+  if (disk_buffer_pool_ != nullptr){
+    rc=disk_buffer_pool_->drop_file();
+    if (rc!=RC::SUCCESS && rc!=RC::FILE_NOT_EXIST){
+      return rc;
+    }
+  }
+
+  disk_buffer_pool_ = nullptr;
+  return RC::SUCCESS;
+}
+
 RC BplusTreeHandler::open(const char *file_name)
 {
   if (disk_buffer_pool_ != nullptr) {
