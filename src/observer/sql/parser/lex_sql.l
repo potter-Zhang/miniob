@@ -27,6 +27,7 @@ while (0);
 %{
 #include<string.h>
 #include<stdio.h>
+#include "common/lang/date.h"
 
 /**
  * flex 代码包含三个部分，使用 %% 分隔
@@ -110,6 +111,7 @@ ROLLBACK                                RETURN_TOKEN(TRX_ROLLBACK);
 INT                                     RETURN_TOKEN(INT_T);
 CHAR                                    RETURN_TOKEN(STRING_T);
 FLOAT                                   RETURN_TOKEN(FLOAT_T);
+DATE                                    RETURN_TOKEN(DATE_T);
 LOAD                                    RETURN_TOKEN(LOAD);
 DATA                                    RETURN_TOKEN(DATA);
 INFILE                                  RETURN_TOKEN(INFILE);
@@ -131,6 +133,8 @@ EXPLAIN                                 RETURN_TOKEN(EXPLAIN);
 "-" |
 "*" |
 "/"                                     { return yytext[0]; }
+'{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\' yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
+\"{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\" yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
 \"[^"]*\"                               yylval->string = strdup(yytext); RETURN_TOKEN(SSS);
 '[^']*\'                                yylval->string = strdup(yytext); RETURN_TOKEN(SSS);
 

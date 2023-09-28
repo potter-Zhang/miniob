@@ -15,6 +15,7 @@ See the Mulan PSL v2 for more details. */
 #include <string.h>
 #include <algorithm>
 #include "common/defs.h"
+#include "date.h"
 
 namespace common {
 
@@ -38,6 +39,13 @@ int compare_float(void *arg1, void *arg2)
     return -1;
   }
   return 0;
+}
+
+int compare_date(void *arg1, void *arg2)
+{
+  int v1 = ((Date *)arg1)->value();
+  int v2 = ((Date *)arg2)->value();
+  return v1 - v2;
 }
 
 int compare_string(void *arg1, int arg1_max_length, void *arg2, int arg2_max_length)
