@@ -1980,7 +1980,7 @@ yyreduce:
       (yyval.value) = new Value((Date)tmp);
       free(tmp);
       if (!(yyval.value)->get_date().check())
-        yyerror(&(yylsp[0]), sql_string, sql_result, scanner, "Invalid date argument!");
+        YYABORT;
     }
 #line 1986 "yacc_sql.cpp"
     break;
