@@ -295,7 +295,7 @@ Date Value::get_date() const
 {
   switch (attr_type_) {
     case DATES: {
-      return (Date)num_value_.date_value_;
+      return num_value_.date_value_;
     } break;
     default: {
       LOG_WARN("false data type. type=%d", attr_type_);

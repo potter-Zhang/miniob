@@ -389,6 +389,8 @@ value:
       char *tmp = common::substr($1,1,strlen($1)-2);
       $$ = new Value((Date)tmp);
       free(tmp);
+      if (!$$->get_date().check())
+        yyerror(&@1, sql_string, sql_result, scanner, "Invalid date argument!");
     }
     |SSS {
       char *tmp = common::substr($1,1,strlen($1)-2);

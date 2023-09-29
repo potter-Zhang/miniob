@@ -45,5 +45,26 @@ int sql_parse(const char *st, ParsedSqlResult *sql_result);
 RC parse(const char *st, ParsedSqlResult *sql_result)
 {
   sql_parse(st, sql_result);
+
+  /* sql_result->sql_nodes
+  // check fields values
+  switch (field_type)
+  {
+  case INTS: 
+    break;
+  case FLOATS:
+    break;
+  case DATES: {
+    Date date = values[i].get_date();
+    if (!date.check())
+      return RC::INVALID_ARGUMENT;
+  } break;
+  case BOOLEANS:
+    break;
+  case CHARS:
+    break;
+  default:
+    break;
+  } */
   return RC::SUCCESS;
 }
