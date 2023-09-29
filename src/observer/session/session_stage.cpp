@@ -101,9 +101,10 @@ void SessionStage::handle_request(StageEvent *event)
   Session::set_current_session(sev->session());
   sev->session()->set_current_request(sev);
   SQLStageEvent sql_event(sev, sql);
-  RC event_result = handle_sql(&sql_event);
+  (void)handle_sql(&sql_event);
+  /* RC event_result = handle_sql(&sql_event);
   if (event_result != RC::SUCCESS)
-    sev->sql_result()->set_return_code(event_result);
+    sev->sql_result()->set_return_code(event_result); */
   Communicator *communicator = sev->get_communicator();
   bool need_disconnect = false;
   RC rc = communicator->write_result(sev, need_disconnect);

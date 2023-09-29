@@ -389,8 +389,9 @@ value:
       char *tmp = common::substr($1,1,strlen($1)-2);
       $$ = new Value((Date)tmp);
       free(tmp);
-      if (!$$->get_date().check())
+      if (!$$->get_date().check()){
         YYABORT;
+      }
     }
     |SSS {
       char *tmp = common::substr($1,1,strlen($1)-2);
