@@ -47,12 +47,31 @@ RC InsertStmt::create(Db *db, const InsertSqlNode &inserts, Stmt *&stmt)
     return RC::SCHEMA_FIELD_MISSING;
   }
 
-  // check fields type
+  // check fields type and check fields values
   const int sys_field_num = table_meta.sys_field_num();
   for (int i = 0; i < value_num; i++) {
     const FieldMeta *field_meta = table_meta.field(i + sys_field_num);
     const AttrType field_type = field_meta->type();
-    const AttrType value_type = values[i].attr_type();
+    // check fields values
+    switch (field_type)
+    {
+    case INTS: 
+      break;
+    case FLOATS:
+      break;
+    case DATES: {
+      Date date = values[i].get_date();
+      if (!date.check())
+        return RC::INVALID_ARGUMENT;
+    } break;
+    case BOOLEANS:
+      break;
+    case CHARS:
+      break;
+    default:
+      break;
+    }
+    const AttrType value_type = values[i].attr_type();    
     if (field_type != value_type) {  // TODO try to convert the value type to field type
       LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
           table_name, field_meta->name(), field_type, value_type);

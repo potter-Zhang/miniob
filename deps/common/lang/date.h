@@ -6,6 +6,7 @@ public:
     Date(char* c);
     Date(int i);
     int value();
+    bool check();
 private:
     int value_;
 };
