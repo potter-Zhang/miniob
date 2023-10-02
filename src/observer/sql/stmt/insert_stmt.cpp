@@ -16,6 +16,7 @@ See the Mulan PSL v2 for more details. */
 #include "common/log/log.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
+#include "math.h"
 
 InsertStmt::InsertStmt(Table *table, const Value *values, int value_amount)
     : table_(table), values_(values), value_amount_(value_amount)
@@ -42,7 +43,7 @@ RC InsertStmt::create(Db *db, const InsertSqlNode &inserts, Stmt *&stmt)
   const int value_num = static_cast<int>(inserts.values.size());
   const TableMeta &table_meta = table->table_meta();
   const int field_num = table_meta.field_num() - table_meta.sys_field_num();
-  if (field_num != value_num) {
+  if (value_num % field_num != 0) {
     LOG_WARN("schema mismatch. value num=%d, field num in schema=%d", value_num, field_num);
     return RC::SCHEMA_FIELD_MISSING;
   }
@@ -50,7 +51,7 @@ RC InsertStmt::create(Db *db, const InsertSqlNode &inserts, Stmt *&stmt)
   // check fields type
   const int sys_field_num = table_meta.sys_field_num();
   for (int i = 0; i < value_num; i++) {
-    const FieldMeta *field_meta = table_meta.field(i + sys_field_num);
+    const FieldMeta *field_meta = table_meta.field(i % field_num + sys_field_num);
     const AttrType field_type = field_meta->type();
     const AttrType value_type = values[i].attr_type();    
     if (field_type != value_type) {  // TODO try to convert the value type to field type
@@ -62,5 +63,6 @@ RC InsertStmt::create(Db *db, const InsertSqlNode &inserts, Stmt *&stmt)
 
   // everything alright
   stmt = new InsertStmt(table, values, value_num);
+  ((InsertStmt*)stmt)->groups_ = round(value_num / field_num);
   return RC::SUCCESS;
 }

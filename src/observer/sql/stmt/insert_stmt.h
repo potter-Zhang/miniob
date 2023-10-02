@@ -51,9 +51,14 @@ public:
   {
     return value_amount_;
   }
+  int groups() const
+  {
+    return groups_;
+  }
 
 private:
   Table *table_ = nullptr;
   const Value *values_ = nullptr;
   int value_amount_ = 0;
+  int groups_ = 0;
 };

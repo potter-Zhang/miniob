@@ -112,6 +112,8 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   Expression *                      expression;
   std::vector<Expression *> *       expression_list;
   std::vector<Value> *              value_list;
+  std::vector<Value> *              value_row;
+  std::vector<Value> *              value_rows;
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
@@ -138,6 +140,8 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <attr_infos>          attr_def_list
 %type <attr_info>           attr_def
 %type <value_list>          value_list
+%type <value_row>           value_row
+%type <value_rows>          value_rows
 %type <condition_list>      where
 %type <condition_list>      condition_list
 %type <rel_attr_list>       select_attr
@@ -347,17 +351,45 @@ type:
     | DATE_T   { $$=DATES; }
     ;
 insert_stmt:        /*insert   语句的语法解析树*/
-    INSERT INTO ID VALUES LBRACE value value_list RBRACE 
+    INSERT INTO ID VALUES value_row value_rows
     {
       $$ = new ParsedSqlNode(SCF_INSERT);
       $$->insertion.relation_name = $3;
-      if ($7 != nullptr) {
-        $$->insertion.values.swap(*$7);
+      if ($6 != nullptr) {
+        $$->insertion.values.swap(*$6);
       }
-      $$->insertion.values.emplace_back(*$6);
+      std::copy($5->begin(), $5->end(), std::back_inserter($$->insertion.values));
       std::reverse($$->insertion.values.begin(), $$->insertion.values.end());
-      delete $6;
+      delete $5;
       free($3);
+    }
+    ;
+
+value_rows:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA value_row value_rows{ 
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::vector<Value>;
+      }
+      std::copy($2->begin(), $2->end(), std::back_inserter(*$$));
+      delete $2;
+    }
+    ;
+
+value_row:
+    LBRACE value value_list RBRACE
+    {
+      $$ = new std::vector<Value>;
+      if ($3 != nullptr) {
+        $$->swap(*$3);
+      }
+      $$->emplace_back(*$2);
+      delete $2;
     }
     ;
 
