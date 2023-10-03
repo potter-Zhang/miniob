@@ -32,7 +32,7 @@ public:
   {
     
   }
-  void add_projection(const Table *table, const FieldMeta *field);
+  void add_projection(const Table *table, const FieldMeta *field, const AggregationFunc func = NONE);
 
   PhysicalOperatorType type() const override
   {
@@ -49,7 +49,18 @@ public:
   }
 
   Tuple *current_tuple() override;
+  std::vector<AggregationFunc> funcs() const{
+    return funcs_;
+  }
+  const ProjectTuple& tuple() const{
+    return tuple_;
+  }
+  bool is_aggregation() const{
+    return is_aggregation_;
+  }
 
 private:
   ProjectTuple tuple_;
+  std::vector<AggregationFunc> funcs_;
+  bool is_aggregation_ = false;
 };

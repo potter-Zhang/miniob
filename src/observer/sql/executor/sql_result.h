@@ -64,6 +64,10 @@ public:
   {
     return state_string_;
   }
+  const std::unique_ptr<PhysicalOperator> &physical_operator() const
+  {
+    return operator_;
+  }
 
   RC open();
   RC close();

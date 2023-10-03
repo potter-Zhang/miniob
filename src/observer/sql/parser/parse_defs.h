@@ -24,6 +24,19 @@ See the Mulan PSL v2 for more details. */
 class Expression;
 
 /**
+ * @brief 表示聚合查询的类型
+ * @ingroup SQLParser
+ */
+enum AggregationFunc
+{
+  NONE = 0,
+  MAXFUN,
+  MINFUN,
+  COUNTFUN,
+  AVGFUN,
+};
+
+/**
  * @defgroup SQLParser SQL Parser 
  */
 
@@ -38,6 +51,7 @@ struct RelAttrSqlNode
 {
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
+  AggregationFunc func = NONE;
 };
 
 /**

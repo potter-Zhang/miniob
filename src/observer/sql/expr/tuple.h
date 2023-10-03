@@ -275,6 +275,10 @@ public:
     return tuple_->find_cell(spec, cell);
   }
 
+  const std::vector<TupleCellSpec *>& speces() const{
+    return speces_;
+  }
+
 #if 0
   RC cell_spec_at(int index, const TupleCellSpec *&spec) const override
   {

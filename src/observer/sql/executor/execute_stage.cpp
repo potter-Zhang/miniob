@@ -64,33 +64,44 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
 
   // TODO 这里也可以优化一下，是否可以让physical operator自己设置tuple schema
   TupleSchema schema;
-  switch (stmt->type()) {
-    case StmtType::SELECT: {
-      SelectStmt *select_stmt = static_cast<SelectStmt *>(stmt);
-      bool with_table_name = select_stmt->tables().size() > 1;
+  // 看有没有聚合查询，有的话，暂时先不显示tuple schema
+  const vector<Field> &fields = static_cast<SelectStmt *>(stmt)->query_fields();
+  bool show_schema = true;
+  for (Field field : fields){
+    if (field.func() != NONE){
+      show_schema = false;      
+      break;
+    }
+  }  
+  if (show_schema){
+    switch (stmt->type()) {
+      case StmtType::SELECT: {
+        SelectStmt *select_stmt = static_cast<SelectStmt *>(stmt);
+        bool with_table_name = select_stmt->tables().size() > 1;
 
-      for (const Field &field : select_stmt->query_fields()) {
-        if (with_table_name) {
-          schema.append_cell(field.table_name(), field.field_name());
-        } else {
-          schema.append_cell(field.field_name());
+        for (const Field &field : select_stmt->query_fields()) {
+          if (with_table_name) {
+            schema.append_cell(field.table_name(), field.field_name());
+          } else {
+            schema.append_cell(field.field_name());
+          }
         }
-      }
-    } break;
+      } break;
 
-    case StmtType::CALC: {
-      CalcPhysicalOperator *calc_operator = static_cast<CalcPhysicalOperator *>(physical_operator.get());
-      for (const unique_ptr<Expression> & expr : calc_operator->expressions()) {
-        schema.append_cell(expr->name().c_str());
-      }
-    } break;
+      case StmtType::CALC: {
+        CalcPhysicalOperator *calc_operator = static_cast<CalcPhysicalOperator *>(physical_operator.get());
+        for (const unique_ptr<Expression> & expr : calc_operator->expressions()) {
+          schema.append_cell(expr->name().c_str());
+        }
+      } break;
 
-    case StmtType::EXPLAIN: {
-      schema.append_cell("Query Plan");
-    } break;
-    default: {
-      // 只有select返回结果
-    } break;
+      case StmtType::EXPLAIN: {
+        schema.append_cell("Query Plan");
+      } break;
+      default: {
+        // 只有select返回结果
+      } break;
+    }
   }
 
   SqlResult *sql_result = sql_event->session_event()->sql_result();

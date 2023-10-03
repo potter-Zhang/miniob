@@ -67,16 +67,36 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   std::vector<Field> query_fields;
   for (int i = static_cast<int>(select_sql.attributes.size()) - 1; i >= 0; i--) {
     const RelAttrSqlNode &relation_attr = select_sql.attributes[i];
-
+    int length = query_fields.size();
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
         0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
-      for (Table *table : tables) {
-        wildcard_fields(table, query_fields);
+      // 看有没有聚合查询
+      if (relation_attr.func != NONE){
+        if (relation_attr.func != AggregationFunc::COUNTFUN){
+          LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+          return RC::SQL_SYNTAX;
+        }
+        for (Table *table : tables){
+          const TableMeta &table_meta = table->table_meta();
+          const int field_num = table_meta.field_num();
+          query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
+        }
+        for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+          iter->set_func(relation_attr.func);
       }
-
-    } else if (!common::is_blank(relation_attr.relation_name.c_str())) {
+      else{
+        for (Table *table : tables) {
+          wildcard_fields(table, query_fields);
+        }     
+      }
+    } else if (!common::is_blank(relation_attr.relation_name.c_str())) {      
       const char *table_name = relation_attr.relation_name.c_str();
       const char *field_name = relation_attr.attribute_name.c_str();
+      // 看有没有聚合查询，这里应该是不允许聚合查询的
+      if (relation_attr.func != NONE){
+        LOG_WARN("invalid aggregation query: %s.AggregationFunc(%d)", table_name, relation_attr.func);
+        return RC::SQL_SYNTAX;
+      }
 
       if (0 == strcmp(table_name, "*")) {
         if (0 != strcmp(field_name, "*")) {
@@ -120,6 +140,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
       query_fields.push_back(Field(table, field_meta));
+      // 看有没有聚合查询
+      if (relation_attr.func != NONE){
+        for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+          iter->set_func(relation_attr.func);
+      }
     }
   }
 

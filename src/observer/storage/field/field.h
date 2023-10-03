@@ -37,6 +37,10 @@ public:
   {
     return field_;
   }
+  const AggregationFunc func() const
+  {
+    return func_;
+  }
 
   AttrType attr_type() const
   {
@@ -60,6 +64,10 @@ public:
   {
     this->field_ = field;
   }
+  void set_func(const AggregationFunc func)
+  {
+    this->func_ = func;
+  }
 
   void set_int(Record &record, int value);
   int  get_int(const Record &record);
@@ -69,4 +77,5 @@ public:
 private:
   const Table *table_ = nullptr;
   const FieldMeta *field_ = nullptr;
+  AggregationFunc func_ = NONE;
 };

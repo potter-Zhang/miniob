@@ -12,6 +12,8 @@ See the Mulan PSL v2 for more details. */
 // Created by Wangyunlai on 2023/06/25.
 //
 
+#include <exception>
+
 #include "net/plain_communicator.h"
 #include "net/buffered_writer.h"
 #include "sql/expr/tuple.h"
@@ -19,6 +21,7 @@ See the Mulan PSL v2 for more details. */
 #include "session/session.h"
 #include "common/io/io.h"
 #include "common/log/log.h"
+#include "sql/operator/project_physical_operator.h"
 
 PlainCommunicator::PlainCommunicator()
 {
@@ -220,15 +223,44 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   }
 
   rc = RC::SUCCESS;
-  Tuple *tuple = nullptr;
-  while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
-    assert(tuple != nullptr);
+  // 看是否为聚合查询
+  bool is_aggregation = false;
+  ProjectPhysicalOperator* ppo;
+  PhysicalOperator* oper = event->sql_result()->physical_operator().get();
+  try{
+    ppo = (ProjectPhysicalOperator*)oper;    
+    is_aggregation = ppo->is_aggregation();
+  }catch(std::exception e){
 
-    int cell_num = tuple->cell_num();
-    for (int i = 0; i < cell_num; i++) {
-      if (i != 0) {
-        const char *delim = " | ";
-        rc = writer_->writen(delim, strlen(delim));
+  }
+  //std::string query = std::toupper(event->query());
+  //if query.find("max")
+  Tuple *tuple = nullptr;
+  if (!is_aggregation){
+    while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
+      assert(tuple != nullptr);
+
+      int cell_num = tuple->cell_num();
+      for (int i = 0; i < cell_num; i++) {
+        if (i != 0) {
+          const char *delim = " | ";
+          rc = writer_->writen(delim, strlen(delim));
+          if (OB_FAIL(rc)) {
+            LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+            sql_result->close();
+            return rc;
+          }
+        }
+
+        Value value;
+        rc = tuple->cell_at(i, value);
+        if (rc != RC::SUCCESS) {
+          sql_result->close();
+          return rc;
+        }
+
+        std::string cell_str = value.to_string();
+        rc = writer_->writen(cell_str.data(), cell_str.size());
         if (OB_FAIL(rc)) {
           LOG_WARN("failed to send data to client. err=%s", strerror(errno));
           sql_result->close();
@@ -236,15 +268,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         }
       }
 
-      Value value;
-      rc = tuple->cell_at(i, value);
-      if (rc != RC::SUCCESS) {
-        sql_result->close();
-        return rc;
-      }
-
-      std::string cell_str = value.to_string();
-      rc = writer_->writen(cell_str.data(), cell_str.size());
+      char newline = '\n';
+      rc = writer_->writen(&newline, 1);
       if (OB_FAIL(rc)) {
         LOG_WARN("failed to send data to client. err=%s", strerror(errno));
         sql_result->close();
@@ -252,39 +277,135 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       }
     }
 
-    char newline = '\n';
-    rc = writer_->writen(&newline, 1);
-    if (OB_FAIL(rc)) {
-      LOG_WARN("failed to send data to client. err=%s", strerror(errno));
-      sql_result->close();
-      return rc;
+    if (rc == RC::RECORD_EOF) {
+      rc = RC::SUCCESS;
+    }
+
+    if (cell_num == 0) {
+      // 除了select之外，其它的消息通常不会通过operator来返回结果，表头和行数据都是空的
+      // 这里针对这种情况做特殊处理，当表头和行数据都是空的时候，就返回处理的结果
+      // 可能是insert/delete等操作，不直接返回给客户端数据，这里把处理结果返回给客户端
+      RC rc_close = sql_result->close();
+      if (rc == RC::SUCCESS) {
+        rc = rc_close;
+      }
+      sql_result->set_return_code(rc);
+      return write_state(event, need_disconnect);
+      } else {
+
+      rc = writer_->writen(send_message_delimiter_.data(), send_message_delimiter_.size());
+      if (OB_FAIL(rc)) {
+        LOG_ERROR("Failed to send data back to client. ret=%s, error=%s", strrc(rc), strerror(errno));
+        sql_result->close();
+        return rc;
+      }
+
+      need_disconnect = false;
     }
   }
+  else{
+    std::vector<AggregationFunc> funcs = ppo->funcs();
+    int size = funcs.size();
+    std::vector<Value> values(size);
+    /* std::vector<bool> non_funcs(size, false);
+    for(int i = 0; i < funcs.size(); i++){
+      if (funcs[i] == AggregationFunc::NONE)
+        non_funcs[i] = true;
+    } */
+    bool tuple_exist = false;
+    int num = 0;
+    while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
+      assert(tuple != nullptr);
 
-  if (rc == RC::RECORD_EOF) {
-    rc = RC::SUCCESS;
-  }
+      num ++;
+      int cell_num = tuple->cell_num();
+      for (int i = 0; i < cell_num; i++) {
+        Value value;
+        rc = tuple->cell_at(i, value);
+        if (rc != RC::SUCCESS) {
+          sql_result->close();
+          return rc;
+        }
+        if (!tuple_exist){
+          if (funcs[i] != AggregationFunc::COUNTFUN)
+            values[i] = value;
+          else
+            values[i] = Value(1);
+        }
+        else{
+          switch (funcs[i]){
+            case AggregationFunc::NONE: {
 
-  if (cell_num == 0) {
-    // 除了select之外，其它的消息通常不会通过operator来返回结果，表头和行数据都是空的
-    // 这里针对这种情况做特殊处理，当表头和行数据都是空的时候，就返回处理的结果
-    // 可能是insert/delete等操作，不直接返回给客户端数据，这里把处理结果返回给客户端
-    RC rc_close = sql_result->close();
-    if (rc == RC::SUCCESS) {
-      rc = rc_close;
+            } break;
+            case AggregationFunc::MAXFUN: {
+              if (value.compare(values[i]) > 0)
+                values[i] = value;
+            } break;
+            case AggregationFunc::MINFUN: {
+              if (value.compare(values[i]) < 0)
+                values[i] = value;
+            } break;
+            case AggregationFunc::COUNTFUN: {
+              values[i].set_int(values[i].get_int() + 1);
+            } break;
+            case AggregationFunc::AVGFUN: {
+              switch (value.attr_type()) {
+                // INTS时，最后的结果放在Value.float_value_
+                case AttrType::INTS: {
+                  values[i].set_int(values[i].get_int() + value.get_int());
+                } break;
+                case AttrType::FLOATS: {
+                  values[i].set_float(values[i].get_float() + value.get_float());
+                } break;
+                default: {
+                  LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                  return RC::INVALID_ARGUMENT;
+                } break;
+              }
+            } break;
+          }
+        }        
+      }
+
+      tuple_exist = true;
     }
-    sql_result->set_return_code(rc);
-    return write_state(event, need_disconnect);
-  } else {
+    if (tuple_exist){
+      for (int i = 0; i < size; i++){
+        if (i != 0){
+          const char *delim = " | ";
+            rc = writer_->writen(delim, strlen(delim));
+            if (OB_FAIL(rc)) {
+              LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+              sql_result->close();
+              return rc;
+            }
+        }
+        std::string cell_str;
+        // 计算平均数时，结果都用浮点数表示
+        if (funcs[i] == AggregationFunc::AVGFUN){
+          if (values[i].attr_type() == AttrType::INTS){
+            values[i].set_float(values[i].get_int());
+            values[i].set_type(AttrType::FLOATS);
+          }
+          values[i].set_float(values[i].get_float() / num);
+        }
+        cell_str = values[i].to_string();
+        rc = writer_->writen(cell_str.data(), cell_str.size());
+        if (OB_FAIL(rc)) {
+          LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+          sql_result->close();
+          return rc;
+        }
+      }
 
-    rc = writer_->writen(send_message_delimiter_.data(), send_message_delimiter_.size());
-    if (OB_FAIL(rc)) {
-      LOG_ERROR("Failed to send data back to client. ret=%s, error=%s", strrc(rc), strerror(errno));
-      sql_result->close();
-      return rc;
+      char newline = '\n';
+      rc = writer_->writen(&newline, 1);
+      if (OB_FAIL(rc)) {
+        LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+        sql_result->close();
+        return rc;
+      }
     }
-
-    need_disconnect = false;
   }
 
   RC rc_close = sql_result->close();

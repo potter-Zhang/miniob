@@ -99,6 +99,10 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         LE
         GE
         NE
+        MAX
+        MIN
+        COUNT
+        AVG
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -121,6 +125,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   int                               number;
   float                             floats;
   char *                            dates;
+  AggregationFunc                   func;
 }
 
 %token <number> NUMBER
@@ -172,6 +177,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            command_wrapper
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
+%type <func>                func
 
 %left '+' '-'
 %left '*' '/'
@@ -566,6 +572,27 @@ rel_attr:
       free($1);
       free($3);
     }
+    | func LBRACE ID RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = $3;
+      $$->func = $1;
+      free($3);
+    }
+    | func LBRACE '*' RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = "*";
+      if ($1 != AggregationFunc::COUNTFUN)
+        YYABORT;
+      $$->func = $1;
+    }
+    | func LBRACE ID DOT ID RBRACE {
+      $$ = new RelAttrSqlNode;;
+      $$->relation_name = $3;
+      $$->attribute_name = $5;
+      $$->func = $1;
+      free($3);
+      free($5);
+    }
     ;
 
 attr_list:
@@ -599,6 +626,20 @@ rel_list:
 
       $$->push_back($2);
       free($2);
+    }
+    ;
+func:
+    MAX {
+      $$ = AggregationFunc::MAXFUN;
+    }
+    | MIN {
+      $$ = AggregationFunc::MINFUN;
+    }
+    | COUNT {
+      $$ = AggregationFunc::COUNTFUN;
+    }
+    | AVG {
+      $$ = AggregationFunc::AVGFUN;
     }
     ;
 where:
