@@ -406,6 +406,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         return rc;
       }
     }
+
+    need_disconnect = false;
   }
 
   RC rc_close = sql_result->close();
