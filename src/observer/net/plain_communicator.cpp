@@ -406,6 +406,12 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         return rc;
       }
     }
+    rc = writer_->writen(send_message_delimiter_.data(), send_message_delimiter_.size());
+    if (OB_FAIL(rc)) {
+      LOG_ERROR("Failed to send data back to client. ret=%s, error=%s", strrc(rc), strerror(errno));
+      sql_result->close();
+      return rc;
+    }
 
     need_disconnect = false;
   }
