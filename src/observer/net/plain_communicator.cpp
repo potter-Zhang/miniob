@@ -359,6 +359,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                 } break;
                 default: {
                   LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                  sql_result->close();
                   return RC::INVALID_ARGUMENT;
                 } break;
               }
