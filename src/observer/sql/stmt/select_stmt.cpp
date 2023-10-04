@@ -80,6 +80,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           const TableMeta &table_meta = table->table_meta();
           const int field_num = table_meta.field_num();
           query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
+          query_fields.back().set_is_star(true);
         }
         for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
           iter->set_func(relation_attr.func);

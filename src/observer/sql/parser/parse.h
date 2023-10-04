@@ -18,3 +18,9 @@ See the Mulan PSL v2 for more details. */
 #include "sql/parser/parse_defs.h"
 
 RC parse(const char *st, ParsedSqlResult *sql_result);
+
+/**
+ * @brief 将聚合查询的类型转换为字符串
+ * @ingroup SQLParser
+*/
+const std::string func_to_string(AggregationFunc func);

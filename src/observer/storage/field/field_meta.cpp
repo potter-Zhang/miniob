@@ -62,6 +62,11 @@ const char *FieldMeta::name() const
   return name_.c_str();
 }
 
+void FieldMeta::set_name(const char* name)
+{
+  name_ = name;
+}
+
 AttrType FieldMeta::type() const
 {
   return attr_type_;

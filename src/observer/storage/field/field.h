@@ -42,6 +42,11 @@ public:
     return func_;
   }
 
+  const bool is_star() const
+  {
+    return is_star_;
+  }
+
   AttrType attr_type() const
   {
     return field_->type();
@@ -68,6 +73,10 @@ public:
   {
     this->func_ = func;
   }
+  void set_is_star(bool is_star)
+  {
+    this->is_star_ = is_star;
+  }
 
   void set_int(Record &record, int value);
   int  get_int(const Record &record);
@@ -78,4 +87,5 @@ private:
   const Table *table_ = nullptr;
   const FieldMeta *field_ = nullptr;
   AggregationFunc func_ = NONE;
+  bool is_star_ = false;
 };

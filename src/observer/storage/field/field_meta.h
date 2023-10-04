@@ -38,6 +38,7 @@ public:
 
 public:
   const char *name() const;
+  void set_name(const char* name);
   AttrType type() const;
   int offset() const;
   int len() const;
