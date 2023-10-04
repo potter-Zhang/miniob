@@ -593,6 +593,15 @@ rel_attr:
       free($3);
       free($5);
     }
+    | func LBRACE '*'{
+      YYABORT;
+    }
+    | func LBRACE ID DOT ID{
+      YYABORT;
+    }
+    | func LBRACE ID COMMA{
+      YYABORT;
+    }
     ;
 
 attr_list:
