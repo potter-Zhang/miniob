@@ -278,6 +278,12 @@ int Value::compare(const Value &other) const
   } else if (this->attr_type_ == FLOATS && other.attr_type_ == INTS) {
     float other_data = other.num_value_.int_value_;
     return common::compare_float((void *)&this->num_value_.float_value_, (void *)&other_data);
+  } else if (this->attr_type_ == DATES && other.attr_type_ == CHARS) {
+    int other_data = other.get_date();
+    return common::compare_int((void *)&this->num_value_.date_value_, (void *)&other_data);
+  } else if (this->attr_type_ == CHARS && other.attr_type_ == DATES) {
+    int this_data = this->get_date();
+    return common::compare_int((void *)&this_data, (void *)&other.num_value_.date_value_);
   }
   LOG_WARN("not supported");
   return -1;  // TODO return rc?
@@ -415,6 +421,7 @@ bool Value::convert_to(AttrType new_type) {
     case DATES: {
       int d = get_date();
       if (d != 0) {
+        std::string().swap(str_value_);
         set_date(d);
         return true;
       }
