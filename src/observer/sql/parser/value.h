@@ -16,6 +16,7 @@ See the Mulan PSL v2 for more details. */
 
 #include <string>
 #include "common/lang/date.h"
+#include <vector>
 
 /**
  * @brief 属性的类型
@@ -47,6 +48,8 @@ public:
   {
     this->set_data(data, length);
   }
+
+  bool operator == (const Value& other) const;
 
   explicit Value(int val);
   explicit Value(float val);
@@ -110,4 +113,12 @@ private:
     bool bool_value_;
   } num_value_;
   std::string str_value_;
+};
+
+struct value_hash_name {
+  size_t operator()(const Value& p) const;
+};
+
+struct vector_value_hash_name {
+  size_t operator()(const std::vector<Value>& vec) const;
 };

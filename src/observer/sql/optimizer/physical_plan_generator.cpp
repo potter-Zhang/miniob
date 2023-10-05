@@ -188,7 +188,8 @@ RC PhysicalPlanGenerator::create_plan(ProjectLogicalOperator &project_oper, uniq
     }
   }
 
-  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator;
+  int group_by_begin = project_oper.group_by_begin();
+  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator(group_by_begin);
   const vector<Field> &project_fields = project_oper.fields();
   for (const Field &field : project_fields) {
     project_operator->add_projection(field.table(), field.meta(), field.func());

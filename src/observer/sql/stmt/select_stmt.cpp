@@ -149,6 +149,51 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     }
   }
 
+  // 仿照query fields也录入一下group by的列名
+  int group_by_begin;
+  const std::vector<std::string> &group_by_columns = select_sql.group_by_columns;
+  if (group_by_columns.size() != 0)
+    group_by_begin = query_fields.size();
+  else
+    group_by_begin = -1;
+  // 没有group by *.column
+  for (std::string column : group_by_columns){
+    size_t pos;
+    if ((pos = column.find(".")) != column.npos){
+      const char *table_name = column.substr(0, pos).c_str();
+      const char *field_name = column.substr(pos + 1).c_str();
+      auto iter = table_map.find(table_name);
+      if (iter == table_map.end()) {
+        LOG_WARN("no such table in from list: %s", table_name);
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      Table *table = iter->second;
+      const FieldMeta *field_meta = table->table_meta().field(field_name);
+      if (nullptr == field_meta) {
+        LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), field_name);
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      query_fields.push_back(Field(table, field_meta));
+    }
+    else{
+      if (tables.size() != 1) {
+        LOG_WARN("invalid. I do not know the attr's table. attr=%s", column.c_str());
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      Table *table = tables[0];
+      const FieldMeta *field_meta = table->table_meta().field(column.c_str());
+      if (nullptr == field_meta) {
+        LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), column.c_str());
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      query_fields.push_back(Field(table, field_meta));
+    }
+  }
+
   LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables.size(), query_fields.size());
 
   Table *default_table = nullptr;
@@ -175,6 +220,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->filter_stmt_ = filter_stmt;
+  select_stmt->group_by_begin_ = group_by_begin;
   stmt = select_stmt;
   return RC::SUCCESS;
 }

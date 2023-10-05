@@ -17,6 +17,9 @@ See the Mulan PSL v2 for more details. */
 #include "storage/record/record.h"
 #include "storage/table/table.h"
 
+ProjectPhysicalOperator::ProjectPhysicalOperator(int group_by_begin): group_by_begin_(group_by_begin)
+{}
+
 RC ProjectPhysicalOperator::open(Trx *trx)
 {
   if (children_.empty()) {
@@ -60,6 +63,8 @@ void ProjectPhysicalOperator::add_projection(const Table *table, const FieldMeta
   // 对多表查询来说，展示的alias 需要带表名字
   TupleCellSpec *spec = new TupleCellSpec(table->name(), field_meta->name(), field_meta->name());
   tuple_.add_cell_spec(spec);
+  if (group_by_begin_ > -1 && funcs_.size() >= group_by_begin_)
+    return;
   funcs_.push_back(func);
   if (!is_aggregation_ && func != NONE)
     is_aggregation_ = true;

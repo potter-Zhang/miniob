@@ -57,9 +57,14 @@ public:
   {
     return filter_stmt_;
   }
+  const int group_by_begin() const
+  {
+    return group_by_begin_;
+  }
 
 private:
   std::vector<Field> query_fields_;
   std::vector<Table *> tables_;
   FilterStmt *filter_stmt_ = nullptr;
+  int group_by_begin_ = -1;
 };

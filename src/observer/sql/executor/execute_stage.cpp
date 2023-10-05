@@ -79,7 +79,12 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
       SelectStmt *select_stmt = static_cast<SelectStmt *>(stmt);
       bool with_table_name = select_stmt->tables().size() > 1;
 
+      int num = 0;
+      int group_by_begin = select_stmt->group_by_begin();
       for (const Field &field : select_stmt->query_fields()) {
+        if (group_by_begin > -1 && num >= group_by_begin)
+          break;
+        num ++;
         AggregationFunc func = field.func();
         if (with_table_name) {
           if (func == NONE)

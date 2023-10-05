@@ -22,6 +22,7 @@ See the Mulan PSL v2 for more details. */
 #include "common/io/io.h"
 #include "common/log/log.h"
 #include "sql/operator/project_physical_operator.h"
+#include "sql/parser/value.h"
 
 PlainCommunicator::PlainCommunicator()
 {
@@ -225,18 +226,25 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   rc = RC::SUCCESS;
   // 看是否为聚合查询
   bool is_aggregation = false;
+  // 看是否为group by
+  bool is_group_by = false;
+  int group_by_begin;
   ProjectPhysicalOperator* ppo;
   PhysicalOperator* oper = event->sql_result()->physical_operator().get();
-  try{
-    ppo = (ProjectPhysicalOperator*)oper;    
-    is_aggregation = ppo->is_aggregation();
-  }catch(std::exception e){
+  if (oper->type() ==  PhysicalOperatorType::PROJECT){
+    try{
+      ppo = (ProjectPhysicalOperator*)oper;    
+      is_aggregation = ppo->is_aggregation();
+      if ((group_by_begin = ppo->group_by_begin()) != -1)
+        is_group_by = true;
+    }catch(std::exception e){
 
+    }
   }
   //std::string query = std::toupper(event->query());
   //if query.find("max")
   Tuple *tuple = nullptr;
-  if (!is_aggregation){
+  if (!is_aggregation && !is_group_by){
     while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
       assert(tuple != nullptr);
 
@@ -303,7 +311,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       need_disconnect = false;
     }
   }
-  else{
+  else if(is_aggregation && !is_group_by){
     std::vector<AggregationFunc> funcs = ppo->funcs();
     int size = funcs.size();
     std::vector<Value> values(size);
@@ -389,6 +397,161 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             values[i].set_type(AttrType::FLOATS);
           }
           values[i].set_float(values[i].get_float() / num);
+        }
+        cell_str = values[i].to_string();
+        rc = writer_->writen(cell_str.data(), cell_str.size());
+        if (OB_FAIL(rc)) {
+          LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+          sql_result->close();
+          return rc;
+        }
+      }
+
+      char newline = '\n';
+      rc = writer_->writen(&newline, 1);
+      if (OB_FAIL(rc)) {
+        LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+        sql_result->close();
+        return rc;
+      }
+    }
+    rc = writer_->writen(send_message_delimiter_.data(), send_message_delimiter_.size());
+    if (OB_FAIL(rc)) {
+      LOG_ERROR("Failed to send data back to client. ret=%s, error=%s", strrc(rc), strerror(errno));
+      sql_result->close();
+      return rc;
+    }
+
+    need_disconnect = false;
+  }
+  else if(is_group_by){
+    std::vector<AggregationFunc> funcs = ppo->funcs();
+    int size = funcs.size();
+    //std::vector<Value> values(size);
+    /* std::vector<bool> non_funcs(size, false);
+    for(int i = 0; i < funcs.size(); i++){
+      if (funcs[i] == AggregationFunc::NONE)
+        non_funcs[i] = true;
+    } */
+
+    // 存储大量group by列是否被访问过
+    typedef std::unordered_map<std::vector<Value>, int, vector_value_hash_name> group_by_num;
+    group_by_num num;
+    typedef std::unordered_map<std::vector<Value>, std::vector<Value>, vector_value_hash_name> group_by_type;
+    group_by_type group_by_map;
+    bool begin = true;
+    Value value;
+    while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
+      assert(tuple != nullptr);
+
+      // 感觉cell_num不为0
+      int cell_num = tuple->cell_num();
+      std::vector<Value> group_value;
+      for (int i = group_by_begin; i < cell_num; i++){
+        rc = tuple->cell_at(i, value);
+        if (rc != RC::SUCCESS) {
+          sql_result->close();
+          return rc;
+        }
+        group_value.push_back(value);
+      }
+      std::pair<std::vector<Value>, std::vector<Value>> *current_group;
+      std::pair<std::vector<Value>, int> *current_num;
+      auto iter_group = group_by_map.find(group_value);
+      auto iter_num = num.find(group_value);
+      bool not_found = false;
+      if (iter_group == group_by_map.end()){
+        // 后面别忘了把current_group插入到group_by_map
+        current_group = new std::pair<std::vector<Value>, std::vector<Value>>(
+          std::pair<std::vector<Value>, std::vector<Value>>(group_value, std::vector<Value>(group_by_begin)));
+        // 后面别忘了把current_num插入到num
+        current_num = new std::pair<std::vector<Value>, int>(std::pair<std::vector<Value>, int>(group_value, 0));
+        not_found = true;
+      }
+      else{
+        current_group = (std::pair<std::vector<Value>, std::vector<Value>> *)&(*iter_group);
+        current_num = (std::pair<std::vector<Value>, int> *)&(*iter_num);
+      }
+      std::vector<Value> &values = current_group->second;
+      for (int i = 0; i < group_by_begin; i++) {
+        Value value;
+        rc = tuple->cell_at(i, value);
+        if (rc != RC::SUCCESS) {
+          sql_result->close();
+          return rc;
+        }
+        if (current_num->second == 0){
+          if (funcs[i] != AggregationFunc::COUNTFUN)
+            values[i] = value;
+          else
+            values[i] = Value(1);
+        }
+        else{
+          switch (funcs[i]){
+            case AggregationFunc::NONE: {
+
+            } break;
+            case AggregationFunc::MAXFUN: {
+              if (value.compare(values[i]) > 0)
+                values[i] = value;
+            } break;
+            case AggregationFunc::MINFUN: {
+              if (value.compare(values[i]) < 0)
+                values[i] = value;
+            } break;
+            case AggregationFunc::COUNTFUN: {
+              values[i].set_int(values[i].get_int() + 1);
+            } break;
+            case AggregationFunc::AVGFUN: {
+              switch (value.attr_type()) {
+                // INTS时，最后的结果放在Value.float_value_
+                case AttrType::INTS: {
+                  values[i].set_int(values[i].get_int() + value.get_int());
+                } break;
+                case AttrType::FLOATS: {
+                  values[i].set_float(values[i].get_float() + value.get_float());
+                } break;
+                default: {
+                  LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                  sql_result->close();
+                  return RC::INVALID_ARGUMENT;
+                } break;
+              }
+            } break;
+          }
+        }        
+      }
+      current_num->second ++;
+      if (not_found){
+        group_by_map.insert(*current_group);
+        num.insert(*current_num);
+        delete current_group;
+        delete current_num;
+      }
+
+      //tuple_exist = true;
+    }
+    //if (tuple_exist){
+    for (auto iter = group_by_map.begin(); iter != group_by_map.end(); iter ++){
+      std::vector<Value> values = (*iter).second;
+      for (int i = 0; i < size; i++){
+        if (i != 0){
+          const char *delim = " | ";
+            rc = writer_->writen(delim, strlen(delim));
+            if (OB_FAIL(rc)) {
+              LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+              sql_result->close();
+              return rc;
+            }
+        }
+        std::string cell_str;
+        // 计算平均数时，结果都用浮点数表示
+        if (funcs[i] == AggregationFunc::AVGFUN){
+          if (values[i].attr_type() == AttrType::INTS){
+            values[i].set_float(values[i].get_int());
+            values[i].set_type(AttrType::FLOATS);
+          }
+          values[i].set_float(values[i].get_float() / num.find(iter->first)->second);
         }
         cell_str = values[i].to_string();
         rc = writer_->writen(cell_str.data(), cell_str.size());

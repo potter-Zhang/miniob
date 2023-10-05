@@ -103,6 +103,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         MIN
         COUNT
         AVG
+        GROUPBY
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -151,6 +152,9 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <condition_list>      condition_list
 %type <rel_attr_list>       select_attr
 %type <relation_list>       rel_list
+%type <relation_list>       group_by_columns
+%type <string>              group_by_attr
+%type <relation_list>       group_by_attr_list
 %type <rel_attr_list>       attr_list
 %type <expression>          expression
 %type <expression_list>     expression_list
@@ -466,7 +470,7 @@ update_stmt:      /*  update 语句的语法解析树*/
     }
     ;
 select_stmt:        /*  select 语句的语法解析树*/
-    SELECT select_attr FROM ID rel_list where
+    SELECT select_attr FROM ID rel_list where group_by_columns
     {
       $$ = new ParsedSqlNode(SCF_SELECT);
       if ($2 != nullptr) {
@@ -483,6 +487,11 @@ select_stmt:        /*  select 语句的语法解析树*/
       if ($6 != nullptr) {
         $$->selection.conditions.swap(*$6);
         delete $6;
+      }
+
+      if($7 != nullptr) {
+        $$->selection.group_by_columns.swap(*$7);
+        delete $7;
       }
       free($4);
     }
@@ -725,6 +734,56 @@ comp_op:
     | LE { $$ = LESS_EQUAL; }
     | GE { $$ = GREAT_EQUAL; }
     | NE { $$ = NOT_EQUAL; }
+    ;
+
+group_by_columns:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | GROUPBY group_by_attr group_by_attr_list
+    {
+      $$ = new std::vector<std::string>;
+      if ($3 != nullptr){
+        $$->swap(*$3);
+        delete $3;
+      }
+      $$->push_back($2);
+      free($2);
+    }
+
+group_by_attr_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA group_by_attr group_by_attr_list{
+      if ($3 != nullptr){
+        $$ = $3;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+
+      $$->push_back($2);
+      free($2);
+    }
+    ;
+
+group_by_attr:
+    ID {
+      $$ = $1;
+    }
+    | ID DOT ID {
+      int len1 = strlen($1);
+      int len2 = strlen($3);
+      int len = len1 + len2 + 2;
+      char *temp = new char[len];
+      temp[len1] = '.';
+      temp[len - 1] = '\0';
+      memcpy(temp, $1, len1);
+      memcpy(temp + len1 + 1, $3, len2);
+      $$ = temp;
+    }
     ;
 
 load_data_stmt:

@@ -26,6 +26,8 @@ public:
   ProjectPhysicalOperator()
   {}
 
+  ProjectPhysicalOperator(int group_by_begin);
+
   virtual ~ProjectPhysicalOperator() = default;
 
   void add_expressions(std::vector<std::unique_ptr<Expression>> &&expressions)
@@ -55,12 +57,16 @@ public:
   const ProjectTuple& tuple() const{
     return tuple_;
   }
-  bool is_aggregation() const{
+  const bool is_aggregation() const{
     return is_aggregation_;
+  }
+  const int group_by_begin() const{
+    return group_by_begin_;
   }
 
 private:
   ProjectTuple tuple_;
   std::vector<AggregationFunc> funcs_;
   bool is_aggregation_ = false;
+  int group_by_begin_ = -1;
 };

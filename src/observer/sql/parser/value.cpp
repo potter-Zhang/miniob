@@ -18,6 +18,8 @@ See the Mulan PSL v2 for more details. */
 #include "common/log/log.h"
 #include "common/lang/comparator.h"
 #include "common/lang/string.h"
+#include "value.h"
+#include <bits/stdc++.h>
 
 const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "floats", "dates","booleans"};
 
@@ -36,6 +38,33 @@ AttrType attr_type_from_string(const char *s)
     }
   }
   return UNDEFINED;
+}
+
+size_t value_hash_name::operator()(const Value& p) const
+{  
+  /* AttrType type = p.attr_type();
+  int length = p.length();
+  char * buffer = new char[length + 2];
+  memcpy(buffer, &p, length);
+  // 最后两位放attr type
+  memcpy(buffer + length, &type, 2);
+  size_t temp = *(size_t*)buffer;
+  free(buffer);
+  return temp; */
+  int length = p.length();
+  char* buffer = new char[length];
+  memcpy(buffer, p.data(), length);
+  std::string ss(buffer, length);
+  return std::hash<std::string>{}(ss);
+}
+
+size_t vector_value_hash_name::operator()(const std::vector<Value> &vec) const {
+  size_t seed = vec.size();
+  for (const Value& value : vec) {
+    value_hash_name vhn;
+    seed ^= vhn(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  }
+  return size_t();
 }
 
 Value::Value(int val)
@@ -226,6 +255,10 @@ int Value::compare(const Value &other) const
   return -1;  // TODO return rc?
 }
 
+bool Value::operator == (const Value& other) const{
+  return this->attr_type_ == other.attr_type_ && compare(other) == 0;
+}
+
 int Value::get_int() const
 {
   switch (attr_type_) {
@@ -352,3 +385,4 @@ bool Value::get_boolean() const
   }
   return false;
 }
+
