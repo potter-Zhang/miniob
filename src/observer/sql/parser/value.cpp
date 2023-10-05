@@ -19,7 +19,8 @@ See the Mulan PSL v2 for more details. */
 #include "common/lang/comparator.h"
 #include "common/lang/string.h"
 
-const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "floats", "booleans"};
+const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "dates", "floats", "booleans"};
+const int months[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 const char *attr_type_to_string(AttrType type)
 {
@@ -36,6 +37,54 @@ AttrType attr_type_from_string(const char *s)
     }
   }
   return UNDEFINED;
+}
+int date_check(const char *s, int len) {
+  if (len < 9 || len > 12) {
+    LOG_ERROR("date format length error!");
+    return 0;
+  }
+
+  char buf[12];
+  int d[3];
+  int idx = 0, p = 10000, j = 0;
+  int i = -1;
+
+  if (loop_check(s, i, 4, 3) || loop_check(s, i, 7, i + 1) || loop_check(s, i, 12, i + 1)) {
+    LOG_ERROR("date format error!");
+    return 0;
+  }
+
+  strcpy(buf, s);
+
+  for (int i = 0; i < len; i++) {
+    if (buf[i] == '-') {
+      buf[i] = '\0';
+      d[j++] = atoi(buf + idx);
+      idx = i + 1;
+    }
+  }
+  if (!is_valid_date(d[0], d[1], d[2])) {
+    LOG_ERROR("not a valid date!");
+    return 0;
+  }
+  return d[0] * 10000 + d[1] * 100 + d[2];
+
+}
+
+bool loop_check(const char *s, int &idx, int maxIdx, int minIdx) {
+  while (isdigit(s[++idx]) && idx < maxIdx)
+    ;
+  return idx <= minIdx || s[idx] != '-';
+}
+
+bool is_valid_date(int year, int month, int day) {
+  if (year <= 0 || month <= 0 || day <= 0)
+    return false;
+  if (month > 12)
+    return false;
+  if (month == 2)
+    return day <= months[month] + ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
+  return day <= months[month];
 }
 
 Value::Value(int val)
@@ -58,6 +107,11 @@ Value::Value(const char *s, int len /*= 0*/)
   set_string(s, len);
 }
 
+Value::Value(date val)
+{
+  set_date(val.d);
+}
+
 void Value::set_data(char *data, int length)
 {
   switch (attr_type_) {
@@ -74,6 +128,10 @@ void Value::set_data(char *data, int length)
     } break;
     case BOOLEANS: {
       num_value_.bool_value_ = *(int *)data != 0;
+      length_ = length;
+    } break;
+    case DATES: {
+      num_value_.date_value_ = *(int *)data;
       length_ = length;
     } break;
     default: {
@@ -111,6 +169,12 @@ void Value::set_string(const char *s, int len /*= 0*/)
   }
   length_ = str_value_.length();
 }
+void Value::set_date(int val)
+{
+  attr_type_ = DATES;
+  num_value_.date_value_ = val;
+  length_ = sizeof(num_value_.date_value_);
+}
 
 void Value::set_value(const Value &value)
 {
@@ -126,6 +190,9 @@ void Value::set_value(const Value &value)
     } break;
     case BOOLEANS: {
       set_boolean(value.get_boolean());
+    } break;
+    case DATES: {
+      num_value_.date_value_ = value.get_date();
     } break;
     case UNDEFINED: {
       ASSERT(false, "got an invalid value type");
@@ -161,6 +228,17 @@ std::string Value::to_string() const
     case CHARS: {
       os << str_value_;
     } break;
+    case DATES: {
+      char buf[11];
+      int j, d = num_value_.date_value_;
+
+      j = sprintf(buf, "%d-", d / 10000);
+      d %= 10000;
+      j += sprintf(buf + j, "%02d-", d / 100);
+      d %= 100;
+      j += sprintf(buf + j, "%02d", d);
+      os << buf;
+    } break;
     default: {
       LOG_WARN("unsupported attr type: %d", attr_type_);
     } break;
@@ -186,6 +264,9 @@ int Value::compare(const Value &other) const
       } break;
       case BOOLEANS: {
         return common::compare_int((void *)&this->num_value_.bool_value_, (void *)&other.num_value_.bool_value_);
+      }
+      case DATES: {
+        return common::compare_int((void *)&this->num_value_.date_value_, (void *)&other.num_value_.date_value_);
       }
       default: {
         LOG_WARN("unsupported type: %d", this->attr_type_);
@@ -300,4 +381,24 @@ bool Value::get_boolean() const
     }
   }
   return false;
+}
+
+int Value::get_date() const {
+  switch (attr_type_) {
+    case DATES: {
+      return num_value_.date_value_;
+    } break;
+    case INTS:
+    case FLOATS:
+    case BOOLEANS:
+    case CHARS: {
+      LOG_WARN("can't convert %d to date.", attr_type_);
+      return 0;
+    } break;
+    default: {
+      LOG_WARN("unknown data type. type=%d", attr_type_);
+      return 0;
+    }
+
+  }
 }
