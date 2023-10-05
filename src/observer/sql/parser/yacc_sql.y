@@ -384,26 +384,12 @@ value:
       @$ = @1;
     }
     |SSS {
-      if (yyval.number == CHARS) {
+      
         char *tmp = common::substr($1,1,strlen($1)-2);
         $$ = new Value(tmp);
         free(tmp);
-      } else {
-        int n = strlen($1);
-        $1[n - 1] = '-';
-        char *tmp = common::substr($1, 1, n - 1);
-        if (n = date_check(tmp, n)) {
-          $$ = new Value(Value::date{n});
-          free(tmp);
-        } else {
-          free(tmp);
-          YYABORT;
-        }
-        
-      }
       
     }
-    
     ;
     
 delete_stmt:    /*  delete 语句的语法解析树*/

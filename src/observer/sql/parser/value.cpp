@@ -392,8 +392,15 @@ int Value::get_date() const {
     case FLOATS:
     case BOOLEANS:
     case CHARS: {
-      LOG_WARN("can't convert %d to date.", attr_type_);
-      return 0;
+      int n;
+      std::string tmp = str_value_ + "-";
+      if ((n = date_check(tmp.c_str(), tmp.size())) == 0) {
+        LOG_WARN("can't convert %d to date.", attr_type_);
+        return 0;
+      } else {
+        return n;
+      }
+      
     } break;
     default: {
       LOG_WARN("unknown data type. type=%d", attr_type_);
@@ -401,4 +408,21 @@ int Value::get_date() const {
     }
 
   }
+}
+
+bool Value::convert_to(AttrType new_type) {
+  switch (new_type) {
+    case DATES: {
+      int d = get_date();
+      if (d != 0) {
+        set_date(d);
+        return true;
+      }
+      return false;
+    }
+      
+    default:
+      return false;
+  }
+  return false;
 }

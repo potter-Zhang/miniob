@@ -108,6 +108,8 @@ public:
   bool get_boolean() const;
   int get_date() const;
 
+  bool convert_to(AttrType);
+
 private:
   AttrType attr_type_ = UNDEFINED;
   int length_ = 0;
