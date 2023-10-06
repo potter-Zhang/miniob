@@ -180,6 +180,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            help_stmt
 %type <sql_node>            exit_stmt
 %type <sql_node>            command_wrapper
+%type <sql_node>            inner_join_node
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
 %type <func>                func
@@ -497,54 +498,32 @@ select_stmt:        /*  select 语句的语法解析树*/
       }
       free($4);
     }
-    | SELECT select_attr FROM ID INNERJOIN ID where group_by_columns
+    | SELECT select_attr FROM ID inner_join_node where group_by_columns
     {
-      $$ = new ParsedSqlNode(SCF_SELECT);
+      if ($5 != nullptr){
+        $$ = $5;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+      $$->selection.relations.push_back($4);
+      std::reverse($$->selection.relations.begin(), $$->selection.relations.end());
+
       if ($2 != nullptr) {
         $$->selection.attributes.swap(*$2);
         delete $2;
       }
-      $$->selection.relations.push_back($4);
-      $$->selection.relations.push_back($6);
 
-      if ($7 != nullptr) {
-        $$->selection.conditions.swap(*$7);
+      if ($6 != nullptr) {
+        std::copy($6->begin(), $6->end(), std::back_inserter($$->selection.conditions));
+        delete $6;
+      }
+
+      if($7 != nullptr) {
+        $$->selection.group_by_columns.swap(*$7);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $7;
       }
-
-      if($8 != nullptr) {
-        $$->selection.group_by_columns.swap(*$8);
-        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
-        delete $8;
-      }
       free($4);
-      free($6);
-    }
-    | SELECT select_attr FROM ID INNERJOIN ID ON condition_list where group_by_columns
-    {
-      $$ = new ParsedSqlNode(SCF_SELECT);
-      if ($2 != nullptr) {
-        $$->selection.attributes.swap(*$2);
-        delete $2;
-      }
-      $$->selection.relations.push_back($4);
-      $$->selection.relations.push_back($6);
-
-      if ($8 == nullptr)
-        YYABORT;
-      $$->selection.conditions.swap(*$8);
-      if ($9 != nullptr) {
-        std::copy($9->begin(), $9->end(), std::back_inserter($$->selection.conditions));
-        delete $9;
-      }
-
-      if($10 != nullptr) {
-        $$->selection.group_by_columns.swap(*$10);
-        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
-        delete $10;
-      }
-      free($4);
-      free($6);
     }
     ;
 calc_stmt:
@@ -834,6 +813,38 @@ group_by_attr:
       memcpy(temp, $1, len1);
       memcpy(temp + len1 + 1, $3, len2);
       $$ = temp;
+    }
+    ;
+
+inner_join_node:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | INNERJOIN ID inner_join_node
+    {      
+      if ($3 != nullptr){
+        $$ = $3;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($2);
+      free($2);
+    }
+    | INNERJOIN ID ON condition_list inner_join_node
+    {
+      if ($5 != nullptr){
+        $$ = $5;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      if ($4 == nullptr)
+        YYABORT;
+      std::copy($4->begin(), $4->end(), std::back_inserter($$->selection.conditions));
+      $$->selection.relations.push_back($2);
+      free($2);
     }
     ;
 
