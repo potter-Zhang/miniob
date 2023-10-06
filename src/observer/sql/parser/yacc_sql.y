@@ -491,6 +491,7 @@ select_stmt:        /*  select 语句的语法解析树*/
 
       if($7 != nullptr) {
         $$->selection.group_by_columns.swap(*$7);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $7;
       }
       free($4);

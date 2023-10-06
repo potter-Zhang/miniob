@@ -93,19 +93,23 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     } else if (!common::is_blank(relation_attr.relation_name.c_str())) {      
       const char *table_name = relation_attr.relation_name.c_str();
       const char *field_name = relation_attr.attribute_name.c_str();
-      // 看有没有聚合查询，这里应该是不允许聚合查询的
-      if (relation_attr.func != NONE){
-        LOG_WARN("invalid aggregation query: %s.AggregationFunc(%d)", table_name, relation_attr.func);
-        return RC::SQL_SYNTAX;
-      }
 
       if (0 == strcmp(table_name, "*")) {
         if (0 != strcmp(field_name, "*")) {
           LOG_WARN("invalid field name while table is *. attr=%s", field_name);
           return RC::SCHEMA_FIELD_MISSING;
         }
-        for (Table *table : tables) {
-          wildcard_fields(table, query_fields);
+        // 看有没有聚合查询
+        if (relation_attr.func != NONE){
+          if (relation_attr.func != AggregationFunc::COUNTFUN){
+            LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+            return RC::SQL_SYNTAX;
+          }
+          for (Table *table : tables) {
+            wildcard_fields(table, query_fields);
+          }
+          for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+            iter->set_func(relation_attr.func);
         }
       } else {
         auto iter = table_map.find(table_name);
@@ -125,6 +129,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           }
 
           query_fields.push_back(Field(table, field_meta));
+          // 看有没有聚合查询
+          if (relation_attr.func != NONE){
+            for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+              iter->set_func(relation_attr.func);
+          }
         }
       }
     } else {
@@ -160,8 +169,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   for (std::string column : group_by_columns){
     size_t pos;
     if ((pos = column.find(".")) != column.npos){
-      const char *table_name = column.substr(0, pos).c_str();
-      const char *field_name = column.substr(pos + 1).c_str();
+      std::string table_name = column.substr(0, pos).c_str();
+      std::string field_name = column.substr(pos + 1).c_str();
       auto iter = table_map.find(table_name);
       if (iter == table_map.end()) {
         LOG_WARN("no such table in from list: %s", table_name);
@@ -169,7 +178,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
       Table *table = iter->second;
-      const FieldMeta *field_meta = table->table_meta().field(field_name);
+      const FieldMeta *field_meta = table->table_meta().field(field_name.c_str());
       if (nullptr == field_meta) {
         LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), field_name);
         return RC::SCHEMA_FIELD_MISSING;
