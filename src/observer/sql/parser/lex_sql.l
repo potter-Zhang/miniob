@@ -121,6 +121,7 @@ MIN                                     RETURN_TOKEN(MIN);
 COUNT                                   RETURN_TOKEN(COUNT);
 AVG                                     RETURN_TOKEN(AVG);
 GROUP{WHITE_SAPCE}+BY                   RETURN_TOKEN(GROUPBY);
+INNER{WHITE_SAPCE}+JOIN                 RETURN_TOKEN(INNERJOIN);
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);

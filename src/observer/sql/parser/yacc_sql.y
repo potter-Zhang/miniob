@@ -104,6 +104,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         COUNT
         AVG
         GROUPBY
+        INNERJOIN
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -495,6 +496,55 @@ select_stmt:        /*  select 语句的语法解析树*/
         delete $7;
       }
       free($4);
+    }
+    | SELECT select_attr FROM ID INNERJOIN ID where group_by_columns
+    {
+      $$ = new ParsedSqlNode(SCF_SELECT);
+      if ($2 != nullptr) {
+        $$->selection.attributes.swap(*$2);
+        delete $2;
+      }
+      $$->selection.relations.push_back($4);
+      $$->selection.relations.push_back($6);
+
+      if ($7 != nullptr) {
+        $$->selection.conditions.swap(*$7);
+        delete $7;
+      }
+
+      if($8 != nullptr) {
+        $$->selection.group_by_columns.swap(*$8);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        delete $8;
+      }
+      free($4);
+      free($6);
+    }
+    | SELECT select_attr FROM ID INNERJOIN ID ON condition_list where group_by_columns
+    {
+      $$ = new ParsedSqlNode(SCF_SELECT);
+      if ($2 != nullptr) {
+        $$->selection.attributes.swap(*$2);
+        delete $2;
+      }
+      $$->selection.relations.push_back($4);
+      $$->selection.relations.push_back($6);
+
+      if ($8 == nullptr)
+        YYABORT;
+      $$->selection.conditions.swap(*$8);
+      if ($9 != nullptr) {
+        std::copy($9->begin(), $9->end(), std::back_inserter($$->selection.conditions));
+        delete $9;
+      }
+
+      if($10 != nullptr) {
+        $$->selection.group_by_columns.swap(*$10);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        delete $10;
+      }
+      free($4);
+      free($6);
     }
     ;
 calc_stmt:
