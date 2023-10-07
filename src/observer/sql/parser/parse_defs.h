@@ -51,7 +51,7 @@ struct RelAttrSqlNode
 {
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
-  AggregationFunc func = NONE;
+  AggregationFunc func = NONE; ///< func                        聚合函数名
 };
 
 /**
@@ -165,6 +165,7 @@ struct AttrInfoSqlNode
   AttrType    type;       ///< Type of attribute
   std::string name;       ///< Attribute name
   size_t      length;     ///< Length of attribute
+  bool nullable = false;  ///< nullable
 };
 
 /**

@@ -21,7 +21,7 @@ See the Mulan PSL v2 for more details. */
 #include "value.h"
 #include <bits/stdc++.h>
 
-const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "floats", "dates","booleans"};
+const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "floats", "dates","booleans", "null"};
 
 const char *attr_type_to_string(AttrType type)
 {
@@ -101,29 +101,41 @@ void Value::set_data(char *data, int length)
     case INTS: {
       num_value_.int_value_ = *(int *)data;
       length_ = length;
+      if (nullable_ && is_null_)
+        length_ ++;
     } break;
     case FLOATS: {
       num_value_.float_value_ = *(float *)data;
       length_ = length;
+      if (nullable_ && is_null_)
+        length_ ++;
     } break;
     case DATES: {
       num_value_.date_value_ = *((Date *)data);
       length_ = length;
+      if (nullable_ && is_null_)
+        length_ ++;
     } break;
     case BOOLEANS: {
       num_value_.bool_value_ = *(int *)data != 0;
       length_ = length;
+      if (nullable_ && is_null_)
+        length_ ++;
     } break;
     default: {
       LOG_WARN("unknown data type: %d", attr_type_);
     } break;
   }
+  get_data();
 }
 void Value::set_int(int val)
 {
   attr_type_ = INTS;
   num_value_.int_value_ = val;
   length_ = sizeof(val);
+  if (nullable_ && is_null_)
+    length_ ++;
+  get_data();
 }
 
 void Value::set_float(float val)
@@ -131,18 +143,27 @@ void Value::set_float(float val)
   attr_type_ = FLOATS;
   num_value_.float_value_ = val;
   length_ = sizeof(val);
+  if (nullable_ && is_null_)
+    length_ ++;
+  get_data();
 }
 void Value::set_date(Date val)
 {
   attr_type_ = DATES;
   num_value_.date_value_ = val;
   length_ = sizeof(val);
+  if (nullable_ && is_null_)
+    length_ ++;
+  get_data();
 }
 void Value::set_boolean(bool val)
 {
   attr_type_ = BOOLEANS;
   num_value_.bool_value_ = val;
   length_ = sizeof(val);
+  if (nullable_ && is_null_)
+    length_ ++;
+  get_data();
 }
 void Value::set_string(const char *s, int len /*= 0*/)
 {
@@ -154,6 +175,9 @@ void Value::set_string(const char *s, int len /*= 0*/)
     str_value_.assign(s);
   }
   length_ = str_value_.length();
+  if (nullable_ && is_null_)
+    length_ ++;
+  get_data();
 }
 
 void Value::set_value(const Value &value)
@@ -180,14 +204,29 @@ void Value::set_value(const Value &value)
   }
 }
 
-const char *Value::data() const
+const char* Value::data() const{
+  return str_value_.c_str();
+}
+
+void Value::get_data()
 {
   switch (attr_type_) {
     case CHARS: {
-      return str_value_.c_str();
+      if (nullable_) {
+        std::string temp;
+        temp = is_null_;
+        str_value_ = temp + str_value_;
+      }
     } break;
     default: {
-      return (const char *)&num_value_;
+      if (nullable_) {
+        std::string temp;
+        temp = is_null_;
+        str_value_ = temp + std::string((const char *)&num_value_);
+      }
+      else {
+        str_value_ = (const char *)&num_value_;
+      }
     } break;
   }
 }
@@ -195,25 +234,33 @@ const char *Value::data() const
 std::string Value::to_string() const
 {
   std::stringstream os;
-  switch (attr_type_) {
-    case INTS: {
-      os << num_value_.int_value_;
-    } break;
-    case FLOATS: {
-      os << common::double_to_str(num_value_.float_value_);
-    } break;
-    case DATES: {
-      os << common::date_to_str(num_value_.date_value_);
-    } break;
-    case BOOLEANS: {
-      os << num_value_.bool_value_;
-    } break;
-    case CHARS: {
-      os << str_value_;
-    } break;
-    default: {
-      LOG_WARN("unsupported attr type: %d", attr_type_);
-    } break;
+  if (nullable_ && is_null_){
+    os << std::string("null");
+  }
+  else{
+    switch (attr_type_) {
+      case INTS: {
+        os << num_value_.int_value_;
+      } break;
+      case FLOATS: {
+        os << common::double_to_str(num_value_.float_value_);
+      } break;
+      case DATES: {
+        os << common::date_to_str(num_value_.date_value_);
+      } break;
+      case BOOLEANS: {
+        os << num_value_.bool_value_;
+      } break;
+      case CHARS: {
+        os << str_value_;
+      } break;
+      case NULLTYPE: {
+        os << std::string("null");
+      }
+      default: {
+        LOG_WARN("unsupported attr type: %d", attr_type_);
+      } break;
+    }
   }
   return os.str();
 }

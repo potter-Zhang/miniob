@@ -25,15 +25,27 @@ See the Mulan PSL v2 for more details. */
 enum AttrType
 {
   UNDEFINED,
+  // CHARS到DATES之间是用户可以正常使用的类型，若要天街用户可以正常使用的类型(认为NULLTYPE不正常)，最好增加到CHARS和DATES之间，否则需要修改类似ChARS<= <=DATES的地方
   CHARS,          ///< 字符串类型
   INTS,           ///< 整数类型(4字节)
   FLOATS,         ///< 浮点数类型(4字节)
   DATES,          ///< 日期类型(4字节)
   BOOLEANS,       ///< boolean类型，当前不是由parser解析出来的，是程序内部使用的
+  NULLTYPE,       ///< NULL值，NULL与任何数据对比，都是false；这是一个临时类型，到了resolve阶段会被解析成对应类型
 };
 
 const char *attr_type_to_string(AttrType type);
 AttrType attr_type_from_string(const char *s);
+
+class Value;
+
+struct value_hash_name {
+  size_t operator()(const Value& p) const;
+};
+
+struct vector_value_hash_name {
+  size_t operator()(const std::vector<Value>& vec) const;
+};
 
 /**
  * @brief 属性的值
@@ -64,6 +76,18 @@ public:
   {
     this->attr_type_ = type;
   }
+  void set_length(int length)
+  {
+    this->length_ = length;
+  }
+  void set_nullable(bool nullable)
+  {
+    this->nullable_ = nullable;
+  }
+  void set_is_null(bool is_null)
+  {
+    this->is_null_ = is_null;
+  }
   void set_data(char *data, int length);
   void set_data(const char *data, int length)
   {
@@ -81,6 +105,7 @@ public:
   int compare(const Value &other) const;
 
   const char *data() const;
+  void get_data();
   int length() const
   {
     return length_;
@@ -89,6 +114,15 @@ public:
   AttrType attr_type() const
   {
     return attr_type_;
+  }
+
+  bool nullable() const
+  {
+    return nullable_;
+  }
+  bool is_null() const
+  {
+    return is_null_;
   }
 
 public:
@@ -102,6 +136,9 @@ public:
   std::string get_string() const;
   bool get_boolean() const;
 
+  // friend size_t value_hash_name::operator()(const Value& p) const;
+  // friend size_t vector_value_hash_name::operator()(const std::vector<Value>& vec) const;
+
 private:
   AttrType attr_type_ = UNDEFINED;
   int length_ = 0;
@@ -113,12 +150,9 @@ private:
     bool bool_value_;
   } num_value_;
   std::string str_value_;
-};
 
-struct value_hash_name {
-  size_t operator()(const Value& p) const;
-};
-
-struct vector_value_hash_name {
-  size_t operator()(const std::vector<Value>& vec) const;
+  bool nullable_ = false;
+  bool is_null_ = false;
+  //std::string buffer_;
+  //bool buffer_allocated_ = false;
 };

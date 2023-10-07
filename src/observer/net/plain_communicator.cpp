@@ -187,8 +187,26 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     return write_state(event, need_disconnect);
   }
 
+  // 看是否为聚合查询
+  bool is_aggregation = false;
+  // 看是否为group by
+  bool is_group_by = false;
+  int group_by_begin;
+  ProjectPhysicalOperator* ppo;
+  PhysicalOperator* oper = event->sql_result()->physical_operator().get();
+  if (oper->type() ==  PhysicalOperatorType::PROJECT){
+    try{
+      ppo = (ProjectPhysicalOperator*)oper;    
+      is_aggregation = ppo->is_aggregation();
+      if ((group_by_begin = ppo->group_by_begin()) != -1)
+        is_group_by = true;
+    }catch(std::exception e){
+
+    }
+  }
+
   const TupleSchema &schema = sql_result->tuple_schema();
-  const int cell_num = schema.cell_num();
+  const int cell_num = is_group_by ? group_by_begin : schema.cell_num();
 
   for (int i = 0; i < cell_num; i++) {
     const TupleCellSpec &spec = schema.cell_at(i);
@@ -224,23 +242,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   }
 
   rc = RC::SUCCESS;
-  // 看是否为聚合查询
-  bool is_aggregation = false;
-  // 看是否为group by
-  bool is_group_by = false;
-  int group_by_begin;
-  ProjectPhysicalOperator* ppo;
-  PhysicalOperator* oper = event->sql_result()->physical_operator().get();
-  if (oper->type() ==  PhysicalOperatorType::PROJECT){
-    try{
-      ppo = (ProjectPhysicalOperator*)oper;    
-      is_aggregation = ppo->is_aggregation();
-      if ((group_by_begin = ppo->group_by_begin()) != -1)
-        is_group_by = true;
-    }catch(std::exception e){
-
-    }
-  }
+  
   //std::string query = std::toupper(event->query());
   //if query.find("max")
   Tuple *tuple = nullptr;
@@ -337,8 +339,14 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         if (!tuple_exist){
           if (funcs[i] != AggregationFunc::COUNTFUN)
             values[i] = value;
-          else
-            values[i] = Value(1);
+          else{
+            TupleCellSpec spec = schema.cell_at(i + size);
+            std::string spec_str = std::string(spec.alias());
+            if (spec_str.find("*") == spec_str.npos)
+              values[i] = Value(1);
+            else
+              values[i] = Value(0);
+          }
         }
         else{
           switch (funcs[i]){
@@ -346,30 +354,43 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
             } break;
             case AggregationFunc::MAXFUN: {
-              if (value.compare(values[i]) > 0)
+              if (values[i].nullable() && values[i].is_null())
+                values[i] = value;
+              else if (!(value.nullable() && value.is_null()) && value.compare(values[i]) > 0)
                 values[i] = value;
             } break;
             case AggregationFunc::MINFUN: {
-              if (value.compare(values[i]) < 0)
+              if (values[i].nullable() && values[i].is_null())
+                values[i] = value;
+              else if (!(value.nullable() && value.is_null()) && value.compare(values[i]) < 0)
                 values[i] = value;
             } break;
             case AggregationFunc::COUNTFUN: {
-              values[i].set_int(values[i].get_int() + 1);
+              TupleCellSpec spec = schema.cell_at(i + size);
+              std::string spec_str = std::string(spec.alias());
+              if (spec_str.find("*") == spec_str.npos)              
+                values[i].set_int(values[i].get_int() + 1);
+              else {
+                if (!(value.nullable() && value.is_null()))
+                  values[i].set_int(values[i].get_int() + 1);
+              }
             } break;
             case AggregationFunc::AVGFUN: {
-              switch (value.attr_type()) {
-                // INTS时，最后的结果放在Value.float_value_
-                case AttrType::INTS: {
-                  values[i].set_int(values[i].get_int() + value.get_int());
-                } break;
-                case AttrType::FLOATS: {
-                  values[i].set_float(values[i].get_float() + value.get_float());
-                } break;
-                default: {
-                  LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
-                  sql_result->close();
-                  return RC::INVALID_ARGUMENT;
-                } break;
+              if (!(value.nullable() && value.is_null())){
+                switch (value.attr_type()) {
+                  // INTS时，最后的结果放在Value.float_value_
+                  case AttrType::INTS: {
+                    values[i].set_int(values[i].get_int() + value.get_int());
+                  } break;
+                  case AttrType::FLOATS: {
+                    values[i].set_float(values[i].get_float() + value.get_float());
+                  } break;
+                  default: {
+                    LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                    sql_result->close();
+                    return RC::INVALID_ARGUMENT;
+                  } break;
+                }
               }
             } break;
           }
@@ -392,11 +413,13 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         std::string cell_str;
         // 计算平均数时，结果都用浮点数表示
         if (funcs[i] == AggregationFunc::AVGFUN){
-          if (values[i].attr_type() == AttrType::INTS){
-            values[i].set_float(values[i].get_int());
-            values[i].set_type(AttrType::FLOATS);
+          if (!(values[i].nullable() && values[i].is_null())){
+            if (values[i].attr_type() == AttrType::INTS){
+              values[i].set_float(values[i].get_int());
+              values[i].set_type(AttrType::FLOATS);
+            }
+            values[i].set_float(values[i].get_float() / num);
           }
-          values[i].set_float(values[i].get_float() / num);
         }
         cell_str = values[i].to_string();
         rc = writer_->writen(cell_str.data(), cell_str.size());
@@ -483,8 +506,14 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         if (current_num->second == 0){
           if (funcs[i] != AggregationFunc::COUNTFUN)
             values[i] = value;
-          else
-            values[i] = Value(1);
+          else{
+            TupleCellSpec spec = schema.cell_at(i + size);
+            std::string spec_str = std::string(spec.alias());
+            if (spec_str.find("*") == spec_str.npos)
+              values[i] = Value(1);
+            else
+              values[i] = Value(0);
+          }
         }
         else{
           switch (funcs[i]){
@@ -492,30 +521,43 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
             } break;
             case AggregationFunc::MAXFUN: {
-              if (value.compare(values[i]) > 0)
+              if (values[i].nullable() && values[i].is_null())
+                values[i] = value;
+              else if (!(value.nullable() && value.is_null()) && value.compare(values[i]) > 0)
                 values[i] = value;
             } break;
             case AggregationFunc::MINFUN: {
-              if (value.compare(values[i]) < 0)
+              if (values[i].nullable() && values[i].is_null())
+                values[i] = value;
+              else if (!(value.nullable() && value.is_null()) && value.compare(values[i]) < 0)
                 values[i] = value;
             } break;
             case AggregationFunc::COUNTFUN: {
-              values[i].set_int(values[i].get_int() + 1);
+              TupleCellSpec spec = schema.cell_at(i + size);
+              std::string spec_str = std::string(spec.alias());
+              if (spec_str.find("*") == spec_str.npos)              
+                values[i].set_int(values[i].get_int() + 1);
+              else {
+                if (!(value.nullable() && value.is_null()))
+                  values[i].set_int(values[i].get_int() + 1);
+              }
             } break;
             case AggregationFunc::AVGFUN: {
-              switch (value.attr_type()) {
-                // INTS时，最后的结果放在Value.float_value_
-                case AttrType::INTS: {
-                  values[i].set_int(values[i].get_int() + value.get_int());
-                } break;
-                case AttrType::FLOATS: {
-                  values[i].set_float(values[i].get_float() + value.get_float());
-                } break;
-                default: {
-                  LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
-                  sql_result->close();
-                  return RC::INVALID_ARGUMENT;
-                } break;
+              if (!(value.nullable() && value.is_null())){
+                switch (value.attr_type()) {
+                  // INTS时，最后的结果放在Value.float_value_
+                  case AttrType::INTS: {
+                    values[i].set_int(values[i].get_int() + value.get_int());
+                  } break;
+                  case AttrType::FLOATS: {
+                    values[i].set_float(values[i].get_float() + value.get_float());
+                  } break;
+                  default: {
+                    LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                    sql_result->close();
+                    return RC::INVALID_ARGUMENT;
+                  } break;
+                }
               }
             } break;
           }
@@ -547,12 +589,15 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         std::string cell_str;
         // 计算平均数时，结果都用浮点数表示
         if (funcs[i] == AggregationFunc::AVGFUN){
-          if (values[i].attr_type() == AttrType::INTS){
-            values[i].set_float(values[i].get_int());
-            values[i].set_type(AttrType::FLOATS);
+          if (!(values[i].nullable() && values[i].is_null())){
+            if (values[i].attr_type() == AttrType::INTS){
+              values[i].set_float(values[i].get_int());
+              values[i].set_type(AttrType::FLOATS);
+            }
+            values[i].set_float(values[i].get_float() / num.find(iter->first)->second);
           }
-          values[i].set_float(values[i].get_float() / num.find(iter->first)->second);
         }
+        
         cell_str = values[i].to_string();
         rc = writer_->writen(cell_str.data(), cell_str.size());
         if (OB_FAIL(rc)) {

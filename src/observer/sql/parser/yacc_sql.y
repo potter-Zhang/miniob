@@ -105,6 +105,9 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         AVG
         GROUPBY
         INNERJOIN
+        NOTNULL
+        NULLABLE
+        NULLVALUE
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -146,6 +149,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <rel_attr>            rel_attr
 %type <attr_infos>          attr_def_list
 %type <attr_info>           attr_def
+%type <attr_info>           simple_attr_def
 %type <value_list>          value_list
 %type <value_row>           value_row
 %type <value_rows>          value_rows
@@ -334,8 +338,24 @@ attr_def_list:
       delete $2;
     }
     ;
-    
+
 attr_def:
+    simple_attr_def
+    {
+      $$ = $1;
+    }
+    | simple_attr_def NOTNULL
+    {
+      $$ = $1;
+    }
+    | simple_attr_def NULLABLE
+    {
+      $$ = $1;
+      $$->nullable = true;
+      $$->length ++;
+    }
+
+simple_attr_def:
     ID type LBRACE number RBRACE 
     {
       $$ = new AttrInfoSqlNode;
@@ -441,6 +461,12 @@ value:
       char *tmp = common::substr($1,1,strlen($1)-2);
       $$ = new Value(tmp);
       free(tmp);
+    }
+    |NULLVALUE{
+      $$ = new Value();
+      $$->set_type(AttrType::NULLTYPE);
+      $$->set_nullable(true);
+      $$->set_is_null(true);
     }
     ;
     
