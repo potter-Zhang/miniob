@@ -222,10 +222,10 @@ void Value::get_data()
       if (nullable_) {
         std::string temp;
         temp = is_null_;
-        str_value_ = temp + std::string((const char *)&num_value_);
+        str_value_ = temp + std::string((const char *)&num_value_, length_ - 1);
       }
       else {
-        str_value_ = (const char *)&num_value_;
+        str_value_ = std::string((const char *)&num_value_, length_);
       }
     } break;
   }

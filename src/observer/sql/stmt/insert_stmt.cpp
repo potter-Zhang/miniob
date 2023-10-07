@@ -58,7 +58,8 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
       if (value_type == AttrType::NULLTYPE){
         if (field_meta->nullable()){
           values[i].set_type(field_type);
-          values[i].set_string("");
+          values[i].set_length(field_meta->len());
+          values[i].get_data();
         }
         else {
           LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",

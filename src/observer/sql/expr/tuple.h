@@ -179,6 +179,7 @@ public:
       cell.set_nullable(true);
       if (cell.data()[0] != 0)
         cell.set_is_null(true);
+      cell.set_data(cell.data() + 1, field_meta->len() - 1);
     }      
     return RC::SUCCESS;
   }
