@@ -235,7 +235,7 @@ std::string Value::to_string() const
 {
   std::stringstream os;
   if (nullable_ && is_null_){
-    os << std::string("null");
+    os << std::string("NULL");
   }
   else{
     switch (attr_type_) {
@@ -255,7 +255,7 @@ std::string Value::to_string() const
         os << str_value_;
       } break;
       case NULLTYPE: {
-        os << std::string("null");
+        os << std::string("NULL");
       }
       default: {
         LOG_WARN("unsupported attr type: %d", attr_type_);

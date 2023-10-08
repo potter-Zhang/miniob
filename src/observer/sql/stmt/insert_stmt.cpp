@@ -57,6 +57,7 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
     if (field_type != value_type) {  // TODO try to convert the value type to field type
       if (value_type == AttrType::NULLTYPE){
         if (field_meta->nullable()){
+          values[i].set_nullable(true);
           values[i].set_type(field_type);
           values[i].set_length(field_meta->len());
           values[i].get_data();
@@ -64,7 +65,7 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
         else {
           LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
             table_name, field_meta->name(), field_type, value_type);
-        return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+          return RC::SCHEMA_FIELD_TYPE_MISMATCH;
         }
       }
       else {
@@ -72,6 +73,11 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
             table_name, field_meta->name(), field_type, value_type);
         return RC::SCHEMA_FIELD_TYPE_MISMATCH;
       }
+    }
+    else {
+      values[i].set_nullable(field_meta->nullable());
+      values[i].set_length(field_meta->len());
+      values[i].get_data();
     }
   }
 
