@@ -16,6 +16,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/logical_operator.h"
 #include "sql/operator/table_get_logical_operator.h"
 #include "sql/expr/expression.h"
+#include "sql/expr/tuple.h"
 
 RC PredicatePushdownRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bool &change_made)
 {
@@ -116,6 +117,21 @@ RC PredicatePushdownRewriter::get_exprs_can_pushdown(
     if (left_expr->type() != ExprType::FIELD && left_expr->type() != ExprType::VALUE &&
         right_expr->type() != ExprType::FIELD && right_expr->type() != ExprType::VALUE) {
       return rc;
+    }
+    // 如果出现null，则不能改写
+    if (left_expr->type() == ExprType::VALUE){
+      RowTuple tuple;
+      Value value;
+      left_expr->get_value(tuple, value);
+      if (value.nullable() && value.is_null())
+        return rc;
+    }
+    if (right_expr->type() == ExprType::VALUE){
+      RowTuple tuple;
+      Value value;
+      right_expr->get_value(tuple, value);
+      if (value.nullable() && value.is_null())
+        return rc;
     }
 
     pushdown_exprs.emplace_back(std::move(expr));

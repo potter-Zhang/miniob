@@ -108,6 +108,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         NOTNULL
         NULLABLE
         NULLVALUE
+        ISNULL
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -722,14 +723,22 @@ condition_list:
       $$ = nullptr;
     }
     | condition {
-      $$ = new std::vector<ConditionSqlNode>;
-      $$->emplace_back(*$1);
-      delete $1;
+      if ($1 != nullptr) {
+        $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
+      else
+        $$ = nullptr;
     }
     | condition AND condition_list {
       $$ = $3;
-      $$->emplace_back(*$1);
-      delete $1;
+      if ($1 != nullptr){
+        if ($$ == nullptr)
+          $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
     }
     ;
 condition:
@@ -780,6 +789,25 @@ condition:
 
       delete $1;
       delete $3;
+    }
+    | value ISNULL
+    {
+      $$ = nullptr;
+      delete $1;
+    }
+    | rel_attr ISNULL
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 0;
+      Value null_value = Value();
+      null_value.set_nullable(true);
+      null_value.set_is_null(true);
+      $$->right_value = null_value;
+      $$->comp = CompOp::EQUAL_TO;
+
+      delete $1;
     }
     ;
 

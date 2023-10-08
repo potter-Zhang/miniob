@@ -125,6 +125,7 @@ INNER{WHITE_SAPCE}+JOIN                 RETURN_TOKEN(INNERJOIN);
 NOT{WHITE_SAPCE}+NULL                   RETURN_TOKEN(NOTNULL);
 NULLABLE                                RETURN_TOKEN(NULLABLE);
 NULL                                    RETURN_TOKEN(NULLVALUE);
+IS{WHITE_SAPCE}+NULL                    RETURN_TOKEN(ISNULL);
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);

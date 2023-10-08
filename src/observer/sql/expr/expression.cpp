@@ -89,6 +89,17 @@ ComparisonExpr::~ComparisonExpr()
 RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &result) const
 {
   RC rc = RC::SUCCESS;
+  bool left_null = left.nullable() && left.is_null();
+  bool right_null = right.nullable() && right.is_null();
+  if (left_null && right_null && comp_ == EQUAL_TO){
+    result = true;
+    return rc;
+  }
+  else if (left_null || right_null){
+    result = false;
+    return rc;
+  }
+    
   int cmp_result = left.compare(right);
   result = false;
   switch (comp_) {
