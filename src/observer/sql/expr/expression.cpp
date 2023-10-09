@@ -103,6 +103,10 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
     }
   }
   else if (left_null && right_null && comp_ == EQUAL_TO){
+    if (left.attr_type() != UNDEFINED && right.attr_type() != UNDEFINED) {
+      result = false;
+      return rc;
+    }
     result = true;
     return rc;
   }
