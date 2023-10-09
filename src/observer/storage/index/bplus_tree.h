@@ -48,6 +48,7 @@ enum class BplusTreeOperationType
 /**
  * @brief 属性比较(BplusTree)
  * @ingroup BPlusTree
+ * 
  */
 class AttrComparator 
 {
@@ -147,7 +148,7 @@ public:
       } break;
       case FLOATS: {
         return std::to_string(*(float *)v);
-      }
+      } break;
       case CHARS: {
         std::string str;
         for (int i = 0; i < attr_length_; i++) {
@@ -157,7 +158,10 @@ public:
           str.push_back(v[i]);
         }
         return str;
-      }
+      } break;
+      case DATES: {        
+        return Value(Value::date{*(int *)v}).to_string();
+      }      
       default: {
         ASSERT(false, "unknown attr type. %d", attr_type_);
       }

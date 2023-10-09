@@ -154,6 +154,8 @@ public:
 
   const Value &get_value() const { return value_; }
 
+  bool try_convert_attr_type(AttrType newAttrType) { return value_.convert_to(newAttrType); }
+
 private:
   Value value_;
 };

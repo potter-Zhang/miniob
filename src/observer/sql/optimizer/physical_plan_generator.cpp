@@ -122,8 +122,13 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
       const Field &field = field_expr->field();
       index = table->find_index_by_field(field.field_name());
       if (nullptr != index) {
+        if (field.attr_type() != value_expr->value_type()) {
+          ASSERT(value_expr->try_convert_attr_type(field.attr_type()), "index equal: field and value is not comparable");
+        }
         break;
       }
+
+      
     }
   }
 
@@ -131,6 +136,7 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
     ASSERT(value_expr != nullptr, "got an index but value expr is null ?");
 
     const Value &value = value_expr->get_value();
+    
     IndexScanPhysicalOperator *index_scan_oper = new IndexScanPhysicalOperator(
           table, index, table_get_oper.readonly(), 
           &value, true /*left_inclusive*/, 

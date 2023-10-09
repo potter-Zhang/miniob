@@ -126,6 +126,8 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
 
   filter_unit->set_comp(comp);
 
+  // change type of not attr into attr
+  
   // 检查两个类型是否能够比较
   return rc;
 }
