@@ -474,6 +474,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     } */
 
     // 存储大量group by列是否被访问过
+    typedef std::unordered_map<std::vector<Value>, bool, vector_value_hash_name> group_by_visited;
+    group_by_visited visited;
     typedef std::unordered_map<std::vector<Value>, int, vector_value_hash_name> group_by_num;
     group_by_num num;
     typedef std::unordered_map<std::vector<Value>, std::vector<Value>, vector_value_hash_name> group_by_type;
@@ -496,8 +498,10 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       }
       std::pair<std::vector<Value>, std::vector<Value>> *current_group;
       std::pair<std::vector<Value>, int> *current_num;
+      std::pair<std::vector<Value>, bool> *current_visited;
       auto iter_group = group_by_map.find(group_value);
       auto iter_num = num.find(group_value);
+      auto iter_visited = visited.find(group_value);
       bool not_found = false;
       if (iter_group == group_by_map.end()){
         // 后面别忘了把current_group插入到group_by_map
@@ -505,11 +509,14 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
           std::pair<std::vector<Value>, std::vector<Value>>(group_value, std::vector<Value>(group_by_begin)));
         // 后面别忘了把current_num插入到num
         current_num = new std::pair<std::vector<Value>, int>(std::pair<std::vector<Value>, int>(group_value, 0));
+        // 后面别忘了把current_visited插入到group_by_visited
+        current_visited = new std::pair<std::vector<Value>, bool>(std::pair<std::vector<Value>, bool>(group_value, false));
         not_found = true;
       }
       else{
         current_group = (std::pair<std::vector<Value>, std::vector<Value>> *)&(*iter_group);
         current_num = (std::pair<std::vector<Value>, int> *)&(*iter_num);
+        current_visited = (std::pair<std::vector<Value>, bool> *)&(*iter_visited);
       }
       std::vector<Value> &values = current_group->second;
       for (int i = 0; i < group_by_begin; i++) {
@@ -519,7 +526,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
           sql_result->close();
           return rc;
         }
-        if (current_num->second == 0){
+        if (!current_visited->second){
           if (funcs[i] != AggregationFunc::COUNTFUN && funcs[i] != AggregationFunc::AVGFUN) {
             values[i] = value;
           }
@@ -595,10 +602,12 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             } break;
           }
         }        
-      }
+      }      
       if (not_found){
         group_by_map.insert(*current_group);
         num.insert(*current_num);
+        current_visited->second = true;
+        visited.insert(*current_visited);
         delete current_group;
         delete current_num;
       }
