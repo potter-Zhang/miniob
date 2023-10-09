@@ -246,7 +246,7 @@ std::string Value::to_string() const
   return os.str();
 }
 
-int Value::compare(const Value &other) const
+int Value::compare(const Value &other, RC &rc) const
 {
   if (this->attr_type_ == other.attr_type_) {
     switch (this->attr_type_) {
@@ -280,11 +280,16 @@ int Value::compare(const Value &other) const
     return common::compare_float((void *)&this->num_value_.float_value_, (void *)&other_data);
   } else if (this->attr_type_ == DATES && other.attr_type_ == CHARS) {
     int other_data = other.get_date();
+    if (other_data == 0)
+      rc = RC::INVALID_ARGUMENT;
     return common::compare_int((void *)&this->num_value_.date_value_, (void *)&other_data);
   } else if (this->attr_type_ == CHARS && other.attr_type_ == DATES) {
     int this_data = this->get_date();
+    if (this_data == 0)
+      rc = RC::INVALID_ARGUMENT;
     return common::compare_int((void *)&this_data, (void *)&other.num_value_.date_value_);
   }
+  rc = RC::INVALID_ARGUMENT;
   LOG_WARN("not supported");
   return -1;  // TODO return rc?
 }

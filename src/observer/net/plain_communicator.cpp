@@ -161,7 +161,9 @@ RC PlainCommunicator::write_result(SessionEvent *event, bool &need_disconnect)
   if (!need_disconnect) {
     (void)write_debug(event, need_disconnect);
   }
+  
   writer_->flush(); // TODO handle error
+  
   return rc;
 }
 
@@ -185,12 +187,6 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
   const TupleSchema &schema = sql_result->tuple_schema();
   const int cell_num = schema.cell_num();
-
-  if (cell_num > 0 && sql_result->peek_next_tuple() != RC::SUCCESS) {
-    sql_result->close();
-    sql_result->set_return_code(RC::RECORD_EOF);
-    return write_state(event, need_disconnect);
-  }
 
   for (int i = 0; i < cell_num; i++) {
     const TupleCellSpec &spec = schema.cell_at(i);
@@ -269,6 +265,11 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
   if (rc == RC::RECORD_EOF) {
     rc = RC::SUCCESS;
+  } else {
+    sql_result->close();
+    sql_result->set_return_code(rc);
+    writer_->clear();
+    return write_state(event, need_disconnect);
   }
 
   if (cell_num == 0) {

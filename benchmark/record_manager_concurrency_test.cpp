@@ -56,7 +56,7 @@ class TestConditionFilter : public ConditionFilter
 public:
   TestConditionFilter(int32_t begin, int32_t end) : begin_(begin), end_(end) {}
 
-  bool filter(const Record &rec) const override
+  bool filter(const Record &rec, RC &rc) const override
   {
     const char *data  = rec.data();
     int32_t     value = *(int32_t *)data;
