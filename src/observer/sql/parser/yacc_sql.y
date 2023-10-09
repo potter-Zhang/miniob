@@ -42,6 +42,19 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   return expr;
 }
 
+ConditionSqlNode *always_false()
+{
+  ConditionSqlNode *result = new ConditionSqlNode;
+  result->left_is_attr = 0;
+  Value* vl = new Value(1);
+  result->left_value = *vl;
+  result->right_is_attr = 0;
+  Value* vr = new Value(2);
+  result->right_value = *vr;
+  result->comp = CompOp::EQUAL_TO;
+  return result;
+}
+
 %}
 
 %define api.pure full
@@ -466,12 +479,6 @@ value:
       $$ = new Value(tmp);
       free(tmp);
     }
-    |NULLVALUE{
-      $$ = new Value();
-      $$->set_type(AttrType::NULLTYPE);
-      $$->set_nullable(true);
-      $$->set_is_null(true);
-    }
     ;
     
 delete_stmt:    /*  delete 语句的语法解析树*/
@@ -795,14 +802,7 @@ condition:
     }
     | value ISNULL
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      Value* vl = new Value(1);
-      $$->left_value = *vl;
-      $$->right_is_attr = 0;
-      Value* vr = new Value(2);
-      $$->right_value = *vr;
-      $$->comp = CompOp::EQUAL_TO;
+      $$ = always_false();
 
       delete $1;
     }
@@ -823,6 +823,8 @@ condition:
     | value ISNOTNULL
     {
       $$ = nullptr;
+
+      delete $1;
     }
     | rel_attr ISNOTNULL
     {
@@ -844,14 +846,35 @@ condition:
     }
     | NULLISNOTNULL
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      Value* vl = new Value(1);
-      $$->left_value = *vl;
-      $$->right_is_attr = 0;
-      Value* vr = new Value(2);
-      $$->right_value = *vr;
-      $$->comp = CompOp::EQUAL_TO;
+      $$ = always_false();
+    }
+    | value comp_op NULLVALUE
+    {
+      $$ = always_false();
+
+      delete $1;
+    }
+    | rel_attr comp_op NULLVALUE
+    {
+      $$ = always_false();
+
+      delete $1;
+    }
+    | NULLVALUE comp_op value
+    {
+      $$ = always_false();
+
+      delete $3;
+    }
+    | NULLVALUE comp_op rel_attr
+    {
+      $$ = always_false();
+
+      delete $3;
+    }
+    | NULLVALUE comp_op NULLVALUE
+    {
+      $$ = always_false();
     }
     ;
 
