@@ -338,7 +338,6 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         if (!tuple_exist){
           if (funcs[i] != AggregationFunc::COUNTFUN && funcs[i] != AggregationFunc::AVGFUN){
             values[i] = value;
-            num ++;
           }
           else{
             if (!(value.nullable() && value.is_null())){
@@ -523,7 +522,6 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         if (current_num->second == 0){
           if (funcs[i] != AggregationFunc::COUNTFUN && funcs[i] != AggregationFunc::AVGFUN) {
             values[i] = value;
-            current_num->second ++;
           }
           else{
             if (!(value.nullable() && value.is_null())){
