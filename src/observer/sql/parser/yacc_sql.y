@@ -479,6 +479,13 @@ value:
       $$ = new Value(tmp);
       free(tmp);
     }
+    |NULLVALUE{
+      $$ = new Value();
+      $$->set_type(AttrType::NULLTYPE);
+      $$->set_nullable(true);
+      $$->set_is_null(true);
+    }
+
     ;
     
 delete_stmt:    /*  delete 语句的语法解析树*/
@@ -754,24 +761,34 @@ condition_list:
 condition:
     rel_attr comp_op value
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 1;
-      $$->left_attr = *$1;
-      $$->right_is_attr = 0;
-      $$->right_value = *$3;
-      $$->comp = $2;
+      if ($3->nullable() && $3->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 1;
+        $$->left_attr = *$1;
+        $$->right_is_attr = 0;
+        $$->right_value = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
     }
     | value comp_op value 
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      $$->left_value = *$1;
-      $$->right_is_attr = 0;
-      $$->right_value = *$3;
-      $$->comp = $2;
+      if ($1->nullable() && $1->is_null())
+        $$ = always_false();
+      else if ($3->nullable() && $3->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 0;
+        $$->left_value = *$1;
+        $$->right_is_attr = 0;
+        $$->right_value = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
@@ -790,12 +807,16 @@ condition:
     }
     | value comp_op rel_attr
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      $$->left_value = *$1;
-      $$->right_is_attr = 1;
-      $$->right_attr = *$3;
-      $$->comp = $2;
+      if ($1->nullable() && $1->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 0;
+        $$->left_value = *$1;
+        $$->right_is_attr = 1;
+        $$->right_attr = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
@@ -845,34 +866,6 @@ condition:
       $$ = nullptr;
     }
     | NULLISNOTNULL
-    {
-      $$ = always_false();
-    }
-    | value comp_op NULLVALUE
-    {
-      $$ = always_false();
-
-      delete $1;
-    }
-    | rel_attr comp_op NULLVALUE
-    {
-      $$ = always_false();
-
-      delete $1;
-    }
-    | NULLVALUE comp_op value
-    {
-      $$ = always_false();
-
-      delete $3;
-    }
-    | NULLVALUE comp_op rel_attr
-    {
-      $$ = always_false();
-
-      delete $3;
-    }
-    | NULLVALUE comp_op NULLVALUE
     {
       $$ = always_false();
     }

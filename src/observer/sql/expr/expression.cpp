@@ -102,7 +102,7 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
       return rc;
     }
   }
-  if (left_null && right_null && comp_ == EQUAL_TO){
+  else if (left_null && right_null && comp_ == EQUAL_TO){
     result = true;
     return rc;
   }
