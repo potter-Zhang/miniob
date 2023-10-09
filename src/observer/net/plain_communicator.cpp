@@ -375,12 +375,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
               else{
                 TupleCellSpec spec = schema.cell_at(i);
                 std::string spec_str = std::string(spec.alias());
-                if (spec_str.find("*") == spec_str.npos)              
+                if (spec_str.find("*") != spec_str.npos)              
                   values[i].set_int(values[i].get_int() + 1);
-                else {
-                  if (!(value.nullable() && value.is_null()))
-                    values[i].set_int(values[i].get_int() + 1);
-                }
               }
             } break;
             case AggregationFunc::AVGFUN: {
@@ -546,12 +542,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
               else{
                 TupleCellSpec spec = schema.cell_at(i);
                 std::string spec_str = std::string(spec.alias());
-                if (spec_str.find("*") == spec_str.npos)              
+                if (spec_str.find("*") != spec_str.npos)              
                   values[i].set_int(values[i].get_int() + 1);
-                else {
-                  if (!(value.nullable() && value.is_null()))
-                    values[i].set_int(values[i].get_int() + 1);
-                }
               }
             } break;
             case AggregationFunc::AVGFUN: {
