@@ -327,7 +327,6 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
       assert(tuple != nullptr);
 
-      num ++;
       int cell_num = tuple->cell_num();
       for (int i = 0; i < cell_num; i++) {
         Value value;
@@ -337,18 +336,29 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
           return rc;
         }
         if (!tuple_exist){
-          if (funcs[i] != AggregationFunc::COUNTFUN)
+          if (funcs[i] != AggregationFunc::COUNTFUN && funcs[i] != AggregationFunc::AVGFUN){
             values[i] = value;
+            num ++;
+          }
           else{
-            if (!(value.nullable() && value.is_null()))
-              values[i] = Value(1);
+            if (!(value.nullable() && value.is_null())){
+              if (funcs[i] != AggregationFunc::AVGFUN)
+                values[i] = Value(1);
+              else{
+                values[i] = value;
+                num ++;
+              }
+            }
+            else if (funcs[i] == AggregationFunc::AVGFUN)
+              // 接受null，便于最后平均值是否为null的判断
+              values[i] = value;
             else {
               TupleCellSpec spec = schema.cell_at(i);
               std::string spec_str = std::string(spec.alias());
               if (spec_str.find("*") == spec_str.npos)
-                values[i] = Value(1);
-              else
                 values[i] = Value(0);
+              else
+                values[i] = Value(1);
             }
           }
         }
@@ -381,6 +391,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             } break;
             case AggregationFunc::AVGFUN: {
               if (!(value.nullable() && value.is_null())){
+                num ++;
                 switch (value.attr_type()) {
                   // INTS时，最后的结果放在Value.float_value_
                   case AttrType::INTS: {
@@ -391,8 +402,10 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                   } break;
                   default: {
                     LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                    writer_->clear();
                     sql_result->close();
-                    return RC::INVALID_ARGUMENT;
+                    sql_result->set_return_code(RC::INVALID_ARGUMENT);                    
+                    return write_state(event, need_disconnect);
                   } break;
                 }
               }
@@ -508,15 +521,30 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
           return rc;
         }
         if (current_num->second == 0){
-          if (funcs[i] != AggregationFunc::COUNTFUN)
+          if (funcs[i] != AggregationFunc::COUNTFUN && funcs[i] != AggregationFunc::AVGFUN) {
             values[i] = value;
+            current_num->second ++;
+          }
           else{
-            TupleCellSpec spec = schema.cell_at(i);
-            std::string spec_str = std::string(spec.alias());
-            if (spec_str.find("*") == spec_str.npos)
-              values[i] = Value(1);
-            else
-              values[i] = Value(0);
+            if (!(value.nullable() && value.is_null())){
+              if (funcs[i] != AggregationFunc::AVGFUN)
+                values[i] = Value(1);
+              else{
+                values[i] = value;
+                current_num->second ++;
+              }
+            }
+            else if (funcs[i] == AggregationFunc::AVGFUN)
+              // 接受null，便于最后平均值是否为null的判断
+              values[i] = value;
+            else {
+              TupleCellSpec spec = schema.cell_at(i);
+              std::string spec_str = std::string(spec.alias());
+              if (spec_str.find("*") == spec_str.npos)
+                values[i] = Value(0);
+              else
+                values[i] = Value(1);
+            }
           }
         }
         else{
@@ -548,6 +576,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             } break;
             case AggregationFunc::AVGFUN: {
               if (!(value.nullable() && value.is_null())){
+                current_num->second ++;
                 switch (value.attr_type()) {
                   // INTS时，最后的结果放在Value.float_value_
                   case AttrType::INTS: {
@@ -558,8 +587,10 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                   } break;
                   default: {
                     LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                    writer_->clear();
                     sql_result->close();
-                    return RC::INVALID_ARGUMENT;
+                    sql_result->set_return_code(RC::INVALID_ARGUMENT);                    
+                    return write_state(event, need_disconnect);
                   } break;
                 }
               }
@@ -567,7 +598,6 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
           }
         }        
       }
-      current_num->second ++;
       if (not_found){
         group_by_map.insert(*current_group);
         num.insert(*current_num);
