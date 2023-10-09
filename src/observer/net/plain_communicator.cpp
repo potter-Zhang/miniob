@@ -317,16 +317,23 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     std::vector<AggregationFunc> funcs = ppo->funcs();
     int size = funcs.size();
     std::vector<Value> values(size);
+    int avg_size = 0;
+    for (auto iter = funcs.begin(); iter != funcs.end(); iter ++){
+      if (*iter == AggregationFunc::AVGFUN)
+        avg_size ++;
+    }
+    std::vector<int> num(avg_size, 0);
     /* std::vector<bool> non_funcs(size, false);
     for(int i = 0; i < funcs.size(); i++){
       if (funcs[i] == AggregationFunc::NONE)
         non_funcs[i] = true;
     } */
     bool tuple_exist = false;
-    int num = 0;
+    //int num = 0;
     while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
       assert(tuple != nullptr);
 
+      std::vector<int>::iterator iter_avg_num = num.begin();
       int cell_num = tuple->cell_num();
       for (int i = 0; i < cell_num; i++) {
         Value value;
@@ -345,7 +352,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                 values[i] = Value(1);
               else{
                 values[i] = value;
-                num ++;
+                (*iter_avg_num) ++;
+                iter_avg_num ++;
               }
             }
             else if (funcs[i] == AggregationFunc::AVGFUN)
@@ -390,7 +398,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             } break;
             case AggregationFunc::AVGFUN: {
               if (!(value.nullable() && value.is_null())){
-                num ++;
+                (*iter_avg_num) ++;
+                iter_avg_num ++;
                 switch (value.attr_type()) {
                   // INTS时，最后的结果放在Value.float_value_
                   case AttrType::INTS: {
@@ -416,6 +425,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       tuple_exist = true;
     }
     if (tuple_exist){
+      std::vector<int>::iterator iter_avg_num = num.begin();
       for (int i = 0; i < size; i++){
         if (i != 0){
           const char *delim = " | ";
@@ -434,7 +444,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
               values[i].set_float(values[i].get_int());
               values[i].set_type(AttrType::FLOATS);
             }
-            values[i].set_float(values[i].get_float() / num);
+            values[i].set_float(values[i].get_float() / *iter_avg_num);
+            iter_avg_num ++;
           }
         }
         cell_str = values[i].to_string();
@@ -466,6 +477,11 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   else if(is_group_by){
     std::vector<AggregationFunc> funcs = ppo->funcs();
     int size = funcs.size();
+    int avg_size = 0;
+    for (auto iter = funcs.begin(); iter != funcs.end(); iter ++){
+      if (*iter == AggregationFunc::AVGFUN)
+        avg_size ++;
+    }
     //std::vector<Value> values(size);
     /* std::vector<bool> non_funcs(size, false);
     for(int i = 0; i < funcs.size(); i++){
@@ -476,7 +492,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     // 存储大量group by列是否被访问过
     typedef std::unordered_map<std::vector<Value>, bool, vector_value_hash_name> group_by_visited;
     group_by_visited visited;
-    typedef std::unordered_map<std::vector<Value>, int, vector_value_hash_name> group_by_num;
+    typedef std::unordered_map<std::vector<Value>, std::vector<int>, vector_value_hash_name> group_by_num;
     group_by_num num;
     typedef std::unordered_map<std::vector<Value>, std::vector<Value>, vector_value_hash_name> group_by_type;
     group_by_type group_by_map;
@@ -497,7 +513,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         group_value.push_back(value);
       }
       std::pair<std::vector<Value>, std::vector<Value>> *current_group;
-      std::pair<std::vector<Value>, int> *current_num;
+      std::pair<std::vector<Value>, std::vector<int>> *current_num;
       std::pair<std::vector<Value>, bool> *current_visited;
       auto iter_group = group_by_map.find(group_value);
       auto iter_num = num.find(group_value);
@@ -508,17 +524,19 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
         current_group = new std::pair<std::vector<Value>, std::vector<Value>>(
           std::pair<std::vector<Value>, std::vector<Value>>(group_value, std::vector<Value>(group_by_begin)));
         // 后面别忘了把current_num插入到num
-        current_num = new std::pair<std::vector<Value>, int>(std::pair<std::vector<Value>, int>(group_value, 0));
+        current_num = new std::pair<std::vector<Value>, std::vector<int>>(std::pair<std::vector<Value>, std::vector<int>>
+          (group_value, std::vector<int>(avg_size ,0)));
         // 后面别忘了把current_visited插入到group_by_visited
         current_visited = new std::pair<std::vector<Value>, bool>(std::pair<std::vector<Value>, bool>(group_value, false));
         not_found = true;
       }
       else{
         current_group = (std::pair<std::vector<Value>, std::vector<Value>> *)&(*iter_group);
-        current_num = (std::pair<std::vector<Value>, int> *)&(*iter_num);
+        current_num = (std::pair<std::vector<Value>, std::vector<int>> *)&(*iter_num);
         current_visited = (std::pair<std::vector<Value>, bool> *)&(*iter_visited);
       }
       std::vector<Value> &values = current_group->second;
+      std::vector<int>::iterator iter_avg_num = current_num->second.begin();
       for (int i = 0; i < group_by_begin; i++) {
         Value value;
         rc = tuple->cell_at(i, value);
@@ -536,7 +554,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                 values[i] = Value(1);
               else{
                 values[i] = value;
-                current_num->second ++;
+                (*iter_avg_num) ++;
+                iter_avg_num ++;
               }
             }
             else if (funcs[i] == AggregationFunc::AVGFUN)
@@ -581,7 +600,8 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
             } break;
             case AggregationFunc::AVGFUN: {
               if (!(value.nullable() && value.is_null())){
-                current_num->second ++;
+                (*iter_avg_num) ++;
+                iter_avg_num ++;
                 switch (value.attr_type()) {
                   // INTS时，最后的结果放在Value.float_value_
                   case AttrType::INTS: {
@@ -614,8 +634,9 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
       //tuple_exist = true;
     }
-    //if (tuple_exist){
+    //if (tuple_exist){    
     for (auto iter = group_by_map.begin(); iter != group_by_map.end(); iter ++){
+      std::vector<int>::iterator iter_avg_num = num.find(iter->first)->second.begin();
       std::vector<Value> values = (*iter).second;
       for (int i = 0; i < size; i++){
         if (i != 0){
@@ -635,7 +656,9 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
               values[i].set_float(values[i].get_int());
               values[i].set_type(AttrType::FLOATS);
             }
-            values[i].set_float(values[i].get_float() / num.find(iter->first)->second);
+            
+            values[i].set_float(values[i].get_float() / *iter_avg_num);
+            iter_avg_num ++;
           }
         }
         
