@@ -110,6 +110,8 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         NULLVALUE
         ISNULL
         ISNOTNULL
+        NULLISNULL
+        NULLISNOTNULL
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -835,6 +837,21 @@ condition:
       $$->comp = CompOp::EQUAL_TO;
 
       delete $1;
+    }
+    | NULLISNULL
+    {
+      $$ = nullptr;
+    }
+    | NULLISNOTNULL
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 0;
+      Value* vl = new Value(1);
+      $$->left_value = *vl;
+      $$->right_is_attr = 0;
+      Value* vr = new Value(2);
+      $$->right_value = *vr;
+      $$->comp = CompOp::EQUAL_TO;
     }
     ;
 
