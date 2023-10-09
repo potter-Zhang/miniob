@@ -186,6 +186,12 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   const TupleSchema &schema = sql_result->tuple_schema();
   const int cell_num = schema.cell_num();
 
+  if (cell_num > 0 && sql_result->peek_next_tuple() != RC::SUCCESS) {
+    sql_result->close();
+    sql_result->set_return_code(RC::RECORD_EOF);
+    return write_state(event, need_disconnect);
+  }
+
   for (int i = 0; i < cell_num; i++) {
     const TupleCellSpec &spec = schema.cell_at(i);
     const char *alias = spec.alias();
