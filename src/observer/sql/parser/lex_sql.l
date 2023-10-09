@@ -126,6 +126,7 @@ NOT{WHITE_SAPCE}+NULL                   RETURN_TOKEN(NOTNULL);
 NULLABLE                                RETURN_TOKEN(NULLABLE);
 NULL                                    RETURN_TOKEN(NULLVALUE);
 IS{WHITE_SAPCE}+NULL                    RETURN_TOKEN(ISNULL);
+IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL   RETURN_TOKEN(ISNOTNULL);
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);

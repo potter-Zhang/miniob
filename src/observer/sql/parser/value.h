@@ -88,6 +88,10 @@ public:
   {
     this->is_null_ = is_null;
   }
+  void set_is_null(int i)
+  {
+    this->is_null_ = i;
+  }
   void set_data(char *data, int length);
   void set_data(const char *data, int length)
   {
@@ -120,7 +124,7 @@ public:
   {
     return nullable_;
   }
-  bool is_null() const
+  int is_null() const
   {
     return is_null_;
   }
@@ -152,7 +156,7 @@ private:
   std::string str_value_;
 
   bool nullable_ = false;
-  bool is_null_ = false;
+  int is_null_ = 0;
   //std::string buffer_;
   //bool buffer_allocated_ = false;
 };

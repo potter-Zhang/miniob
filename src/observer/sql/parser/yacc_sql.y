@@ -109,6 +109,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         NULLABLE
         NULLVALUE
         ISNULL
+        ISNOTNULL
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -812,6 +813,24 @@ condition:
       Value null_value = Value();
       null_value.set_nullable(true);
       null_value.set_is_null(true);
+      $$->right_value = null_value;
+      $$->comp = CompOp::EQUAL_TO;
+
+      delete $1;
+    }
+    | value ISNOTNULL
+    {
+      $$ = nullptr;
+    }
+    | rel_attr ISNOTNULL
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 0;
+      Value null_value = Value();
+      null_value.set_nullable(true);
+      null_value.set_is_null(-1);
       $$->right_value = null_value;
       $$->comp = CompOp::EQUAL_TO;
 

@@ -91,6 +91,17 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
   RC rc = RC::SUCCESS;
   bool left_null = left.nullable() && left.is_null();
   bool right_null = right.nullable() && right.is_null();
+  // right.is_null() == -1表示not null
+  if (right.is_null() == -1){
+    if (!left_null && right_null && comp_ == EQUAL_TO){
+      result = true;
+      return rc;
+    }
+    else if(left_null && right_null && comp_ == EQUAL_TO){
+      result = false;
+      return rc;
+    }
+  }
   if (left_null && right_null && comp_ == EQUAL_TO){
     result = true;
     return rc;
