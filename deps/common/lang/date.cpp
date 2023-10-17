@@ -41,9 +41,9 @@ bool Date::check(){
     const int max_day = max_day_in_month[month - 1];
     if (day > max_day)
         return false;
-    if (month == 2  && (!is_leap_year(year) && day > 28 || is_leap_year(year) && day == 28))
+    if (month == 2  && (!is_leap_year(year) && day > 28)) //|| is_leap_year(year) && day == 28))
         return false;
-    if (value_ > 20380228)
-        return false;
+    /*if (value_ > 20380228)
+        return false;*/
     return true;
 }
