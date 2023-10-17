@@ -34,7 +34,8 @@ bool Date::check(){
     int remain = value_ - year * 10000;
     int month = remain / 100;
     int day = remain % 100;
-    if ((year < 1970 || year > 2038) || (month <=0 || month > 12) || (day <= 0 || day > 31))
+    //if ((year < 1970 || year > 2038) || (month <=0 || month > 12) || (day <= 0 || day > 31))
+    if ((month <=0 || month > 12) || (day <= 0 || day > 31))
         return false;
     int max_day_in_month[] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     const int max_day = max_day_in_month[month - 1];
