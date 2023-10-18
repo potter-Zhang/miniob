@@ -674,6 +674,8 @@ class TestSuite:
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
       lines1 = f1.readlines()
       lines2 = f2.readlines()
+      print(len(lines1),end=',')
+      print(len(lines2))
       if len(lines1) != len(lines2):
         return False
 
@@ -724,6 +726,7 @@ class TestSuite:
       return True
     else:
       result = self.__compare_files(result_tmp_file_name, result_file_name)
+      
       if not GlobalConfig.debug:
         #os.remove(result_tmp_file_name)
         pass

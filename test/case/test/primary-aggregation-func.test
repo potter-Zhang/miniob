@@ -54,4 +54,4 @@ SELECT max(id2) FROM aggregation_func;
 SELECT avg(id2) FROM aggregation_func;
 
 -- echo 9. select many aggregation
-SELECT min(num),max(num),avg(num) FROM aggregation_func;
+SELECT min(num),max(num),avg(num),sum(num) FROM aggregation_func;

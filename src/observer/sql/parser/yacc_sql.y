@@ -372,6 +372,12 @@ attr_def:
       $$->nullable = true;
       $$->length ++;
     }
+    | simple_attr_def NULLVALUE
+    {
+      $$ = $1;
+      $$->nullable = true;
+      $$->length ++;
+    }
 
 simple_attr_def:
     ID type LBRACE number RBRACE 
