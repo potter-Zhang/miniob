@@ -116,6 +116,7 @@ ConditionSqlNode *always_false()
         MIN
         COUNT
         AVG
+        SUM
         GROUPBY
         INNERJOIN
         NOTNULL
@@ -723,6 +724,9 @@ func:
     }
     | AVG {
       $$ = AggregationFunc::AVGFUN;
+    }
+    | SUM {
+      $$ = AggregationFunc::SUMFUN;
     }
     ;
 where:

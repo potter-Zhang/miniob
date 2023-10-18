@@ -102,21 +102,22 @@ extern int yydebug;
     MIN = 303,                     /* MIN  */
     COUNT = 304,                   /* COUNT  */
     AVG = 305,                     /* AVG  */
-    GROUPBY = 306,                 /* GROUPBY  */
-    INNERJOIN = 307,               /* INNERJOIN  */
-    NOTNULL = 308,                 /* NOTNULL  */
-    NULLABLE = 309,                /* NULLABLE  */
-    NULLVALUE = 310,               /* NULLVALUE  */
-    ISNULL = 311,                  /* ISNULL  */
-    ISNOTNULL = 312,               /* ISNOTNULL  */
-    NULLISNULL = 313,              /* NULLISNULL  */
-    NULLISNOTNULL = 314,           /* NULLISNOTNULL  */
-    NUMBER = 315,                  /* NUMBER  */
-    FLOAT = 316,                   /* FLOAT  */
-    DATE = 317,                    /* DATE  */
-    ID = 318,                      /* ID  */
-    SSS = 319,                     /* SSS  */
-    UMINUS = 320                   /* UMINUS  */
+    SUM = 306,                     /* SUM  */
+    GROUPBY = 307,                 /* GROUPBY  */
+    INNERJOIN = 308,               /* INNERJOIN  */
+    NOTNULL = 309,                 /* NOTNULL  */
+    NULLABLE = 310,                /* NULLABLE  */
+    NULLVALUE = 311,               /* NULLVALUE  */
+    ISNULL = 312,                  /* ISNULL  */
+    ISNOTNULL = 313,               /* ISNOTNULL  */
+    NULLISNULL = 314,              /* NULLISNULL  */
+    NULLISNOTNULL = 315,           /* NULLISNOTNULL  */
+    NUMBER = 316,                  /* NUMBER  */
+    FLOAT = 317,                   /* FLOAT  */
+    DATE = 318,                    /* DATE  */
+    ID = 319,                      /* ID  */
+    SSS = 320,                     /* SSS  */
+    UMINUS = 321                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -125,7 +126,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 130 "yacc_sql.y"
+#line 131 "yacc_sql.y"
 
   ParsedSqlNode *                   sql_node;
   ConditionSqlNode *                condition;
@@ -148,7 +149,7 @@ union YYSTYPE
   char *                            dates;
   AggregationFunc                   func;
 
-#line 152 "yacc_sql.hpp"
+#line 153 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

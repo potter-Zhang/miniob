@@ -120,6 +120,7 @@ MAX                                     RETURN_TOKEN(MAX);
 MIN                                     RETURN_TOKEN(MIN);
 COUNT                                   RETURN_TOKEN(COUNT);
 AVG                                     RETURN_TOKEN(AVG);
+SUM                                     RETURN_TOKEN(SUM);
 GROUP{WHITE_SAPCE}+BY                   RETURN_TOKEN(GROUPBY);
 INNER{WHITE_SAPCE}+JOIN                 RETURN_TOKEN(INNERJOIN);
 NOT{WHITE_SAPCE}+NULL                   RETURN_TOKEN(NOTNULL);

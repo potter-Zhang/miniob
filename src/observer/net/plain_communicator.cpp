@@ -416,6 +416,26 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
                     return write_state(event, need_disconnect);
                   } break;
                 }
+              } 
+            } break;
+            case AggregationFunc::SUMFUN: {
+              if (!(value.nullable() && value.is_null())){
+                switch (value.attr_type()) {
+                  // INTS时，最后的结果放在Value.float_value_
+                  case AttrType::INTS: {
+                    values[i].set_int(values[i].get_int() + value.get_int());
+                  } break;
+                  case AttrType::FLOATS: {
+                    values[i].set_float(values[i].get_float() + value.get_float());
+                  } break;
+                  default: {
+                    LOG_WARN("invalid type to calculate sum: %s", ppo->tuple().speces()[i]->alias());
+                    writer_->clear();
+                    sql_result->close();
+                    sql_result->set_return_code(RC::INVALID_ARGUMENT);                    
+                    return write_state(event, need_disconnect);
+                  } break;
+                }
               }
             } break;
           }
@@ -602,6 +622,26 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
               if (!(value.nullable() && value.is_null())){
                 (*iter_avg_num) ++;
                 iter_avg_num ++;
+                switch (value.attr_type()) {
+                  // INTS时，最后的结果放在Value.float_value_
+                  case AttrType::INTS: {
+                    values[i].set_int(values[i].get_int() + value.get_int());
+                  } break;
+                  case AttrType::FLOATS: {
+                    values[i].set_float(values[i].get_float() + value.get_float());
+                  } break;
+                  default: {
+                    LOG_WARN("invalid type to calculate average: %s", ppo->tuple().speces()[i]->alias());
+                    writer_->clear();
+                    sql_result->close();
+                    sql_result->set_return_code(RC::INVALID_ARGUMENT);                    
+                    return write_state(event, need_disconnect);
+                  } break;
+                }
+              }
+            } break;
+            case AggregationFunc::SUMFUN: {
+              if (!(value.nullable() && value.is_null())){
                 switch (value.attr_type()) {
                   // INTS时，最后的结果放在Value.float_value_
                   case AttrType::INTS: {

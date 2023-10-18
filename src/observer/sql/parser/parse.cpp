@@ -68,6 +68,9 @@ const std::string func_to_string(AggregationFunc func){
     case AVGFUN: {
       return "avg";
     } break;
+    case SUMFUN: {
+      return "sum";
+    } break;
   }
   return "";
 };

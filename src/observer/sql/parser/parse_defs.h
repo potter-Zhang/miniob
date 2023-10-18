@@ -34,6 +34,7 @@ enum AggregationFunc
   MINFUN,
   COUNTFUN,
   AVGFUN,
+  SUMFUN,
 };
 
 /**
