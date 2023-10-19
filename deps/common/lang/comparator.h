@@ -21,5 +21,9 @@ int compare_int(void *arg1, void *arg2);
 int compare_float(void *arg1, void *arg2);
 int compare_date(void *arg1, void *arg2);
 int compare_string(void *arg1, int arg1_max_length, void *arg2, int arg2_max_length);
+int compare_string_float(void *arg1, int length, void * arg2);
+int compare_float_string(void *arg1, void * arg2, int length);
+int compare_string_int(void *arg1, int length, void * arg2);
+int compare_int_string(void *arg1, void * arg2, int length);
 
 }
