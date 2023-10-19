@@ -107,6 +107,10 @@ void SessionStage::handle_request(StageEvent *event)
 
   Communicator *communicator = sev->get_communicator();
   bool need_disconnect = false;
+
+  sev->session()->set_sql_debug(true);
+  sql_debug("is going to enter write_result");
+
   rc = communicator->write_result(sev, need_disconnect);
   LOG_INFO("write result return %s", strrc(rc));
   if (need_disconnect) {
