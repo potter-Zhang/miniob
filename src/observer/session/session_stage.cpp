@@ -99,27 +99,26 @@ void SessionStage::handle_request(StageEvent *event)
   }
 
   Session::set_current_session(sev->session());
-  sev->session()->set_current_request(sev);
   SQLStageEvent sql_event(sev, sql);
 
-  sev->session()->set_sql_debug(true);
+  //sev->session()->set_sql_debug(true);
 
-  sql_debug("1");
+  //sql_debug("1");
 
   RC rc = handle_sql(&sql_event);
 
-  sql_debug("2");
+  //sql_debug("2");
 
   if (rc != RC::SUCCESS)
     sev->sql_result()->set_return_code(rc);
 
   Communicator *communicator = sev->get_communicator();
 
-  sql_debug("3");
+  //sql_debug("3");
 
   bool need_disconnect = false;
   
-  sql_debug("is going to enter write_result");
+  //sql_debug("is going to enter write_result");
 
   rc = communicator->write_result(sev, need_disconnect);
   LOG_INFO("write result return %s", strrc(rc));
