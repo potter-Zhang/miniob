@@ -13,6 +13,7 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include <sstream>
+#include <limits>
 #include "sql/parser/value.h"
 #include "storage/field/field.h"
 #include "common/log/log.h"
@@ -428,6 +429,14 @@ bool Value::convert_to(AttrType new_type) {
       if (d != 0) {
         std::string().swap(str_value_);
         set_date(d);
+        return true;
+      }
+      return false;
+    }
+
+    case FLOATS: {
+      if (attr_type_ == INTS) {
+        set_float(get_int());
         return true;
       }
       return false;
