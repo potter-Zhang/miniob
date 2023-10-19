@@ -171,7 +171,7 @@ RC PlainCommunicator::write_result(SessionEvent *event, bool &need_disconnect)
 
 RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disconnect)
 {
-  LOG_DEBUG("enter write_result_internal");
+  sql_debug("enter write_result_internal");
   RC rc = RC::SUCCESS;
   need_disconnect = true;
 
@@ -180,7 +180,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
   if (RC::SUCCESS != sql_result->return_code() || !sql_result->has_operator()) {
     return write_state(event, need_disconnect);
   }
-  LOG_DEBUG("1");
+  sql_debug("1");
 
   rc = sql_result->open();
   if (OB_FAIL(rc)) {
@@ -188,7 +188,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     sql_result->set_return_code(rc);
     return write_state(event, need_disconnect);
   }
-  LOG_DEBUG("2");
+  sql_debug("2");
 
   // 看是否为聚合查询
   bool is_aggregation = false;
@@ -243,7 +243,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       return rc;
     }
   }
-  LOG_DEBUG("3");
+  sql_debug("3");
 
   rc = RC::SUCCESS;
   
@@ -296,7 +296,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     }
 
     if (cell_num == 0) {
-      LOG_DEBUG("4");
+      sql_debug("4");
       // 除了select之外，其它的消息通常不会通过operator来返回结果，表头和行数据都是空的
       // 这里针对这种情况做特殊处理，当表头和行数据都是空的时候，就返回处理的结果
       // 可能是insert/delete等操作，不直接返回给客户端数据，这里把处理结果返回给客户端
@@ -317,7 +317,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
       need_disconnect = false;
     }
-    LOG_DEBUG("5");
+    sql_debug("5");
   }
   else if(is_aggregation && !is_group_by){
     std::vector<AggregationFunc> funcs = ppo->funcs();
