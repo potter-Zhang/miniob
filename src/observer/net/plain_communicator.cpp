@@ -318,9 +318,19 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
     int size = funcs.size();
     std::vector<Value> values(size);
     int avg_size = 0;
+    int none_size = 0;
     for (auto iter = funcs.begin(); iter != funcs.end(); iter ++){
       if (*iter == AggregationFunc::AVGFUN)
         avg_size ++;
+      if (*iter == AggregationFunc::NONE)
+        none_size ++;
+    }
+    if (none_size != size){
+      LOG_WARN("easy and aggregation funs can't be together if no group by");
+      writer_->clear();
+      sql_result->close();
+      sql_result->set_return_code(RC::INVALID_ARGUMENT);                    
+      return write_state(event, need_disconnect);
     }
     std::vector<int> num(avg_size, 0);
     /* std::vector<bool> non_funcs(size, false);

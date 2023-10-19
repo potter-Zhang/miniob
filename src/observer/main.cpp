@@ -30,6 +30,7 @@ See the Mulan PSL v2 for more details. */
 using namespace common;
 
 #define NET "NET"
+//#define TEST
 
 static Server *g_server = nullptr;
 
@@ -184,6 +185,9 @@ int main(int argc, char **argv)
 
   g_server = init_server();
   Server::init();
+  #ifdef TEST
+  freopen("./test/test.txt", "r", stdin);
+  #endif
   g_server->serve();
 
   LOG_INFO("Server stopped");
