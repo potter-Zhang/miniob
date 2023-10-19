@@ -1,0 +1,5 @@
+add_test( checkRotateTest.CheckRoateTest /home/harry/Desktop/miniob/build/bin/log_test [==[--gtest_filter=checkRotateTest.CheckRoateTest]==] --gtest_also_run_disabled_tests)
+set_tests_properties( checkRotateTest.CheckRoateTest PROPERTIES WORKING_DIRECTORY /home/harry/Desktop/miniob/build/unittest SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( testEnableTest.CheckEnableTest /home/harry/Desktop/miniob/build/bin/log_test [==[--gtest_filter=testEnableTest.CheckEnableTest]==] --gtest_also_run_disabled_tests)
+set_tests_properties( testEnableTest.CheckEnableTest PROPERTIES WORKING_DIRECTORY /home/harry/Desktop/miniob/build/unittest SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set( log_test_TESTS checkRotateTest.CheckRoateTest testEnableTest.CheckEnableTest)
