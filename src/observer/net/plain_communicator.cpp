@@ -325,7 +325,7 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
       if (*iter == AggregationFunc::NONE)
         none_size ++;
     }
-    if (none_size != size){
+    if (none_size != 0 && none_size != size){
       LOG_WARN("easy and aggregation funs can't be together if no group by");
       writer_->clear();
       sql_result->close();
