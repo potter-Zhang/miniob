@@ -98,12 +98,35 @@ extern int yydebug;
     LE = 299,                      /* LE  */
     GE = 300,                      /* GE  */
     NE = 301,                      /* NE  */
+<<<<<<< HEAD
     NUMBER = 302,                  /* NUMBER  */
     FLOAT = 303,                   /* FLOAT  */
     ID = 304,                      /* ID  */
     SSS = 305,                     /* SSS  */
     DATE = 306,                    /* DATE  */
     UMINUS = 307                   /* UMINUS  */
+=======
+    MAX = 302,                     /* MAX  */
+    MIN = 303,                     /* MIN  */
+    COUNT = 304,                   /* COUNT  */
+    AVG = 305,                     /* AVG  */
+    SUM = 306,                     /* SUM  */
+    GROUPBY = 307,                 /* GROUPBY  */
+    INNERJOIN = 308,               /* INNERJOIN  */
+    NOTNULL = 309,                 /* NOTNULL  */
+    NULLABLE = 310,                /* NULLABLE  */
+    NULLVALUE = 311,               /* NULLVALUE  */
+    ISNULL = 312,                  /* ISNULL  */
+    ISNOTNULL = 313,               /* ISNOTNULL  */
+    NULLISNULL = 314,              /* NULLISNULL  */
+    NULLISNOTNULL = 315,           /* NULLISNOTNULL  */
+    NUMBER = 316,                  /* NUMBER  */
+    FLOAT = 317,                   /* FLOAT  */
+    DATE = 318,                    /* DATE  */
+    ID = 319,                      /* ID  */
+    SSS = 320,                     /* SSS  */
+    UMINUS = 321                   /* UMINUS  */
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -112,7 +135,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
+<<<<<<< HEAD
 #line 103 "yacc_sql.y"
+=======
+#line 131 "yacc_sql.y"
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
   ParsedSqlNode *                   sql_node;
   ConditionSqlNode *                condition;
@@ -124,14 +151,26 @@ union YYSTYPE
   Expression *                      expression;
   std::vector<Expression *> *       expression_list;
   std::vector<Value> *              value_list;
+<<<<<<< HEAD
+=======
+  std::vector<Value> *              value_row;
+  std::vector<Value> *              value_rows;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
   char *                            string;
   int                               number;
   float                             floats;
+<<<<<<< HEAD
 
 #line 135 "yacc_sql.hpp"
+=======
+  char *                            dates;
+  AggregationFunc                   func;
+
+#line 153 "yacc_sql.hpp"
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 };
 typedef union YYSTYPE YYSTYPE;

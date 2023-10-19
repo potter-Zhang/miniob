@@ -37,7 +37,11 @@ public:
    * @param rec
    * @return true means match condition, false means failed to match.
    */
+<<<<<<< HEAD
   virtual bool filter(const Record &rec, RC &rc) const = 0;
+=======
+  virtual bool filter(const Record &rec) const = 0;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 };
 
 class DefaultConditionFilter : public ConditionFilter 
@@ -49,7 +53,11 @@ public:
   RC init(const ConDesc &left, const ConDesc &right, AttrType attr_type, CompOp comp_op);
   RC init(Table &table, const ConditionSqlNode &condition);
 
+<<<<<<< HEAD
   virtual bool filter(const Record &rec, RC &rc) const;
+=======
+  virtual bool filter(const Record &rec) const;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 public:
   const ConDesc &left() const
@@ -87,7 +95,11 @@ public:
 
   RC init(const ConditionFilter *filters[], int filter_num);
   RC init(Table &table, const ConditionSqlNode *conditions, int condition_num);
+<<<<<<< HEAD
   virtual bool filter(const Record &rec, RC &rc) const;
+=======
+  virtual bool filter(const Record &rec) const;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 public:
   int filter_num() const

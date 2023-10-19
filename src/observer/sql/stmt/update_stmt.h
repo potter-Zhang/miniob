@@ -16,7 +16,10 @@ See the Mulan PSL v2 for more details. */
 
 #include "common/rc.h"
 #include "sql/stmt/stmt.h"
+<<<<<<< HEAD
 #include "sql/stmt/filter_stmt.h"
+=======
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 class Table;
 
@@ -28,6 +31,7 @@ class UpdateStmt : public Stmt
 {
 public:
   UpdateStmt() = default;
+<<<<<<< HEAD
   UpdateStmt(Table *table, Value *value, std::string field_name, FilterStmt *filter_stmt);
 
 public:
@@ -44,10 +48,19 @@ public:
     return filter_stmt_;
   }
 
+=======
+  UpdateStmt(Table *table, Value *values, int value_amount);
+
+public:
+  static RC create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt);
+
+public:
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   Table *table() const
   {
     return table_;
   }
+<<<<<<< HEAD
   Value *value() const
   {
     return value_;
@@ -64,4 +77,19 @@ private:
   FilterStmt *filter_stmt_ = nullptr;
   std::string field_name_;
   
+=======
+  Value *values() const
+  {
+    return values_;
+  }
+  int value_amount() const
+  {
+    return value_amount_;
+  }
+
+private:
+  Table *table_ = nullptr;
+  Value *values_ = nullptr;
+  int value_amount_ = 0;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 };

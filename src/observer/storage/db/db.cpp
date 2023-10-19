@@ -88,7 +88,12 @@ RC Db::create_table(const char *table_name, int attribute_count, const AttrInfoS
   // 文件路径可以移到Table模块
   std::string table_file_path = table_meta_file(path_.c_str(), table_name);
   Table *table = new Table();
+<<<<<<< HEAD
   rc = table->create(next_table_id_++, table_file_path.c_str(), table_name, path_.c_str(), attribute_count, attributes);
+=======
+  int32_t table_id = next_table_id_++;
+  rc = table->create(table_id, table_file_path.c_str(), table_name, path_.c_str(), attribute_count, attributes);
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   if (rc != RC::SUCCESS) {
     LOG_ERROR("Failed to create table %s.", table_name);
     delete table;
@@ -96,6 +101,33 @@ RC Db::create_table(const char *table_name, int attribute_count, const AttrInfoS
   }
 
   opened_tables_[table_name] = table;
+<<<<<<< HEAD
+=======
+  LOG_INFO("Create table success. table name=%s, table_id:%d", table_name, table_id);
+  return RC::SUCCESS;
+}
+
+RC Db::drop_table(const char *table_name)
+{
+  RC rc = RC::SUCCESS;
+  // check table_name
+  if (opened_tables_.count(table_name) == 0) {
+    LOG_WARN("%s has not been opened before.", table_name);
+    return RC::SCHEMA_TABLE_NOT_EXIST;
+  }
+
+  // 文件路径可以移到Table模块
+  std::string table_file_path = table_meta_file(path_.c_str(), table_name);
+  Table *table = find_table(table_name);
+  rc = table->drop(next_table_id_++, table_file_path.c_str(), table_name, path_.c_str());
+  if (rc != RC::SUCCESS) {
+    LOG_ERROR("Failed to drop table %s.", table_name);
+    delete table;
+    return rc;
+  }
+
+  opened_tables_.erase(table_name);
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   LOG_INFO("Create table success. table name=%s", table_name);
   return RC::SUCCESS;
 }
@@ -141,13 +173,21 @@ RC Db::open_all_tables()
     if (opened_tables_.count(table->name()) != 0) {
       delete table;
       LOG_ERROR("Duplicate table with difference file name. table=%s, the other filename=%s",
+<<<<<<< HEAD
           table->name(),
           filename.c_str());
+=======
+          table->name(), filename.c_str());
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       return RC::INTERNAL;
     }
 
     if (table->table_id() >= next_table_id_) {
+<<<<<<< HEAD
       next_table_id_ = table->table_id();
+=======
+      next_table_id_ = table->table_id() + 1;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     }
     opened_tables_[table->name()] = table;
     LOG_INFO("Open table: %s, file: %s", table->name(), filename.c_str());

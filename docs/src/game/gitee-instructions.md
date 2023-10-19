@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # 1.4 MiniOB Gitee 使用说明
+=======
+# MiniOB Gitee 在训练营中的使用说明
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 实战 MiniOB 编程需要在 Gitee 上创建自己的 private 仓库，在开发完成后，将代码提交到自己的仓库中，然后在训练营中进行测试。
 

@@ -95,6 +95,7 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
 
   Index *index = nullptr;
   ValueExpr *value_expr = nullptr;
+  FieldExpr *field_expr = nullptr;
   for (auto &expr : predicates) {
     if (expr->type() == ExprType::COMPARISON) {
       auto comparison_expr = static_cast<ComparisonExpr *>(expr.get());
@@ -110,7 +111,7 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
         continue;
       }
 
-      FieldExpr *field_expr = nullptr;
+      field_expr = nullptr;
       if (left_expr->type() == ExprType::FIELD) {
         ASSERT(right_expr->type() == ExprType::VALUE, "right expr should be a value expr while left is field expr");
         field_expr = static_cast<FieldExpr *>(left_expr.get());
@@ -141,8 +142,11 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
   if (index != nullptr) {
     ASSERT(value_expr != nullptr, "got an index but value expr is null ?");
 
-    const Value &value = value_expr->get_value();
-    
+    Value value = value_expr->get_value();
+    if (field_expr->field().meta()->nullable()){
+      value.set_nullable(true);
+      value.get_data();
+    }
     IndexScanPhysicalOperator *index_scan_oper = new IndexScanPhysicalOperator(
           table, index, table_get_oper.readonly(), 
           &value, true /*left_inclusive*/, 
@@ -200,10 +204,11 @@ RC PhysicalPlanGenerator::create_plan(ProjectLogicalOperator &project_oper, uniq
     }
   }
 
-  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator;
+  int group_by_begin = project_oper.group_by_begin();
+  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator(group_by_begin);
   const vector<Field> &project_fields = project_oper.fields();
   for (const Field &field : project_fields) {
-    project_operator->add_projection(field.table(), field.meta());
+    project_operator->add_projection(field.table(), field.meta(), field.func());
   }
 
   if (child_phy_oper) {

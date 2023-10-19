@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/common.dir/lang/bitmap.cpp.o.d"
   "CMakeFiles/common.dir/lang/comparator.cpp.o"
   "CMakeFiles/common.dir/lang/comparator.cpp.o.d"
+  "CMakeFiles/common.dir/lang/date.cpp.o"
+  "CMakeFiles/common.dir/lang/date.cpp.o.d"
   "CMakeFiles/common.dir/lang/mutex.cpp.o"
   "CMakeFiles/common.dir/lang/mutex.cpp.o.d"
   "CMakeFiles/common.dir/lang/string.cpp.o"

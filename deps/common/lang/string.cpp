@@ -13,6 +13,7 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include "common/lang/string.h"
+#include "date.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -283,5 +284,23 @@ std::string double_to_str(double v)
   }
 
   return std::string(buf, len);
+}
+
+/**
+ * Date to string
+ * @param date
+ * @return
+*/
+std::string date_to_str(Date date)
+{
+  char buf[8];
+  char result[10];
+  sprintf(buf,"%d",date.value());
+  memcpy(result,buf,4);
+  result[4]='-';
+  memcpy(result+5,buf+4,2);
+  result[7]='-';
+  memcpy(result+8,buf+6,2);
+  return std::string(result, 10);
 }
 }  // namespace common

@@ -67,6 +67,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   std::vector<Field> query_fields;
   for (int i = static_cast<int>(select_sql.attributes.size()) - 1; i >= 0; i--) {
     const RelAttrSqlNode &relation_attr = select_sql.attributes[i];
+<<<<<<< HEAD
 
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
         0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
@@ -75,6 +76,32 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
     } else if (!common::is_blank(relation_attr.relation_name.c_str())) {
+=======
+    int length = query_fields.size();
+    if (common::is_blank(relation_attr.relation_name.c_str()) &&
+        0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
+      // 看有没有聚合查询
+      if (relation_attr.func != NONE){
+        if (relation_attr.func != AggregationFunc::COUNTFUN){
+          LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+          return RC::SQL_SYNTAX;
+        }
+        for (Table *table : tables){
+          const TableMeta &table_meta = table->table_meta();
+          const int field_num = table_meta.field_num();
+          query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
+          query_fields.back().set_is_star(true);
+        }
+        for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+          iter->set_func(relation_attr.func);
+      }
+      else{
+        for (Table *table : tables) {
+          wildcard_fields(table, query_fields);
+        }     
+      }
+    } else if (!common::is_blank(relation_attr.relation_name.c_str())) {      
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       const char *table_name = relation_attr.relation_name.c_str();
       const char *field_name = relation_attr.attribute_name.c_str();
 
@@ -83,8 +110,22 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           LOG_WARN("invalid field name while table is *. attr=%s", field_name);
           return RC::SCHEMA_FIELD_MISSING;
         }
+<<<<<<< HEAD
         for (Table *table : tables) {
           wildcard_fields(table, query_fields);
+=======
+        // 看有没有聚合查询
+        if (relation_attr.func != NONE){
+          if (relation_attr.func != AggregationFunc::COUNTFUN){
+            LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+            return RC::SQL_SYNTAX;
+          }
+          for (Table *table : tables) {
+            wildcard_fields(table, query_fields);
+          }
+          for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+            iter->set_func(relation_attr.func);
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
         }
       } else {
         auto iter = table_map.find(table_name);
@@ -104,6 +145,14 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           }
 
           query_fields.push_back(Field(table, field_meta));
+<<<<<<< HEAD
+=======
+          // 看有没有聚合查询
+          if (relation_attr.func != NONE){
+            for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+              iter->set_func(relation_attr.func);
+          }
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
         }
       }
     } else {
@@ -120,6 +169,59 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
       query_fields.push_back(Field(table, field_meta));
+<<<<<<< HEAD
+=======
+      // 看有没有聚合查询
+      if (relation_attr.func != NONE){
+        for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+          iter->set_func(relation_attr.func);
+      }
+    }
+  }
+
+  // 仿照query fields也录入一下group by的列名
+  int group_by_begin;
+  const std::vector<std::string> &group_by_columns = select_sql.group_by_columns;
+  if (group_by_columns.size() != 0)
+    group_by_begin = query_fields.size();
+  else
+    group_by_begin = -1;
+  // 没有group by *.column
+  for (std::string column : group_by_columns){
+    size_t pos;
+    if ((pos = column.find(".")) != column.npos){
+      std::string table_name = column.substr(0, pos).c_str();
+      std::string field_name = column.substr(pos + 1).c_str();
+      auto iter = table_map.find(table_name);
+      if (iter == table_map.end()) {
+        LOG_WARN("no such table in from list: %s", table_name);
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      Table *table = iter->second;
+      const FieldMeta *field_meta = table->table_meta().field(field_name.c_str());
+      if (nullptr == field_meta) {
+        LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), field_name);
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      query_fields.push_back(Field(table, field_meta));
+    }
+    else{
+      if (tables.size() != 1) {
+        LOG_WARN("invalid. I do not know the attr's table. attr=%s", column.c_str());
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      Table *table = tables[0];
+      const FieldMeta *field_meta = table->table_meta().field(column.c_str());
+      if (nullptr == field_meta) {
+        LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), column.c_str());
+        return RC::SCHEMA_FIELD_MISSING;
+      }
+
+      query_fields.push_back(Field(table, field_meta));
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     }
   }
 
@@ -149,6 +251,10 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->filter_stmt_ = filter_stmt;
+<<<<<<< HEAD
+=======
+  select_stmt->group_by_begin_ = group_by_begin;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   stmt = select_stmt;
   return RC::SUCCESS;
 }

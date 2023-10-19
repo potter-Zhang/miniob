@@ -64,11 +64,14 @@ public:
   {
     return state_string_;
   }
+  const std::unique_ptr<PhysicalOperator> &physical_operator() const
+  {
+    return operator_;
+  }
 
   RC open();
   RC close();
   RC next_tuple(Tuple *&tuple);
-  RC peek_next_tuple() { return operator_->next();}
 
 private:
   Session *session_ = nullptr; ///< 当前所属会话

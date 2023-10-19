@@ -28,6 +28,7 @@ See the Mulan PSL v2 for more details. */
 #include <vector>
 
 #include "common/defs.h"
+#include "date.h"
 namespace common {
 
 /**
@@ -117,6 +118,13 @@ void val_to_str(const T &val, std::string &str, std::ios_base &(*radix)(std::ios
  * @return
  */
 std::string double_to_str(double v);
+
+/**
+ * Date to string
+ * @param date
+ * @return
+*/
+std::string date_to_str(Date date);
 
 bool is_blank(const char *s);
 

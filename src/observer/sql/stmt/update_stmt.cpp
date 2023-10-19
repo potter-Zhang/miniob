@@ -13,6 +13,7 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include "sql/stmt/update_stmt.h"
+<<<<<<< HEAD
 #include "common/log/log.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
@@ -73,4 +74,16 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
   
   return RC::SUCCESS;
   
+=======
+
+UpdateStmt::UpdateStmt(Table *table, Value *values, int value_amount)
+    : table_(table), values_(values), value_amount_(value_amount)
+{}
+
+RC UpdateStmt::create(Db *db, const UpdateSqlNode &update, Stmt *&stmt)
+{
+  // TODO
+  stmt = nullptr;
+  return RC::INTERNAL;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 }

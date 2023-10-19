@@ -292,6 +292,22 @@ RC DiskBufferPool::close_file()
   return RC::SUCCESS;
 }
 
+<<<<<<< HEAD
+=======
+RC DiskBufferPool::drop_file(){
+  int fd = ::remove(file_name_.c_str());
+  close_file();
+  if (fd < 0) {
+    if (ENOENT== errno) {
+      LOG_ERROR("Failed to drop file, it has not been created. %s, ENOENT, %s", file_name_, strerror(errno));
+      return RC::FILE_NOT_EXIST;
+    }
+    LOG_ERROR("Drop table file failed. filename=%s, errmsg=%d:%s", file_name_, errno, strerror(errno));
+    return RC::IOERR_REMOVE;
+  }
+}
+
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 RC DiskBufferPool::get_this_page(PageNum page_num, Frame **frame)
 {
   RC rc = RC::SUCCESS;
@@ -678,6 +694,20 @@ RC BufferPoolManager::create_file(const char *file_name)
   return RC::SUCCESS;
 }
 
+<<<<<<< HEAD
+=======
+RC BufferPoolManager::drop_file(const char *file_name)
+{
+  close_file(file_name);
+  int fd = ::remove(file_name);
+  if (fd < 0) {
+    LOG_ERROR("Failed to drop %s, due to %s.", file_name, strerror(errno));
+    return RC::IOERR_REMOVE;
+  }
+  return RC::SUCCESS;
+}
+
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 RC BufferPoolManager::open_file(const char *_file_name, DiskBufferPool *&_bp)
 {
   std::string file_name(_file_name);

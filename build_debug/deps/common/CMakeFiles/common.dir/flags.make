@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DENABLE_DEBUG -DLINUX -DUNIX
 
-CXX_INCLUDES = -I/home/harry/Desktop/miniob/. -I/home/harry/Desktop/miniob/deps -I/home/harry/Desktop/miniob/deps/common
+CXX_INCLUDES = -I/home/harry/Desktop/miniob_test/. -I/home/harry/Desktop/miniob_test/deps -I/home/harry/Desktop/miniob_test/deps/common
 
-CXX_FLAGS = -g -std=gnu++20
+CXX_FLAGS = -std=gnu++20
 

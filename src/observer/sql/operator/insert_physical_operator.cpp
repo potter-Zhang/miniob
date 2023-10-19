@@ -12,6 +12,9 @@ See the Mulan PSL v2 for more details. */
 // Created by WangYunlai on 2021/6/9.
 //
 
+#include <vector>
+#include <math.h>
+
 #include "sql/operator/insert_physical_operator.h"
 #include "sql/stmt/insert_stmt.h"
 #include "storage/table/table.h"
@@ -25,17 +28,24 @@ InsertPhysicalOperator::InsertPhysicalOperator(Table *table, vector<Value> &&val
 
 RC InsertPhysicalOperator::open(Trx *trx)
 {
-  Record record;
-  RC rc = table_->make_record(static_cast<int>(values_.size()), values_.data(), record);
-  if (rc != RC::SUCCESS) {
-    LOG_WARN("failed to make record. rc=%s", strrc(rc));
-    return rc;
+  TableMeta tableMeta = table_->table_meta();
+  int expected_num = tableMeta.field_num() - tableMeta.sys_field_num();
+  int groups = round(values_.size() / expected_num);
+  std::vector<Record> records(groups);
+  RC rc;
+  for (int i = 0; i < groups; i++){
+    rc = table_->make_record(static_cast<int>(values_.size() / groups), values_.data() + i * expected_num, records[i]);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to make record. rc=%s", strrc(rc));
+      return rc;
+    }
+    rc = trx->insert_record(table_, records[i]);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to insert record by transaction. rc=%s", strrc(rc));
+      return rc;
+    }
   }
-
-  rc = trx->insert_record(table_, record);
-  if (rc != RC::SUCCESS) {
-    LOG_WARN("failed to insert record by transaction. rc=%s", strrc(rc));
-  }
+  
   return rc;
 }
 

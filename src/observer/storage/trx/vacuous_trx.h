@@ -43,7 +43,10 @@ public:
 
   RC insert_record(Table *table, Record &record) override;
   RC delete_record(Table *table, Record &record) override;
+<<<<<<< HEAD
   
+=======
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   RC visit_record(Table *table, Record &record, bool readonly) override;
   RC start_if_need() override;
   RC commit() override;

@@ -27,6 +27,7 @@ while (0);
 %{
 #include<string.h>
 #include<stdio.h>
+#include "common/lang/date.h"
 
 /**
  * flex 代码包含三个部分，使用 %% 分隔
@@ -115,6 +116,20 @@ LOAD                                    RETURN_TOKEN(LOAD);
 DATA                                    RETURN_TOKEN(DATA);
 INFILE                                  RETURN_TOKEN(INFILE);
 EXPLAIN                                 RETURN_TOKEN(EXPLAIN);
+MAX                                     RETURN_TOKEN(MAX);
+MIN                                     RETURN_TOKEN(MIN);
+COUNT                                   RETURN_TOKEN(COUNT);
+AVG                                     RETURN_TOKEN(AVG);
+SUM                                     RETURN_TOKEN(SUM);
+GROUP{WHITE_SAPCE}+BY                   RETURN_TOKEN(GROUPBY);
+INNER{WHITE_SAPCE}+JOIN                 RETURN_TOKEN(INNERJOIN);
+NOT{WHITE_SAPCE}+NULL                   RETURN_TOKEN(NOTNULL);
+NULLABLE                                RETURN_TOKEN(NULLABLE);
+NULL                                    RETURN_TOKEN(NULLVALUE);
+IS{WHITE_SAPCE}+NULL                    RETURN_TOKEN(ISNULL);
+IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL   RETURN_TOKEN(ISNOTNULL);
+NULL{WHITE_SAPCE}+IS{WHITE_SAPCE}+NULL  RETURN_TOKEN(NULLISNULL);
+NULL{WHITE_SAPCE}+IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL RETURN_TOKEN(NULLISNOTNULL);
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);
@@ -132,7 +147,8 @@ EXPLAIN                                 RETURN_TOKEN(EXPLAIN);
 "-" |
 "*" |
 "/"                                     { return yytext[0]; }
-
+'{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\' yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
+\"{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\" yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
 \"[^"]*\"                               yylval->string = strdup(yytext); RETURN_TOKEN(SSS);
 '[^']*\'                                yylval->string = strdup(yytext); RETURN_TOKEN(SSS);
 

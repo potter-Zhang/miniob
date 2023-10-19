@@ -12,6 +12,7 @@
 #include "sql/parser/yacc_sql.hpp"
 #include "sql/parser/lex_sql.h"
 #include "sql/expr/expression.h"
+#include "common/lang/date.h"
 
 using namespace std;
 
@@ -39,6 +40,19 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   ArithmeticExpr *expr = new ArithmeticExpr(type, left, right);
   expr->set_name(token_name(sql_string, llocp));
   return expr;
+}
+
+ConditionSqlNode *always_false()
+{
+  ConditionSqlNode *result = new ConditionSqlNode;
+  result->left_is_attr = 0;
+  Value* vl = new Value(1);
+  result->left_value = *vl;
+  result->right_is_attr = 0;
+  Value* vr = new Value(2);
+  result->right_value = *vr;
+  result->comp = CompOp::EQUAL_TO;
+  return result;
 }
 
 %}
@@ -98,6 +112,20 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         LE
         GE
         NE
+        MAX
+        MIN
+        COUNT
+        AVG
+        SUM
+        GROUPBY
+        INNERJOIN
+        NOTNULL
+        NULLABLE
+        NULLVALUE
+        ISNULL
+        ISNOTNULL
+        NULLISNULL
+        NULLISNOTNULL
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -111,19 +139,23 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   Expression *                      expression;
   std::vector<Expression *> *       expression_list;
   std::vector<Value> *              value_list;
+  std::vector<Value> *              value_row;
+  std::vector<Value> *              value_rows;
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
   char *                            string;
   int                               number;
   float                             floats;
+  char *                            dates;
+  AggregationFunc                   func;
 }
 
 %token <number> NUMBER
 %token <floats> FLOAT
+%token <string> DATE
 %token <string> ID
 %token <string> SSS
-%token <string> DATE
 //非终结符
 
 /** type 定义了各种解析后的结果输出的是什么类型。类型对应了 union 中的定义的成员变量名称 **/
@@ -135,11 +167,17 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <rel_attr>            rel_attr
 %type <attr_infos>          attr_def_list
 %type <attr_info>           attr_def
+%type <attr_info>           simple_attr_def
 %type <value_list>          value_list
+%type <value_row>           value_row
+%type <value_rows>          value_rows
 %type <condition_list>      where
 %type <condition_list>      condition_list
 %type <rel_attr_list>       select_attr
 %type <relation_list>       rel_list
+%type <relation_list>       group_by_columns
+%type <string>              group_by_attr
+%type <relation_list>       group_by_attr_list
 %type <rel_attr_list>       attr_list
 %type <expression>          expression
 %type <expression_list>     expression_list
@@ -164,8 +202,10 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            help_stmt
 %type <sql_node>            exit_stmt
 %type <sql_node>            command_wrapper
+%type <sql_node>            inner_join_node
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
+%type <func>                func
 
 %left '+' '-'
 %left '*' '/'
@@ -316,8 +356,30 @@ attr_def_list:
       delete $2;
     }
     ;
-    
+
 attr_def:
+    simple_attr_def
+    {
+      $$ = $1;
+    }
+    | simple_attr_def NOTNULL
+    {
+      $$ = $1;
+    }
+    | simple_attr_def NULLABLE
+    {
+      $$ = $1;
+      $$->nullable = true;
+      $$->length ++;
+    }
+    | simple_attr_def NULLVALUE
+    {
+      $$ = $1;
+      $$->nullable = true;
+      $$->length ++;
+    }
+
+simple_attr_def:
     ID type LBRACE number RBRACE 
     {
       $$ = new AttrInfoSqlNode;
@@ -345,17 +407,45 @@ type:
     | DATE_T   { $$=DATES; }
     ;
 insert_stmt:        /*insert   语句的语法解析树*/
-    INSERT INTO ID VALUES LBRACE value value_list RBRACE 
+    INSERT INTO ID VALUES value_row value_rows
     {
       $$ = new ParsedSqlNode(SCF_INSERT);
       $$->insertion.relation_name = $3;
-      if ($7 != nullptr) {
-        $$->insertion.values.swap(*$7);
+      if ($6 != nullptr) {
+        $$->insertion.values.swap(*$6);
       }
-      $$->insertion.values.emplace_back(*$6);
+      std::copy($5->begin(), $5->end(), std::back_inserter($$->insertion.values));
       std::reverse($$->insertion.values.begin(), $$->insertion.values.end());
-      delete $6;
+      delete $5;
       free($3);
+    }
+    ;
+
+value_rows:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA value_row value_rows{ 
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::vector<Value>;
+      }
+      std::copy($2->begin(), $2->end(), std::back_inserter(*$$));
+      delete $2;
+    }
+    ;
+
+value_row:
+    LBRACE value value_list RBRACE
+    {
+      $$ = new std::vector<Value>;
+      if ($3 != nullptr) {
+        $$->swap(*$3);
+      }
+      $$->emplace_back(*$2);
+      delete $2;
     }
     ;
 
@@ -383,13 +473,26 @@ value:
       $$ = new Value((float)$1);
       @$ = @1;
     }
-    |SSS {
-      
-        char *tmp = common::substr($1,1,strlen($1)-2);
-        $$ = new Value(tmp);
-        free(tmp);
-      
+    |DATE {
+      char *tmp = common::substr($1,1,strlen($1)-2);
+      $$ = new Value((Date)tmp);
+      free(tmp);
+      if (!$$->get_date().check()){
+        YYABORT;
+      }
     }
+    |SSS {
+      char *tmp = common::substr($1,1,strlen($1)-2);
+      $$ = new Value(tmp);
+      free(tmp);
+    }
+    |NULLVALUE{
+      $$ = new Value();
+      $$->set_type(AttrType::NULLTYPE);
+      $$->set_nullable(true);
+      $$->set_is_null(true);
+    }
+
     ;
     
 delete_stmt:    /*  delete 语句的语法解析树*/
@@ -420,7 +523,7 @@ update_stmt:      /*  update 语句的语法解析树*/
     }
     ;
 select_stmt:        /*  select 语句的语法解析树*/
-    SELECT select_attr FROM ID rel_list where
+    SELECT select_attr FROM ID rel_list where group_by_columns
     {
       $$ = new ParsedSqlNode(SCF_SELECT);
       if ($2 != nullptr) {
@@ -437,6 +540,39 @@ select_stmt:        /*  select 语句的语法解析树*/
       if ($6 != nullptr) {
         $$->selection.conditions.swap(*$6);
         delete $6;
+      }
+
+      if($7 != nullptr) {
+        $$->selection.group_by_columns.swap(*$7);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        delete $7;
+      }
+      free($4);
+    }
+    | SELECT select_attr FROM ID inner_join_node where group_by_columns
+    {
+      if ($5 != nullptr){
+        $$ = $5;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+      $$->selection.relations.push_back($4);
+      std::reverse($$->selection.relations.begin(), $$->selection.relations.end());
+
+      if ($2 != nullptr) {
+        $$->selection.attributes.swap(*$2);
+        delete $2;
+      }
+
+      if ($6 != nullptr) {
+        std::copy($6->begin(), $6->end(), std::back_inserter($$->selection.conditions));
+        delete $6;
+      }
+
+      if($7 != nullptr) {
+        $$->selection.group_by_columns.swap(*$7);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        delete $7;
       }
       free($4);
     }
@@ -526,6 +662,27 @@ rel_attr:
       free($1);
       free($3);
     }
+    | func LBRACE ID RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = $3;
+      $$->func = $1;
+      free($3);
+    }
+    | func LBRACE '*' RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = "*";
+      if ($1 != AggregationFunc::COUNTFUN)
+        YYABORT;
+      $$->func = $1;
+    }
+    | func LBRACE ID DOT ID RBRACE {
+      $$ = new RelAttrSqlNode;;
+      $$->relation_name = $3;
+      $$->attribute_name = $5;
+      $$->func = $1;
+      free($3);
+      free($5);
+    }
     ;
 
 attr_list:
@@ -561,6 +718,23 @@ rel_list:
       free($2);
     }
     ;
+func:
+    MAX {
+      $$ = AggregationFunc::MAXFUN;
+    }
+    | MIN {
+      $$ = AggregationFunc::MINFUN;
+    }
+    | COUNT {
+      $$ = AggregationFunc::COUNTFUN;
+    }
+    | AVG {
+      $$ = AggregationFunc::AVGFUN;
+    }
+    | SUM {
+      $$ = AggregationFunc::SUMFUN;
+    }
+    ;
 where:
     /* empty */
     {
@@ -576,37 +750,55 @@ condition_list:
       $$ = nullptr;
     }
     | condition {
-      $$ = new std::vector<ConditionSqlNode>;
-      $$->emplace_back(*$1);
-      delete $1;
+      if ($1 != nullptr) {
+        $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
+      else
+        $$ = nullptr;
     }
     | condition AND condition_list {
       $$ = $3;
-      $$->emplace_back(*$1);
-      delete $1;
+      if ($1 != nullptr){
+        if ($$ == nullptr)
+          $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
     }
     ;
 condition:
     rel_attr comp_op value
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 1;
-      $$->left_attr = *$1;
-      $$->right_is_attr = 0;
-      $$->right_value = *$3;
-      $$->comp = $2;
+      if ($3->nullable() && $3->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 1;
+        $$->left_attr = *$1;
+        $$->right_is_attr = 0;
+        $$->right_value = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
     }
     | value comp_op value 
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      $$->left_value = *$1;
-      $$->right_is_attr = 0;
-      $$->right_value = *$3;
-      $$->comp = $2;
+      if ($1->nullable() && $1->is_null())
+        $$ = always_false();
+      else if ($3->nullable() && $3->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 0;
+        $$->left_value = *$1;
+        $$->right_is_attr = 0;
+        $$->right_value = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
@@ -625,15 +817,67 @@ condition:
     }
     | value comp_op rel_attr
     {
-      $$ = new ConditionSqlNode;
-      $$->left_is_attr = 0;
-      $$->left_value = *$1;
-      $$->right_is_attr = 1;
-      $$->right_attr = *$3;
-      $$->comp = $2;
+      if ($1->nullable() && $1->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 0;
+        $$->left_value = *$1;
+        $$->right_is_attr = 1;
+        $$->right_attr = *$3;
+        $$->comp = $2;
+      }
 
       delete $1;
       delete $3;
+    }
+    | value ISNULL
+    {
+      $$ = always_false();
+
+      delete $1;
+    }
+    | rel_attr ISNULL
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 0;
+      Value null_value = Value();
+      null_value.set_nullable(true);
+      null_value.set_is_null(true);
+      $$->right_value = null_value;
+      $$->comp = CompOp::EQUAL_TO;
+
+      delete $1;
+    }
+    | value ISNOTNULL
+    {
+      $$ = nullptr;
+
+      delete $1;
+    }
+    | rel_attr ISNOTNULL
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 0;
+      Value null_value = Value();
+      null_value.set_nullable(true);
+      null_value.set_is_null(-1);
+      $$->right_value = null_value;
+      $$->comp = CompOp::EQUAL_TO;
+
+      delete $1;
+    }
+    | NULLISNULL
+    {
+      $$ = nullptr;
+    }
+    | NULLISNOTNULL
+    {
+      $$ = always_false();
     }
     ;
 
@@ -644,6 +888,88 @@ comp_op:
     | LE { $$ = LESS_EQUAL; }
     | GE { $$ = GREAT_EQUAL; }
     | NE { $$ = NOT_EQUAL; }
+    ;
+
+group_by_columns:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | GROUPBY group_by_attr group_by_attr_list
+    {
+      $$ = new std::vector<std::string>;
+      if ($3 != nullptr){
+        $$->swap(*$3);
+        delete $3;
+      }
+      $$->push_back($2);
+      free($2);
+    }
+
+group_by_attr_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA group_by_attr group_by_attr_list{
+      if ($3 != nullptr){
+        $$ = $3;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+
+      $$->push_back($2);
+      free($2);
+    }
+    ;
+
+group_by_attr:
+    ID {
+      $$ = $1;
+    }
+    | ID DOT ID {
+      int len1 = strlen($1);
+      int len2 = strlen($3);
+      int len = len1 + len2 + 2;
+      char *temp = new char[len];
+      temp[len1] = '.';
+      temp[len - 1] = '\0';
+      memcpy(temp, $1, len1);
+      memcpy(temp + len1 + 1, $3, len2);
+      $$ = temp;
+    }
+    ;
+
+inner_join_node:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | INNERJOIN ID inner_join_node
+    {      
+      if ($3 != nullptr){
+        $$ = $3;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($2);
+      free($2);
+    }
+    | INNERJOIN ID ON condition_list inner_join_node
+    {
+      if ($5 != nullptr){
+        $$ = $5;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      if ($4 == nullptr)
+        YYABORT;
+      std::copy($4->begin(), $4->end(), std::back_inserter($$->selection.conditions));
+      $$->selection.relations.push_back($2);
+      free($2);
+    }
     ;
 
 load_data_stmt:

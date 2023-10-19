@@ -46,6 +46,14 @@ public:
   }
 
   /**
+<<<<<<< HEAD
+=======
+   * @brief 删除索引
+  */
+  virtual RC drop() = 0;
+
+  /**
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
    * @brief 插入一条数据
    * 
    * @param record 插入的记录，当前假设记录是定长的

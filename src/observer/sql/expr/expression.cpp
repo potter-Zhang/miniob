@@ -89,10 +89,33 @@ ComparisonExpr::~ComparisonExpr()
 RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &result) const
 {
   RC rc = RC::SUCCESS;
-  int cmp_result = left.compare(right, rc);
-  if (OB_FAIL(rc)) {
+  bool left_null = left.nullable() && left.is_null();
+  bool right_null = right.nullable() && right.is_null();
+  // right.is_null() == -1表示not null
+  if (right.is_null() == -1){
+    if (!left_null && right_null && comp_ == EQUAL_TO){
+      result = true;
+      return rc;
+    }
+    else if(left_null && right_null && comp_ == EQUAL_TO){
+      result = false;
+      return rc;
+    }
+  }
+  else if (left_null && right_null && comp_ == EQUAL_TO){
+    if (left.attr_type() != UNDEFINED && right.attr_type() != UNDEFINED) {
+      result = false;
+      return rc;
+    }
+    result = true;
     return rc;
   }
+  else if (left_null || right_null){
+    result = false;
+    return rc;
+  }
+    
+  int cmp_result = left.compare(right);
   result = false;
   switch (comp_) {
     case EQUAL_TO: {

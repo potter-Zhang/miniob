@@ -35,7 +35,11 @@ class IndexMeta
 public:
   IndexMeta() = default;
 
+<<<<<<< HEAD
   RC init(const char *name, const FieldMeta &field);
+=======
+  RC init(const char *name, const FieldMeta &field);//, bool nullable);
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 public:
   const char *name() const;
@@ -50,4 +54,8 @@ public:
 protected:
   std::string name_;   // index's name
   std::string field_;  // field's name
+<<<<<<< HEAD
+=======
+  //bool nullable_ = false;
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 };

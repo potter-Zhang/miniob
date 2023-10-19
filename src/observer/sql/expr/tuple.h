@@ -174,7 +174,18 @@ public:
     FieldExpr *field_expr = speces_[index];
     const FieldMeta *field_meta = field_expr->field().meta();
     cell.set_type(field_meta->type());
-    cell.set_data(this->record_->data() + field_meta->offset(), field_meta->len());
+    char* pointer = this->record_->data() + field_meta->offset();
+    if (field_meta->nullable()) {
+      if (field_meta->nullable()){
+        cell.set_nullable(true);
+        if (pointer[0] != 0)
+          cell.set_is_null(true);
+        cell.set_data(pointer + 1, field_meta->len() - 1);
+      }
+    }
+    else {
+      cell.set_data(pointer, field_meta->len());
+    }
     return RC::SUCCESS;
   }
 
@@ -273,6 +284,10 @@ public:
   RC find_cell(const TupleCellSpec &spec, Value &cell) const override
   {
     return tuple_->find_cell(spec, cell);
+  }
+
+  const std::vector<TupleCellSpec *>& speces() const{
+    return speces_;
   }
 
 #if 0

@@ -575,9 +575,13 @@ RC RecordFileScanner::fetch_next_record_in_page()
     }
 
     // 如果有过滤条件，就用过滤条件过滤一下
+<<<<<<< HEAD
     if (condition_filter_ != nullptr && !condition_filter_->filter(next_record_, rc)) {
       if (OB_FAIL(rc))
         return rc;
+=======
+    if (condition_filter_ != nullptr && !condition_filter_->filter(next_record_)) {
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       continue;
     }
 

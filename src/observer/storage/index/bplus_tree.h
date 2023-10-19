@@ -27,6 +27,10 @@ See the Mulan PSL v2 for more details. */
 #include "storage/trx/latch_memo.h"
 #include "sql/parser/parse_defs.h"
 #include "common/lang/comparator.h"
+<<<<<<< HEAD
+=======
+#include "common/lang/string.h"
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 #include "common/log/log.h"
 
 /**
@@ -48,7 +52,10 @@ enum class BplusTreeOperationType
 /**
  * @brief 属性比较(BplusTree)
  * @ingroup BPlusTree
+<<<<<<< HEAD
  * 
+=======
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
  */
 class AttrComparator 
 {
@@ -67,12 +74,22 @@ public:
   int operator()(const char *v1, const char *v2) const
   {
     switch (attr_type_) {
+<<<<<<< HEAD
       case INTS: case DATES: {
+=======
+      case INTS: {
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
         return common::compare_int((void *)v1, (void *)v2);
       } break;
       case FLOATS: {
         return common::compare_float((void *)v1, (void *)v2);
       }
+<<<<<<< HEAD
+=======
+      case DATES: {
+        return common::compare_date((void *)v1, (void *)v2);
+      }
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       case CHARS: {
         return common::compare_string((void *)v1, attr_length_, (void *)v2, attr_length_);
       }
@@ -148,7 +165,14 @@ public:
       } break;
       case FLOATS: {
         return std::to_string(*(float *)v);
+<<<<<<< HEAD
       } break;
+=======
+      }
+      case DATES: {
+        return common::date_to_str(*(Date *)v);
+      }
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       case CHARS: {
         std::string str;
         for (int i = 0; i < attr_length_; i++) {
@@ -158,10 +182,14 @@ public:
           str.push_back(v[i]);
         }
         return str;
+<<<<<<< HEAD
       } break;
       case DATES: {        
         return Value(Value::date{*(int *)v}).to_string();
       }      
+=======
+      }
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       default: {
         ASSERT(false, "unknown attr type. %d", attr_type_);
       }
@@ -473,6 +501,14 @@ public:
             int leaf_max_size = -1);
 
   /**
+<<<<<<< HEAD
+=======
+   * 删除句柄indexHandle对应的索引文件
+  */
+  RC drop();
+
+  /**
+>>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
    * 打开名为fileName的索引文件。
    * 如果方法调用成功，则indexHandle为指向被打开的索引句柄的指针。
    * 索引句柄用于在索引中插入或删除索引项，也可用于索引的扫描

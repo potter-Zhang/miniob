@@ -8,13 +8,13 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/harry/Desktop/miniob/unittest/clog_test.cpp" "unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o" "gcc" "unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o.d"
+  "/home/harry/Desktop/miniob_test/unittest/clog_test.cpp" "unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o" "gcc" "unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/harry/Desktop/miniob/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
-  "/home/harry/Desktop/miniob/build/src/observer/CMakeFiles/observer_static.dir/DependInfo.cmake"
+  "/home/harry/Desktop/miniob_test/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
+  "/home/harry/Desktop/miniob_test/build/src/observer/CMakeFiles/observer_static.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

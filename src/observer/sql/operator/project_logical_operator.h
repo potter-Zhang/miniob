@@ -30,6 +30,7 @@ class ProjectLogicalOperator : public LogicalOperator
 {
 public:
   ProjectLogicalOperator(const std::vector<Field> &fields);
+  ProjectLogicalOperator(const std::vector<Field> &fields, int group_by_begin);
   virtual ~ProjectLogicalOperator() = default;
 
   LogicalOperatorType type() const override
@@ -49,6 +50,14 @@ public:
   {
     return fields_;
   }
+  const int group_by_begin() const
+  {
+    return group_by_begin_;
+  }
+  const void set_group_by_begin(int group_by_begin)
+  {
+    group_by_begin_ = group_by_begin;
+  }
 
 private:
   //! 投影映射的字段名称
@@ -56,4 +65,6 @@ private:
   //! 或者是执行某个函数。所以这里应该是表达式Expression。
   //! 不过现在简单处理，就使用字段来描述
   std::vector<Field> fields_;
+
+  int group_by_begin_ = -1;
 };

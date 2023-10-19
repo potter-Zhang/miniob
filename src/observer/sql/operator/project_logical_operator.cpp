@@ -16,3 +16,6 @@ See the Mulan PSL v2 for more details. */
 
 ProjectLogicalOperator::ProjectLogicalOperator(const std::vector<Field> &fields) : fields_(fields)
 {}
+
+ProjectLogicalOperator::ProjectLogicalOperator(const std::vector<Field> &fields, int group_by_begin) : fields_(fields), group_by_begin_(group_by_begin)
+{}

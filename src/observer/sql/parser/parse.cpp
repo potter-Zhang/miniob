@@ -44,6 +44,33 @@ int sql_parse(const char *st, ParsedSqlResult *sql_result);
 
 RC parse(const char *st, ParsedSqlResult *sql_result)
 {
+  int result = sql_parse(st, sql_result);
+  if (result != 0)
+     return RC::INVALID_ARGUMENT;
   sql_parse(st, sql_result);
   return RC::SUCCESS;
 }
+
+const std::string func_to_string(AggregationFunc func){
+  switch (func){
+    case NONE: {
+      return "";
+    } break;
+    case MAXFUN: {
+      return "max";
+    } break;
+    case MINFUN: {
+      return "min";
+    } break;
+    case COUNTFUN: {
+      return "count";
+    } break;
+    case AVGFUN: {
+      return "avg";
+    } break;
+    case SUMFUN: {
+      return "sum";
+    } break;
+  }
+  return "";
+};
