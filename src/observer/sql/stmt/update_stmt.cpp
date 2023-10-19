@@ -39,17 +39,14 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
 
   // check the fields number
   //Value &value = update.value;
-  const int value_num = 1;
+  
   const TableMeta &table_meta = table->table_meta();
   const int field_num = table_meta.field_num() - table_meta.sys_field_num();
-  if (field_num != value_num) {
-    LOG_WARN("schema mismatch. value num=%d, field num in schema=%d", value_num, field_num);
-    return RC::SCHEMA_FIELD_MISSING;
-  }
+  
 
   // check fields type
   const int sys_field_num = table_meta.sys_field_num();
-  const FieldMeta *field_meta = table_meta.field(sys_field_num);
+  const FieldMeta *field_meta = table_meta.field(update.attribute_name.c_str());
   const AttrType field_type = field_meta->type();
   const AttrType value_type = update.value.attr_type();
   if (field_type != value_type) {
