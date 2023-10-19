@@ -67,16 +67,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   std::vector<Field> query_fields;
   for (int i = static_cast<int>(select_sql.attributes.size()) - 1; i >= 0; i--) {
     const RelAttrSqlNode &relation_attr = select_sql.attributes[i];
-<<<<<<< HEAD
-
-    if (common::is_blank(relation_attr.relation_name.c_str()) &&
-        0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
-      for (Table *table : tables) {
-        wildcard_fields(table, query_fields);
-      }
-
-    } else if (!common::is_blank(relation_attr.relation_name.c_str())) {
-=======
     int length = query_fields.size();
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
         0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
@@ -101,7 +91,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
         }     
       }
     } else if (!common::is_blank(relation_attr.relation_name.c_str())) {      
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       const char *table_name = relation_attr.relation_name.c_str();
       const char *field_name = relation_attr.attribute_name.c_str();
 
@@ -110,10 +99,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           LOG_WARN("invalid field name while table is *. attr=%s", field_name);
           return RC::SCHEMA_FIELD_MISSING;
         }
-<<<<<<< HEAD
-        for (Table *table : tables) {
-          wildcard_fields(table, query_fields);
-=======
         // 看有没有聚合查询
         if (relation_attr.func != NONE){
           if (relation_attr.func != AggregationFunc::COUNTFUN){
@@ -125,7 +110,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           }
           for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
             iter->set_func(relation_attr.func);
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
         }
       } else {
         auto iter = table_map.find(table_name);
@@ -145,14 +129,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
           }
 
           query_fields.push_back(Field(table, field_meta));
-<<<<<<< HEAD
-=======
           // 看有没有聚合查询
           if (relation_attr.func != NONE){
             for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
               iter->set_func(relation_attr.func);
           }
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
         }
       }
     } else {
@@ -169,8 +150,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
       query_fields.push_back(Field(table, field_meta));
-<<<<<<< HEAD
-=======
       // 看有没有聚合查询
       if (relation_attr.func != NONE){
         for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
@@ -221,7 +200,6 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       }
 
       query_fields.push_back(Field(table, field_meta));
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     }
   }
 
@@ -251,10 +229,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->filter_stmt_ = filter_stmt;
-<<<<<<< HEAD
-=======
   select_stmt->group_by_begin_ = group_by_begin;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   stmt = select_stmt;
   return RC::SUCCESS;
 }

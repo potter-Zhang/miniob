@@ -1,5 +1,5 @@
 deps/common/CMakeFiles/common.dir/math/random_generator.cpp.o: \
- /home/harry/Desktop/miniob/deps/common/math/random_generator.cpp \
+ /home/harry/Desktop/miniob_test/deps/common/math/random_generator.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/11/chrono \
  /usr/include/c++/11/ratio /usr/include/c++/11/type_traits \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -42,7 +42,7 @@ deps/common/CMakeFiles/common.dir/math/random_generator.cpp.o: \
  /usr/include/c++/11/bits/cpp_type_traits.h \
  /usr/include/c++/11/ext/type_traits.h /usr/include/c++/11/concepts \
  /usr/include/c++/11/compare \
- /home/harry/Desktop/miniob/deps/common/math/random_generator.h \
+ /home/harry/Desktop/miniob_test/deps/common/math/random_generator.h \
  /usr/include/c++/11/stdlib.h /usr/include/c++/11/cstdlib \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \

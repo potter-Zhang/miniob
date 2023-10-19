@@ -265,11 +265,7 @@ std::string Value::to_string() const
   return os.str();
 }
 
-<<<<<<< HEAD
-int Value::compare(const Value &other, RC &rc) const
-=======
 int Value::compare(const Value &other) const
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 {
   if (this->attr_type_ == other.attr_type_) {
     switch (this->attr_type_) {
@@ -279,12 +275,9 @@ int Value::compare(const Value &other) const
       case FLOATS: {
         return common::compare_float((void *)&this->num_value_.float_value_, (void *)&other.num_value_.float_value_);
       } break;
-<<<<<<< HEAD
-=======
       case DATES: {
         return common::compare_date((void *)&this->num_value_.date_value_, (void *)&other.num_value_.date_value_);
       } break;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       case CHARS: {
         return common::compare_string((void *)this->str_value_.c_str(),
             this->str_value_.length(),
@@ -452,7 +445,9 @@ bool Value::get_boolean() const
 bool Value::convert_to(AttrType new_type) {
   switch (new_type) {
     case DATES: {
-      int d = get_date();
+      if (attr_type_ != CHARS)
+        return false;
+      int d = get_date().value();
       if (d != 0) {
         std::string().swap(str_value_);
         set_date(d);

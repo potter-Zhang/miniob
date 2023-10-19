@@ -1,8 +1,8 @@
 src/observer/CMakeFiles/observer_static.dir/session/thread_data.cpp.o: \
- /home/harry/Desktop/miniob/src/observer/session/thread_data.cpp \
+ /home/harry/Desktop/miniob_test/src/observer/session/thread_data.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob/src/observer/session/thread_data.h \
- /home/harry/Desktop/miniob/src/observer/session/session.h \
+ /home/harry/Desktop/miniob_test/src/observer/session/thread_data.h \
+ /home/harry/Desktop/miniob_test/src/observer/session/session.h \
  /usr/include/c++/11/string \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \

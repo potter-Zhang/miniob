@@ -61,10 +61,6 @@ RC VacuousTrx::delete_record(Table *table, Record &record)
   return table->delete_record(record);
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 RC VacuousTrx::visit_record(Table *table, Record &record, bool readonly)
 {
   return RC::SUCCESS;

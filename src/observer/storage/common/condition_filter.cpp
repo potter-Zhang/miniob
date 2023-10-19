@@ -40,11 +40,7 @@ DefaultConditionFilter::~DefaultConditionFilter()
 
 RC DefaultConditionFilter::init(const ConDesc &left, const ConDesc &right, AttrType attr_type, CompOp comp_op)
 {
-<<<<<<< HEAD
-  if (attr_type < CHARS || attr_type > FLOATS) {
-=======
   if (attr_type < CHARS || attr_type > DATES) {
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     LOG_ERROR("Invalid condition with unsupported attribute type: %d", attr_type);
     return RC::INVALID_ARGUMENT;
   }
@@ -123,11 +119,7 @@ RC DefaultConditionFilter::init(Table &table, const ConditionSqlNode &condition)
   return init(left, right, type_left, condition.comp);
 }
 
-<<<<<<< HEAD
-bool DefaultConditionFilter::filter(const Record &rec, RC &rc) const
-=======
 bool DefaultConditionFilter::filter(const Record &rec) const
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 {
   Value left_value;
   Value right_value;
@@ -145,12 +137,8 @@ bool DefaultConditionFilter::filter(const Record &rec) const
   } else {
     right_value.set_value(right_.value);
   }
-<<<<<<< HEAD
-  int cmp_result = left_value.compare(right_value, rc);
-=======
 
   int cmp_result = left_value.compare(right_value);
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
   switch (comp_op_) {
     case EQUAL_TO:
@@ -223,19 +211,10 @@ RC CompositeConditionFilter::init(Table &table, const ConditionSqlNode *conditio
   return init((const ConditionFilter **)condition_filters, condition_num, true);
 }
 
-<<<<<<< HEAD
-bool CompositeConditionFilter::filter(const Record &rec, RC &rc) const
-{
-  for (int i = 0; i < filter_num_; i++) {
-    if (!filters_[i]->filter(rec, rc)) {
-      if (OB_FAIL(rc))
-        break;
-=======
 bool CompositeConditionFilter::filter(const Record &rec) const
 {
   for (int i = 0; i < filter_num_; i++) {
     if (!filters_[i]->filter(rec)) {
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
       return false;
     }
   }

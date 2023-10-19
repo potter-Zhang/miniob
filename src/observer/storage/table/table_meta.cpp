@@ -28,15 +28,11 @@ static const Json::StaticString FIELD_FIELDS("fields");
 static const Json::StaticString FIELD_INDEXES("indexes");
 
 TableMeta::TableMeta(const TableMeta &other)
-<<<<<<< HEAD
-    : name_(other.name_), fields_(other.fields_), indexes_(other.indexes_), record_size_(other.record_size_)
-=======
     : table_id_(other.table_id_),
     name_(other.name_),
     fields_(other.fields_),
     indexes_(other.indexes_),
     record_size_(other.record_size_)
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 {}
 
 void TableMeta::swap(TableMeta &other) noexcept
@@ -81,11 +77,7 @@ RC TableMeta::init(int32_t table_id, const char *name, int field_num, const Attr
   for (int i = 0; i < field_num; i++) {
     const AttrInfoSqlNode &attr_info = attributes[i];
     rc = fields_[i + trx_field_num].init(attr_info.name.c_str(), 
-<<<<<<< HEAD
-            attr_info.type, field_offset, attr_info.length, true/*visible*/);
-=======
             attr_info.type, field_offset, attr_info.length, true/*visible*/, attr_info.nullable);
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     if (rc != RC::SUCCESS) {
       LOG_ERROR("Failed to init field meta. table name=%s, field name: %s", name, attr_info.name.c_str());
       return rc;

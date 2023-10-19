@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer_static.dir/net/ring_buffer.cpp.o: \
- /home/harry/Desktop/miniob/src/observer/net/ring_buffer.cpp \
+ /home/harry/Desktop/miniob_test/src/observer/net/ring_buffer.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/11/algorithm \
  /usr/include/c++/11/utility \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -171,9 +171,9 @@ src/observer/CMakeFiles/observer_static.dir/net/ring_buffer.cpp.o: \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob/src/observer/net/ring_buffer.h \
- /home/harry/Desktop/miniob/src/observer/common/rc.h \
- /home/harry/Desktop/miniob/deps/common/log/log.h \
+ /home/harry/Desktop/miniob_test/src/observer/net/ring_buffer.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/string.h /usr/include/strings.h /usr/include/c++/11/fstream \
  /usr/include/c++/11/istream /usr/include/c++/11/ios \
@@ -194,7 +194,8 @@ src/observer/CMakeFiles/observer_static.dir/net/ring_buffer.cpp.o: \
  /usr/include/c++/11/bits/stl_multimap.h /usr/include/c++/11/set \
  /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \
- /home/harry/Desktop/miniob/deps/common/defs.h /usr/include/c++/11/memory \
+ /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
  /usr/include/c++/11/bits/unique_ptr.h \

@@ -57,13 +57,10 @@ RC Table::create(int32_t table_id,
                  int attribute_count, 
                  const AttrInfoSqlNode attributes[])
 {
-<<<<<<< HEAD
-=======
   if (table_id < 0) {
     LOG_WARN("invalid table id. table_id=%d, table_name=%s", table_id, name);
     return RC::INVALID_ARGUMENT;
   }
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
   if (common::is_blank(name)) {
     LOG_WARN("Name cannot be empty");
@@ -129,8 +126,6 @@ RC Table::create(int32_t table_id,
   return rc;
 }
 
-<<<<<<< HEAD
-=======
 RC Table::drop(int32_t table_id, 
                const char *path, 
                const char *name, 
@@ -179,7 +174,6 @@ RC Table::drop(int32_t table_id,
   return rc;
 }
 
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 RC Table::open(const char *meta_file, const char *base_dir)
 {
   // 加载元数据文件

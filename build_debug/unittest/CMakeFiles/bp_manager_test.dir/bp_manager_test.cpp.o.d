@@ -1,7 +1,7 @@
 unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o: \
- /home/harry/Desktop/miniob/unittest/bp_manager_test.cpp \
+ /home/harry/Desktop/miniob_test/unittest/bp_manager_test.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob/src/observer/storage/buffer/disk_buffer_pool.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/buffer/disk_buffer_pool.h \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -185,9 +185,9 @@ unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob/src/observer/common/rc.h \
- /home/harry/Desktop/miniob/src/observer/common/types.h \
- /home/harry/Desktop/miniob/deps/common/lang/mutex.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/types.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/mutex.h \
  /usr/include/c++/11/condition_variable \
  /usr/include/c++/11/bits/shared_ptr.h \
  /usr/include/c++/11/bits/shared_ptr_base.h \
@@ -240,14 +240,16 @@ unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o: \
  /usr/include/c++/11/istream /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc /usr/include/c++/11/shared_mutex \
  /usr/include/c++/11/thread \
- /home/harry/Desktop/miniob/deps/common/log/log.h /usr/include/assert.h \
- /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /usr/include/assert.h /usr/include/c++/11/fstream \
+ /usr/include/c++/11/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc /usr/include/c++/11/iostream \
  /usr/include/c++/11/set /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \
- /home/harry/Desktop/miniob/deps/common/defs.h /usr/include/c++/11/memory \
+ /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
  /usr/include/c++/11/bits/shared_ptr_atomic.h \
@@ -258,18 +260,18 @@ unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob/deps/common/mm/mem_pool.h \
+ /home/harry/Desktop/miniob_test/deps/common/mm/mem_pool.h \
  /usr/include/c++/11/queue /usr/include/c++/11/deque \
  /usr/include/c++/11/bits/stl_deque.h /usr/include/c++/11/bits/deque.tcc \
  /usr/include/c++/11/bits/stl_queue.h /usr/include/c++/11/list \
  /usr/include/c++/11/bits/stl_list.h /usr/include/c++/11/bits/list.tcc \
- /home/harry/Desktop/miniob/deps/common/os/os.h \
- /home/harry/Desktop/miniob/deps/common/lang/lru_cache.h \
+ /home/harry/Desktop/miniob_test/deps/common/os/os.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/lru_cache.h \
  /usr/include/c++/11/unordered_set \
  /usr/include/c++/11/bits/unordered_set.h \
- /home/harry/Desktop/miniob/deps/common/lang/bitmap.h \
- /home/harry/Desktop/miniob/src/observer/storage/buffer/page.h \
- /home/harry/Desktop/miniob/src/observer/storage/buffer/frame.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/bitmap.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/buffer/page.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/buffer/frame.h \
  /usr/local/include/gtest/gtest.h /usr/include/c++/11/cstddef \
  /usr/include/c++/11/iomanip /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_facets_nonio.h \

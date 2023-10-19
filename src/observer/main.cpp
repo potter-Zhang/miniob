@@ -30,10 +30,6 @@ See the Mulan PSL v2 for more details. */
 using namespace common;
 
 #define NET "NET"
-<<<<<<< HEAD
-=======
-//#define TEST
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 static Server *g_server = nullptr;
 
@@ -46,10 +42,6 @@ void usage()
   std::cout << "-P: protocol. {plain(default), mysql, cli}." << std::endl;
   std::cout << "-t: transaction model. {vacuous(default), mvcc}." << std::endl;
   std::cout << "-n: buffer pool memory size in byte" << std::endl;
-<<<<<<< HEAD
-  exit(0);
-=======
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 }
 
 void parse_parameter(int argc, char **argv)
@@ -90,18 +82,12 @@ void parse_parameter(int argc, char **argv)
         process_param->set_buffer_pool_memory_size(atoi(optarg));
         break;
       case 'h':
-<<<<<<< HEAD
-      default:
-        usage();
-        return;
-=======
         usage();
         exit(0);
         return;
       default:
         std::cout << "Unknown option: " << static_cast<char>(opt) << ", ignored" << std::endl;
         break;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
     }
   }
 }
@@ -198,12 +184,6 @@ int main(int argc, char **argv)
 
   g_server = init_server();
   Server::init();
-<<<<<<< HEAD
-=======
-  #ifdef TEST
-  freopen("./test/test.txt", "r", stdin);
-  #endif
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   g_server->serve();
 
   LOG_INFO("Server stopped");

@@ -28,10 +28,7 @@ public:
   virtual ~BplusTreeIndex() noexcept;
 
   RC create(const char *file_name, const IndexMeta &index_meta, const FieldMeta &field_meta);
-<<<<<<< HEAD
-=======
   RC drop() override;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   RC open(const char *file_name, const IndexMeta &index_meta, const FieldMeta &field_meta);
   RC close();
 

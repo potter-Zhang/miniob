@@ -47,11 +47,8 @@ public:
 
   RC create_table(const char *table_name, int attribute_count, const AttrInfoSqlNode *attributes);
 
-<<<<<<< HEAD
-=======
   RC drop_table(const char *table_name);
 
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
   Table *find_table(const char *table_name) const;
   Table *find_table(int32_t table_id) const;
 

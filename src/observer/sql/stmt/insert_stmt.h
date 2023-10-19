@@ -51,20 +51,14 @@ public:
   {
     return value_amount_;
   }
-<<<<<<< HEAD
-=======
   int groups() const
   {
     return groups_;
   }
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
 private:
   Table *table_ = nullptr;
   const Value *values_ = nullptr;
   int value_amount_ = 0;
-<<<<<<< HEAD
-=======
   int groups_ = 0;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 };

@@ -37,8 +37,6 @@ public:
   {
     return field_;
   }
-<<<<<<< HEAD
-=======
   const AggregationFunc func() const
   {
     return func_;
@@ -48,7 +46,6 @@ public:
   {
     return is_star_;
   }
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
   AttrType attr_type() const
   {
@@ -72,8 +69,6 @@ public:
   {
     this->field_ = field;
   }
-<<<<<<< HEAD
-=======
   void set_func(const AggregationFunc func)
   {
     this->func_ = func;
@@ -82,7 +77,6 @@ public:
   {
     this->is_star_ = is_star;
   }
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 
   void set_int(Record &record, int value);
   int  get_int(const Record &record);
@@ -92,9 +86,6 @@ public:
 private:
   const Table *table_ = nullptr;
   const FieldMeta *field_ = nullptr;
-<<<<<<< HEAD
-=======
   AggregationFunc func_ = NONE;
   bool is_star_ = false;
->>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
 };

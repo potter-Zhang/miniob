@@ -1,5 +1,5 @@
 unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.o: \
- /home/harry/Desktop/miniob/unittest/bitmap_test.cpp \
+ /home/harry/Desktop/miniob_test/unittest/bitmap_test.cpp \
  /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -297,4 +297,4 @@ unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.o: \
  /usr/local/include/gtest/gtest-typed-test.h \
  /usr/local/include/gtest/gtest_pred_impl.h \
  /usr/local/include/gtest/gtest_prod.h \
- /home/harry/Desktop/miniob/deps/common/lang/bitmap.h
+ /home/harry/Desktop/miniob_test/deps/common/lang/bitmap.h
