@@ -171,6 +171,7 @@ RC PlainCommunicator::write_result(SessionEvent *event, bool &need_disconnect)
 
 RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disconnect)
 {
+  event->session()->set_sql_debug(true);
   sql_debug("enter write_result_internal");
   RC rc = RC::SUCCESS;
   need_disconnect = true;
