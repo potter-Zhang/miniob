@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer_static.dir/storage/persist/persist.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/storage/persist/persist.cpp \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/persist/persist.cpp \
  /usr/include/stdc-predef.h /usr/include/errno.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -27,7 +27,7 @@ src/observer/CMakeFiles/observer_static.dir/storage/persist/persist.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/persist/persist.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/persist/persist.h \
  /usr/include/x86_64-linux-gnu/sys/types.h \
  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
@@ -164,8 +164,8 @@ src/observer/CMakeFiles/observer_static.dir/storage/persist/persist.cpp.o: \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdio \
  /usr/include/c++/11/cerrno /usr/include/c++/11/bits/charconv.h \
  /usr/include/c++/11/bits/basic_string.tcc \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/rc.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/istream \
  /usr/include/c++/11/ios /usr/include/c++/11/exception \
@@ -213,7 +213,7 @@ src/observer/CMakeFiles/observer_static.dir/storage/persist/persist.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \

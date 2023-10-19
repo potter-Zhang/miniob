@@ -1,5 +1,5 @@
 deps/common/CMakeFiles/common.dir/os/pidfile.cpp.o: \
- /home/harry/Desktop/miniob_test/deps/common/os/pidfile.cpp \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/os/pidfile.cpp \
  /usr/include/stdc-predef.h /usr/include/assert.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -169,7 +169,7 @@ deps/common/CMakeFiles/common.dir/os/pidfile.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/c++/11/map \
  /usr/include/c++/11/bits/stl_tree.h \
  /usr/include/c++/11/ext/aligned_buffer.h \
@@ -192,7 +192,7 @@ deps/common/CMakeFiles/common.dir/os/pidfile.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
@@ -225,4 +225,4 @@ deps/common/CMakeFiles/common.dir/os/pidfile.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/deps/common/os/pidfile.h
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/os/pidfile.h

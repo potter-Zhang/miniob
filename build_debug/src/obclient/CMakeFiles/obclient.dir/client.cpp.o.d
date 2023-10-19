@@ -1,5 +1,5 @@
 src/obclient/CMakeFiles/obclient.dir/client.cpp.o: \
- /home/harry/Desktop/miniob_test/src/obclient/client.cpp \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/obclient/client.cpp \
  /usr/include/stdc-predef.h /usr/include/arpa/inet.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -107,7 +107,7 @@ src/obclient/CMakeFiles/obclient.dir/client.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/timex.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/istream \
  /usr/include/c++/11/ios /usr/include/c++/11/iosfwd \
  /usr/include/c++/11/bits/stringfwd.h \
@@ -240,7 +240,7 @@ src/obclient/CMakeFiles/obclient.dir/client.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/string.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/string.h \
  /usr/include/c++/11/cxxabi.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
  /usr/include/signal.h \
@@ -272,4 +272,4 @@ src/obclient/CMakeFiles/obclient.dir/client.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/lang/date.h
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/date.h

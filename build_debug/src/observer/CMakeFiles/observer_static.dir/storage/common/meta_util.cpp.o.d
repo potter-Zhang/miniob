@@ -1,8 +1,9 @@
 src/observer/CMakeFiles/observer_static.dir/storage/common/meta_util.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/storage/common/meta_util.cpp \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/common/meta_util.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/deps/common/defs.h /usr/include/errno.h \
- /usr/include/features.h /usr/include/features-time64.h \
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
+ /usr/include/errno.h /usr/include/features.h \
+ /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/bits/timesize.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -204,4 +205,4 @@ src/observer/CMakeFiles/observer_static.dir/storage/common/meta_util.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/common/meta_util.h
+ /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/common/meta_util.h

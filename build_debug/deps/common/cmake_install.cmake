@@ -1,4 +1,4 @@
-# Install script for directory: /home/harry/Desktop/miniob_test/deps/common
+# Install script for directory: /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -43,230 +43,230 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/harry/Desktop/miniob_test/build/lib/libcommon.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/lib/libcommon.a")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/conf" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/conf/ini.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/conf" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/conf/ini.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/defs.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/defs.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/io/io.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/io/io.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/io/roll_select_dir.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/io/roll_select_dir.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/io/select_dir.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/io" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/io/select_dir.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/bitmap.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/bitmap.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/comparator.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/comparator.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/date.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/date.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/defer.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/defer.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/lower_bound.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/lower_bound.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/lru_cache.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/lru_cache.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/mutex.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/mutex.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/serializable.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/serializable.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/lang/string.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/lang" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/lang/string.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/log" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/log/log.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/log" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/log/log.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/math/md5.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/math/md5.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/math/random_generator.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/math/random_generator.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/math/regex.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/math" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/math/regex.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/console_reporter.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/console_reporter.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/histogram_snapshot.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/histogram_snapshot.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/log_reporter.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/log_reporter.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/metric.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/metric.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/metrics.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/metrics.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/metrics_registry.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/metrics_registry.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/reporter.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/reporter.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/reservoir.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/reservoir.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/sampler.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/sampler.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/snapshot.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/snapshot.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/timer_snapshot.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/timer_snapshot.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/metrics/uniform_reservoir.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/metrics" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/metrics/uniform_reservoir.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/mm/debug_new.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/mm/debug_new.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/mm/mem.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/mm/mem.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/mm/mem_pool.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/mm" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/mm/mem_pool.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/os.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/os.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/path.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/path.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/pidfile.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/pidfile.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/process.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/process.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/process_param.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/process_param.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/os/signal.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/os" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/os/signal.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/callback.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/callback.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/class_factory.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/class_factory.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/event_dispatcher.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/event_dispatcher.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/example_stage.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/example_stage.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/init.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/init.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/kill_thread.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/kill_thread.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/metrics_report_event.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/metrics_report_event.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/metrics_stage.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/metrics_stage.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/seda_config.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/seda_config.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/seda_defs.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/seda_defs.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/stage.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/stage.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/stage_event.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/stage_event.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/stage_factory.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/stage_factory.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/thread_pool.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/thread_pool.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/seda/timer_stage.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/seda" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/seda/timer_stage.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/time" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/time/datetime.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/time" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/time/datetime.h")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/time" TYPE FILE FILES "/home/harry/Desktop/miniob_test/deps/common/deps/common/time/timeout_info.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/deps/common/time" TYPE FILE FILES "/home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/deps/common/time/timeout_info.h")
 endif()
 

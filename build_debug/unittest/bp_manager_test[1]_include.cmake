@@ -1,5 +1,5 @@
-if(EXISTS "/home/harry/Desktop/miniob_test/build/unittest/bp_manager_test[1]_tests.cmake")
-  include("/home/harry/Desktop/miniob_test/build/unittest/bp_manager_test[1]_tests.cmake")
+if(EXISTS "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/unittest/bp_manager_test[1]_tests.cmake")
+  include("/home/someone/桌面/myd/miniob合并/sdk_miniob/build/unittest/bp_manager_test[1]_tests.cmake")
 else()
   add_test(bp_manager_test_NOT_BUILT bp_manager_test_NOT_BUILT)
 endif()

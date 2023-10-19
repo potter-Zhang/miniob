@@ -8,12 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/harry/Desktop/miniob_test/src/obclient/client.cpp" "src/obclient/CMakeFiles/obclient.dir/client.cpp.o" "gcc" "src/obclient/CMakeFiles/obclient.dir/client.cpp.o.d"
+  "/home/someone/桌面/myd/miniob合并/sdk_miniob/src/obclient/client.cpp" "src/obclient/CMakeFiles/obclient.dir/client.cpp.o" "gcc" "src/obclient/CMakeFiles/obclient.dir/client.cpp.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/harry/Desktop/miniob_test/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
+  "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
