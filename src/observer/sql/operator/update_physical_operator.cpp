@@ -58,27 +58,10 @@ RC UpdatePhysicalOperator::next()
 
     RowTuple *row_tuple = static_cast<RowTuple *>(tuple);
     Record &record = row_tuple->record();
-    rc = trx_->delete_record(table_, record);
-    const FieldMeta *field = table_->table_meta().field(field_name_.c_str());
-    size_t copy_len = field->len();
-    if (field->type() == CHARS) {
-      const size_t data_len = value_.length();
-      if (copy_len > data_len) {
-        copy_len = data_len + 1;
-      }
-    }
-    memcpy(record.data() + field->offset(), value_.data(), copy_len);
-    
+    rc = trx_->modify_record(table_, record, field_name_.c_str(), value_);
     if (rc != RC::SUCCESS) {
-      LOG_WARN("failed to delete record: %s", strrc(rc));
       return rc;
     }
-    rc = trx_->insert_record(table_, record);
-    if (rc != RC::SUCCESS) {
-      LOG_WARN("failed to insert record: %s", strrc(rc));
-      return rc;
-    }
-    
   }
 
   return RC::RECORD_EOF;

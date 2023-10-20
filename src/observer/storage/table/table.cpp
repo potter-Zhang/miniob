@@ -496,6 +496,31 @@ RC Table::delete_record(const Record &record)
   return rc;
 }
 
+RC Table::modify_record(Record &record, const char *field_name, Value new_value)
+{
+  RC rc = RC::SUCCESS;
+  rc = delete_entry_of_indexes(record.data(), record.rid(), true);
+  const FieldMeta *field = table_meta_.field(field_name);
+    size_t copy_len = field->len();
+    if (field->type() == CHARS) {
+      const size_t data_len = new_value.length();
+      if (copy_len > data_len) {
+        copy_len = data_len + 1;
+      }
+    }
+    memcpy(record.data() + field->offset(), new_value.data(), copy_len);
+
+  rc = visit_record(record.rid(), false, [&](Record &rec) {
+    memcpy(rec.data() + field->offset(), new_value.data(), copy_len);
+  });
+
+  if (rc != RC::SUCCESS) {
+    return rc;
+  }
+  insert_entry_of_indexes(record.data(), record.rid());
+  return rc;
+}
+
 RC Table::insert_entry_of_indexes(const char *record, const RID &rid)
 {
   RC rc = RC::SUCCESS;
