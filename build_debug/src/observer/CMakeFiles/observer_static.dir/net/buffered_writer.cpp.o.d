@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer_static.dir/net/buffered_writer.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/net/buffered_writer.cpp \
+ /home/harry/Desktop/miniob_test/src/observer/net/buffered_writer.cpp \
  /usr/include/stdc-predef.h /usr/include/x86_64-linux-gnu/sys/errno.h \
  /usr/include/errno.h /usr/include/features.h \
  /usr/include/features-time64.h \
@@ -178,6 +178,6 @@ src/observer/CMakeFiles/observer_static.dir/net/buffered_writer.cpp.o: \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/net/buffered_writer.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/net/ring_buffer.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/rc.h
+ /home/harry/Desktop/miniob_test/src/observer/net/buffered_writer.h \
+ /home/harry/Desktop/miniob_test/src/observer/net/ring_buffer.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h

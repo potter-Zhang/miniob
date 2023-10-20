@@ -1,7 +1,7 @@
 unittest/CMakeFiles/log_test.dir/log_test.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/unittest/log_test.cpp \
+ /home/harry/Desktop/miniob_test/unittest/log_test.cpp \
  /usr/include/stdc-predef.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/unittest/log_test.h \
+ /home/harry/Desktop/miniob_test/unittest/log_test.h \
  /usr/include/c++/11/string \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -302,9 +302,9 @@ unittest/CMakeFiles/log_test.dir/log_test.cpp.o: \
  /usr/local/include/gtest/gtest-typed-test.h \
  /usr/local/include/gtest/gtest_pred_impl.h \
  /usr/local/include/gtest/gtest_prod.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
  /usr/include/c++/11/fstream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h
+ /home/harry/Desktop/miniob_test/deps/common/defs.h

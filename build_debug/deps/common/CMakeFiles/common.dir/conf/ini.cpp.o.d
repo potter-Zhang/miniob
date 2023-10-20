@@ -1,5 +1,5 @@
 deps/common/CMakeFiles/common.dir/conf/ini.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/conf/ini.cpp \
+ /home/harry/Desktop/miniob_test/deps/common/conf/ini.cpp \
  /usr/include/stdc-predef.h /usr/include/errno.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -160,7 +160,7 @@ deps/common/CMakeFiles/common.dir/conf/ini.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/conf/ini.h \
+ /home/harry/Desktop/miniob_test/deps/common/conf/ini.h \
  /usr/include/c++/11/iostream /usr/include/c++/11/map \
  /usr/include/c++/11/bits/stl_tree.h \
  /usr/include/c++/11/ext/aligned_buffer.h \
@@ -173,7 +173,7 @@ deps/common/CMakeFiles/common.dir/conf/ini.cpp.o: \
  /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/set \
  /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
+ /home/harry/Desktop/miniob_test/deps/common/defs.h \
  /usr/include/c++/11/memory /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
@@ -213,7 +213,7 @@ deps/common/CMakeFiles/common.dir/conf/ini.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/string.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/string.h \
  /usr/include/c++/11/cxxabi.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
  /usr/include/c++/11/stdlib.h /usr/include/signal.h \
@@ -242,8 +242,8 @@ deps/common/CMakeFiles/common.dir/conf/ini.cpp.o: \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/date.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/c++/11/functional /usr/include/c++/11/bits/std_function.h \
  /usr/include/c++/11/unordered_map /usr/include/c++/11/bits/hashtable.h \

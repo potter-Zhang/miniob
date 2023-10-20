@@ -1,5 +1,5 @@
 unittest/CMakeFiles/persist_test.dir/persist_test.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/unittest/persist_test.cpp \
+ /home/harry/Desktop/miniob_test/unittest/persist_test.cpp \
  /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -297,9 +297,9 @@ unittest/CMakeFiles/persist_test.dir/persist_test.cpp.o: \
  /usr/local/include/gtest/gtest-typed-test.h \
  /usr/local/include/gtest/gtest_pred_impl.h \
  /usr/local/include/gtest/gtest_prod.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/persist/persist.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/persist/persist.h \
  /usr/include/fcntl.h /usr/include/x86_64-linux-gnu/bits/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
  /usr/include/linux/falloc.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/rc.h
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h

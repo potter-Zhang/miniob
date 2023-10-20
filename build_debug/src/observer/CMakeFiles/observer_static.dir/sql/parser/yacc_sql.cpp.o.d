@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer_static.dir/sql/parser/yacc_sql.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/yacc_sql.cpp \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/yacc_sql.cpp \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -171,7 +171,7 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/yacc_sql.cpp.o: \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/istream \
  /usr/include/c++/11/ios /usr/include/c++/11/bits/basic_ios.h \
@@ -191,7 +191,7 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/yacc_sql.cpp.o: \
  /usr/include/c++/11/bits/stl_multimap.h /usr/include/c++/11/set \
  /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
+ /home/harry/Desktop/miniob_test/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
@@ -228,7 +228,7 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/yacc_sql.cpp.o: \
  /usr/include/c++/11/bits/ranges_uninitialized.h \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/string.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/string.h \
  /usr/include/c++/11/cxxabi.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
  /usr/include/signal.h \
@@ -254,17 +254,17 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/yacc_sql.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
  /usr/include/c++/11/sstream /usr/include/c++/11/bits/sstream.tcc \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/date.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/parse_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/value.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/yacc_sql.hpp \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/lex_sql.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/expr/expression.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/field/field.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/table/table.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/table/table_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/rc.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/field/field_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/index/index_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/serializable.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/yacc_sql.hpp
+ /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse_defs.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/value.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/yacc_sql.hpp \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/lex_sql.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/expr/expression.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/field/field.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/table/table.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/table/table_meta.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/field/field_meta.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/index/index_meta.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/serializable.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/yacc_sql.hpp

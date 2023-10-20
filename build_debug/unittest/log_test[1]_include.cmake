@@ -1,5 +1,5 @@
-if(EXISTS "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/unittest/log_test[1]_tests.cmake")
-  include("/home/someone/桌面/myd/miniob合并/sdk_miniob/build/unittest/log_test[1]_tests.cmake")
+if(EXISTS "/home/harry/Desktop/miniob_test/build/unittest/log_test[1]_tests.cmake")
+  include("/home/harry/Desktop/miniob_test/build/unittest/log_test[1]_tests.cmake")
 else()
   add_test(log_test_NOT_BUILT log_test_NOT_BUILT)
 endif()

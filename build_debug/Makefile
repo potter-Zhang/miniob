@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/someone/桌面/myd/miniob合并/sdk_miniob
+CMAKE_SOURCE_DIR = /home/harry/Desktop/miniob_test
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/someone/桌面/myd/miniob合并/sdk_miniob/build
+CMAKE_BINARY_DIR = /home/harry/Desktop/miniob_test/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/someone/桌面/myd/miniob合并/sdk_miniob/build/CMakeFiles /home/someone/桌面/myd/miniob合并/sdk_miniob/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/harry/Desktop/miniob_test/build/CMakeFiles /home/harry/Desktop/miniob_test/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/someone/桌面/myd/miniob合并/sdk_miniob/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/harry/Desktop/miniob_test/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

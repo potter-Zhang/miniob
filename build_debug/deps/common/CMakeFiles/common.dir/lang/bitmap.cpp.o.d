@@ -1,4 +1,4 @@
 deps/common/CMakeFiles/common.dir/lang/bitmap.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/bitmap.cpp \
+ /home/harry/Desktop/miniob_test/deps/common/lang/bitmap.cpp \
  /usr/include/stdc-predef.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/bitmap.h
+ /home/harry/Desktop/miniob_test/deps/common/lang/bitmap.h

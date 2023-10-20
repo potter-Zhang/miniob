@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/someone/桌面/myd/miniob合并/sdk_miniob
-# Build directory: /home/someone/桌面/myd/miniob合并/sdk_miniob/build
+# Source directory: /home/harry/Desktop/miniob_test
+# Build directory: /home/harry/Desktop/miniob_test/build
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

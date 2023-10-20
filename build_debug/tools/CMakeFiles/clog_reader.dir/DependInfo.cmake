@@ -8,13 +8,13 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/someone/桌面/myd/miniob合并/sdk_miniob/tools/clog_reader_cmd.cpp" "tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o" "gcc" "tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o.d"
+  "/home/harry/Desktop/miniob_test/tools/clog_reader_cmd.cpp" "tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o" "gcc" "tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/src/observer/CMakeFiles/observer_static.dir/DependInfo.cmake"
-  "/home/someone/桌面/myd/miniob合并/sdk_miniob/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
+  "/home/harry/Desktop/miniob_test/build/src/observer/CMakeFiles/observer_static.dir/DependInfo.cmake"
+  "/home/harry/Desktop/miniob_test/build/deps/common/CMakeFiles/common.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

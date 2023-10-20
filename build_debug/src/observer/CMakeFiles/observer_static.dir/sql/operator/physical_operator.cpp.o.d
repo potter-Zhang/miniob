@@ -1,7 +1,7 @@
 src/observer/CMakeFiles/observer_static.dir/sql/operator/physical_operator.cpp.o: \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/operator/physical_operator.cpp \
+ /home/harry/Desktop/miniob_test/src/observer/sql/operator/physical_operator.cpp \
  /usr/include/stdc-predef.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/operator/physical_operator.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/operator/physical_operator.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -204,9 +204,9 @@ src/observer/CMakeFiles/observer_static.dir/sql/operator/physical_operator.cpp.o
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/rc.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/expr/tuple.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/log/log.h \
+ /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/expr/tuple.h \
+ /home/harry/Desktop/miniob_test/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/string.h /usr/include/strings.h /usr/include/c++/11/fstream \
  /usr/include/c++/11/istream /usr/include/c++/11/bits/istream.tcc \
@@ -226,20 +226,20 @@ src/observer/CMakeFiles/observer_static.dir/sql/operator/physical_operator.cpp.o
  /usr/include/c++/11/bits/hashtable_policy.h \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/unordered_map.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/expr/tuple_cell.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/table/table.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/table/table_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/field/field_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/parse_defs.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/value.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/date.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/index/index_meta.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/deps/common/lang/serializable.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/parser/parse.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/sql/expr/expression.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/field/field.h \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/storage/record/record.h \
+ /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/expr/tuple_cell.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/table/table.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/table/table_meta.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/field/field_meta.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse_defs.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/value.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/index/index_meta.h \
+ /home/harry/Desktop/miniob_test/deps/common/lang/serializable.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse.h \
+ /home/harry/Desktop/miniob_test/src/observer/sql/expr/expression.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/field/field.h \
+ /home/harry/Desktop/miniob_test/src/observer/storage/record/record.h \
  /usr/include/c++/11/limits /usr/include/c++/11/sstream \
  /usr/include/c++/11/bits/sstream.tcc \
- /home/someone/桌面/myd/miniob合并/sdk_miniob/src/observer/common/types.h
+ /home/harry/Desktop/miniob_test/src/observer/common/types.h
