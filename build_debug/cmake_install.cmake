@@ -1,4 +1,4 @@
-# Install script for directory: /home/harry/Desktop/miniob_test
+# Install script for directory: /home/someone/桌面/myd/miniob-2023/sdk_miniob
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -43,7 +43,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ FILES "/home/harry/Desktop/miniob_test/etc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ FILES "/home/someone/桌面/myd/miniob-2023/sdk_miniob/etc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -52,13 +52,13 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/harry/Desktop/miniob_test/build/deps/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/src/obclient/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/src/observer/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/test/perf/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/benchmark/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/tools/cmake_install.cmake")
-  include("/home/harry/Desktop/miniob_test/build/unittest/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/deps/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/obclient/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/test/perf/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/benchmark/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/tools/cmake_install.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/unittest/cmake_install.cmake")
 
 endif()
 
@@ -70,5 +70,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/harry/Desktop/miniob_test/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

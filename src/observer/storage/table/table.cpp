@@ -508,7 +508,7 @@ RC Table::modify_record(Record &record, const char *field_name, Value new_value)
         copy_len = data_len + 1;
       }
     }
-    memcpy(record.data() + field->offset(), new_value.data(), copy_len);
+    
 
   rc = visit_record(record.rid(), false, [&](Record &rec) {
     memcpy(rec.data() + field->offset(), new_value.data(), copy_len);

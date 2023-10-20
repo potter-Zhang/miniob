@@ -1,7 +1,7 @@
 src/observer/CMakeFiles/observer_static.dir/sql/stmt/create_table_stmt.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/sql/stmt/create_table_stmt.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/create_table_stmt.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/stmt/create_table_stmt.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/create_table_stmt.h \
  /usr/include/c++/11/string \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -144,9 +144,9 @@ src/observer/CMakeFiles/observer_static.dir/sql/stmt/create_table_stmt.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/src/observer/sql/stmt/stmt.h \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse_defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/stmt.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/parse_defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
@@ -211,8 +211,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/stmt/create_table_stmt.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/value.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
- /home/harry/Desktop/miniob_test/src/observer/event/sql_debug.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/value.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/date.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/event/sql_debug.h \
  /usr/include/c++/11/list /usr/include/c++/11/bits/stl_list.h \
  /usr/include/c++/11/bits/list.tcc

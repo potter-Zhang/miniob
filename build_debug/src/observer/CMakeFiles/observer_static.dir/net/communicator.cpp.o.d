@@ -1,7 +1,7 @@
 src/observer/CMakeFiles/observer_static.dir/net/communicator.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/net/communicator.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/communicator.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/src/observer/net/communicator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/communicator.h \
  /usr/include/c++/11/string \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -177,18 +177,18 @@ src/observer/CMakeFiles/observer_static.dir/net/communicator.cpp.o: \
  /usr/local/include/event2/bufferevent_struct.h \
  /usr/local/include/event2/bufferevent_compat.h \
  /usr/local/include/event2/tag.h /usr/local/include/event2/tag_compat.h \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
- /home/harry/Desktop/miniob_test/src/observer/net/mysql_communicator.h \
- /home/harry/Desktop/miniob_test/src/observer/net/plain_communicator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/mysql_communicator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/plain_communicator.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/src/observer/net/cli_communicator.h \
- /home/harry/Desktop/miniob_test/src/observer/net/buffered_writer.h \
- /home/harry/Desktop/miniob_test/src/observer/net/ring_buffer.h \
- /home/harry/Desktop/miniob_test/src/observer/session/session.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/mutex.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/cli_communicator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/buffered_writer.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/ring_buffer.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/session/session.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/mutex.h \
  /usr/include/string.h /usr/include/strings.h \
  /usr/include/c++/11/unordered_map \
  /usr/include/c++/11/ext/aligned_buffer.h \
@@ -261,7 +261,7 @@ src/observer/CMakeFiles/observer_static.dir/net/communicator.cpp.o: \
  /usr/include/c++/11/istream /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc /usr/include/c++/11/mutex \
  /usr/include/c++/11/shared_mutex /usr/include/c++/11/thread \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/assert.h /usr/include/c++/11/fstream \
  /usr/include/c++/11/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
@@ -270,7 +270,7 @@ src/observer/CMakeFiles/observer_static.dir/net/communicator.cpp.o: \
  /usr/include/c++/11/set /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h /usr/include/c++/11/functional \
  /usr/include/c++/11/bits/std_function.h \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \

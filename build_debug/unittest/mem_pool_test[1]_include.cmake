@@ -1,5 +1,5 @@
-if(EXISTS "/home/harry/Desktop/miniob_test/build/unittest/mem_pool_test[1]_tests.cmake")
-  include("/home/harry/Desktop/miniob_test/build/unittest/mem_pool_test[1]_tests.cmake")
+if(EXISTS "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/unittest/mem_pool_test[1]_tests.cmake")
+  include("/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/unittest/mem_pool_test[1]_tests.cmake")
 else()
   add_test(mem_pool_test_NOT_BUILT mem_pool_test_NOT_BUILT)
 endif()

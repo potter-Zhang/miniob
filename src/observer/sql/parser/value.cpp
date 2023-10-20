@@ -443,29 +443,37 @@ bool Value::get_boolean() const
 
 
 bool Value::convert_to(AttrType new_type) {
-  switch (new_type) {
-    case DATES: {
-      if (attr_type_ != CHARS)
+  if (nullable_ && is_null_){
+    attr_type_ = new_type;
+    length_ = 1; //图方便，可能有问题
+    get_data();
+    return true;
+  }
+  else{
+    switch (new_type) {
+      case DATES: {
+        if (attr_type_ != CHARS)
+          return false;
+        int d = get_date().value();
+        if (d != 0) {
+          std::string().swap(str_value_);
+          set_date(d);
+          return true;
+        }
         return false;
-      int d = get_date().value();
-      if (d != 0) {
-        std::string().swap(str_value_);
-        set_date(d);
-        return true;
       }
-      return false;
-    }
 
-    case FLOATS: {
-      if (attr_type_ == INTS) {
-        set_float(get_int());
-        return true;
+      case FLOATS: {
+        if (attr_type_ == INTS) {
+          set_float(get_int());
+          return true;
+        }
+        return false;
       }
-      return false;
+        
+      default:
+        return false;
     }
-      
-    default:
-      return false;
   }
   return false;
 }

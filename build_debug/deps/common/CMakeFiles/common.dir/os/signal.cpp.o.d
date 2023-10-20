@@ -1,7 +1,7 @@
 deps/common/CMakeFiles/common.dir/os/signal.cpp.o: \
- /home/harry/Desktop/miniob_test/deps/common/os/signal.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/os/signal.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/deps/common/os/signal.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/os/signal.h \
  /usr/include/signal.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -54,7 +54,7 @@ deps/common/CMakeFiles/common.dir/os/signal.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
  /usr/include/x86_64-linux-gnu/sys/select.h \
@@ -215,7 +215,7 @@ deps/common/CMakeFiles/common.dir/os/signal.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \

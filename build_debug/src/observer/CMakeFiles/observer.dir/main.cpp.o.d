@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer.dir/main.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/main.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/main.cpp \
  /usr/include/stdc-predef.h /usr/include/netinet/in.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -181,13 +181,13 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc \
- /home/harry/Desktop/miniob_test/src/observer/common/init.h \
- /home/harry/Desktop/miniob_test/deps/common/os/process_param.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/init.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/os/process_param.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/conf/ini.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/conf/ini.h \
  /usr/include/c++/11/map /usr/include/c++/11/bits/stl_tree.h \
  /usr/include/c++/11/ext/aligned_buffer.h \
  /usr/include/c++/11/bits/node_handle.h \
@@ -199,9 +199,9 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/set \
  /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \
- /home/harry/Desktop/miniob_test/src/observer/common/ini_setting.h \
- /home/harry/Desktop/miniob_test/deps/common/os/process.h \
- /home/harry/Desktop/miniob_test/deps/common/os/signal.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/ini_setting.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/os/process.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/os/signal.h \
  /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
  /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
@@ -224,12 +224,12 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/string.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/string.h \
  /usr/include/c++/11/cxxabi.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
  /usr/include/c++/11/stdlib.h /usr/include/c++/11/sstream \
  /usr/include/c++/11/bits/sstream.tcc \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
@@ -265,13 +265,13 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
- /home/harry/Desktop/miniob_test/src/observer/net/server.h \
- /home/harry/Desktop/miniob_test/deps/common/seda/stage.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/date.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/server.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/seda/stage.h \
  /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
  /usr/include/c++/11/bits/deque.tcc /usr/include/c++/11/list \
  /usr/include/c++/11/bits/stl_list.h /usr/include/c++/11/bits/list.tcc \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/string.h /usr/include/strings.h \
  /usr/include/c++/11/functional /usr/include/c++/11/bits/std_function.h \
@@ -279,9 +279,9 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/include/c++/11/bits/hashtable_policy.h \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/unordered_map.h \
- /home/harry/Desktop/miniob_test/deps/common/seda/stage_event.h \
- /home/harry/Desktop/miniob_test/src/observer/net/server_param.h \
- /home/harry/Desktop/miniob_test/src/observer/net/communicator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/seda/stage_event.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/server_param.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/communicator.h \
  /usr/local/include/event.h /usr/local/include/event2/event-config.h \
  /usr/local/include/evutil.h /usr/local/include/event2/util.h \
  /usr/local/include/event2/visibility.h /usr/include/netdb.h \
@@ -298,4 +298,4 @@ src/observer/CMakeFiles/observer.dir/main.cpp.o: \
  /usr/local/include/event2/bufferevent_struct.h \
  /usr/local/include/event2/bufferevent_compat.h \
  /usr/local/include/event2/tag.h /usr/local/include/event2/tag_compat.h \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h

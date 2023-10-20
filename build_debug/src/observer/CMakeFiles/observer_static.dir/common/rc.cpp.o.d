@@ -1,4 +1,4 @@
 src/observer/CMakeFiles/observer_static.dir/common/rc.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h

@@ -1,5 +1,5 @@
 src/observer/CMakeFiles/observer_static.dir/sql/parser/lex_sql.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/lex_sql.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/lex_sql.cpp \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -62,8 +62,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/lex_sql.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/c++/11/bits/std_abs.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse_defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/date.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/parse_defs.h \
  /usr/include/c++/11/memory /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/c++/11/bits/functexcept.h \
  /usr/include/c++/11/bits/exception_defines.h \
@@ -206,8 +206,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/lex_sql.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/value.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/value.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc /usr/include/c++/11/bits/codecvt.h \
@@ -226,5 +226,5 @@ src/observer/CMakeFiles/observer_static.dir/sql/parser/lex_sql.cpp.o: \
  /usr/include/c++/11/bits/hashtable_policy.h \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/unordered_map.h \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/yacc_sql.hpp
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/yacc_sql.hpp

@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/harry/Desktop/miniob_test
+CMAKE_SOURCE_DIR = /home/someone/桌面/myd/miniob-2023/sdk_miniob
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/harry/Desktop/miniob_test/build
+CMAKE_BINARY_DIR = /home/someone/桌面/myd/miniob-2023/sdk_miniob/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,14 +142,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/harry/Desktop/miniob_test/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/harry/Desktop/miniob_test/build/CMakeFiles /home/harry/Desktop/miniob_test/build/unittest//CMakeFiles/progress.marks
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/harry/Desktop/miniob_test/build/CMakeFiles 0
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/someone/桌面/myd/miniob-2023/sdk_miniob/build/CMakeFiles /home/someone/桌面/myd/miniob-2023/sdk_miniob/build/unittest//CMakeFiles/progress.marks
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/someone/桌面/myd/miniob-2023/sdk_miniob/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/clean
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/clean
 .PHONY : clean
 
 # The main clean target
@@ -158,22 +158,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/preinstall
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/preinstall
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/harry/Desktop/miniob_test/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 unittest/CMakeFiles/arithmetic_expression_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/arithmetic_expression_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/arithmetic_expression_test.dir/rule
 .PHONY : unittest/CMakeFiles/arithmetic_expression_test.dir/rule
 
 # Convenience name for target.
@@ -182,12 +182,12 @@ arithmetic_expression_test: unittest/CMakeFiles/arithmetic_expression_test.dir/r
 
 # fast build rule for target.
 arithmetic_expression_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/build
 .PHONY : arithmetic_expression_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/bitmap_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bitmap_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bitmap_test.dir/rule
 .PHONY : unittest/CMakeFiles/bitmap_test.dir/rule
 
 # Convenience name for target.
@@ -196,12 +196,12 @@ bitmap_test: unittest/CMakeFiles/bitmap_test.dir/rule
 
 # fast build rule for target.
 bitmap_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/build
 .PHONY : bitmap_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/bp_manager_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bp_manager_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bp_manager_test.dir/rule
 .PHONY : unittest/CMakeFiles/bp_manager_test.dir/rule
 
 # Convenience name for target.
@@ -210,12 +210,12 @@ bp_manager_test: unittest/CMakeFiles/bp_manager_test.dir/rule
 
 # fast build rule for target.
 bp_manager_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/build
 .PHONY : bp_manager_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/bplus_tree_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bplus_tree_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/bplus_tree_test.dir/rule
 .PHONY : unittest/CMakeFiles/bplus_tree_test.dir/rule
 
 # Convenience name for target.
@@ -224,12 +224,12 @@ bplus_tree_test: unittest/CMakeFiles/bplus_tree_test.dir/rule
 
 # fast build rule for target.
 bplus_tree_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/build
 .PHONY : bplus_tree_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/clog_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/clog_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/clog_test.dir/rule
 .PHONY : unittest/CMakeFiles/clog_test.dir/rule
 
 # Convenience name for target.
@@ -238,12 +238,12 @@ clog_test: unittest/CMakeFiles/clog_test.dir/rule
 
 # fast build rule for target.
 clog_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/build
 .PHONY : clog_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/log_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/log_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/log_test.dir/rule
 .PHONY : unittest/CMakeFiles/log_test.dir/rule
 
 # Convenience name for target.
@@ -252,12 +252,12 @@ log_test: unittest/CMakeFiles/log_test.dir/rule
 
 # fast build rule for target.
 log_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/build
 .PHONY : log_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/lower_bound_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/lower_bound_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/lower_bound_test.dir/rule
 .PHONY : unittest/CMakeFiles/lower_bound_test.dir/rule
 
 # Convenience name for target.
@@ -266,12 +266,12 @@ lower_bound_test: unittest/CMakeFiles/lower_bound_test.dir/rule
 
 # fast build rule for target.
 lower_bound_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/build
 .PHONY : lower_bound_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/md5_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/md5_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/md5_test.dir/rule
 .PHONY : unittest/CMakeFiles/md5_test.dir/rule
 
 # Convenience name for target.
@@ -280,12 +280,12 @@ md5_test: unittest/CMakeFiles/md5_test.dir/rule
 
 # fast build rule for target.
 md5_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/build
 .PHONY : md5_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/mem_pool_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/mem_pool_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/mem_pool_test.dir/rule
 .PHONY : unittest/CMakeFiles/mem_pool_test.dir/rule
 
 # Convenience name for target.
@@ -294,12 +294,12 @@ mem_pool_test: unittest/CMakeFiles/mem_pool_test.dir/rule
 
 # fast build rule for target.
 mem_pool_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/build
 .PHONY : mem_pool_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/persist_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/persist_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/persist_test.dir/rule
 .PHONY : unittest/CMakeFiles/persist_test.dir/rule
 
 # Convenience name for target.
@@ -308,12 +308,12 @@ persist_test: unittest/CMakeFiles/persist_test.dir/rule
 
 # fast build rule for target.
 persist_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/build
 .PHONY : persist_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/pidfile_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/pidfile_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/pidfile_test.dir/rule
 .PHONY : unittest/CMakeFiles/pidfile_test.dir/rule
 
 # Convenience name for target.
@@ -322,12 +322,12 @@ pidfile_test: unittest/CMakeFiles/pidfile_test.dir/rule
 
 # fast build rule for target.
 pidfile_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/build
 .PHONY : pidfile_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/record_manager_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/record_manager_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/record_manager_test.dir/rule
 .PHONY : unittest/CMakeFiles/record_manager_test.dir/rule
 
 # Convenience name for target.
@@ -336,12 +336,12 @@ record_manager_test: unittest/CMakeFiles/record_manager_test.dir/rule
 
 # fast build rule for target.
 record_manager_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/build
 .PHONY : record_manager_test/fast
 
 # Convenience name for target.
 unittest/CMakeFiles/ring_buffer_test.dir/rule:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/ring_buffer_test.dir/rule
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unittest/CMakeFiles/ring_buffer_test.dir/rule
 .PHONY : unittest/CMakeFiles/ring_buffer_test.dir/rule
 
 # Convenience name for target.
@@ -350,7 +350,7 @@ ring_buffer_test: unittest/CMakeFiles/ring_buffer_test.dir/rule
 
 # fast build rule for target.
 ring_buffer_test/fast:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/build
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/build
 .PHONY : ring_buffer_test/fast
 
 arithmetic_expression_test.o: arithmetic_expression_test.cpp.o
@@ -358,7 +358,7 @@ arithmetic_expression_test.o: arithmetic_expression_test.cpp.o
 
 # target to build an object file
 arithmetic_expression_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.o
 .PHONY : arithmetic_expression_test.cpp.o
 
 arithmetic_expression_test.i: arithmetic_expression_test.cpp.i
@@ -366,7 +366,7 @@ arithmetic_expression_test.i: arithmetic_expression_test.cpp.i
 
 # target to preprocess a source file
 arithmetic_expression_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.i
 .PHONY : arithmetic_expression_test.cpp.i
 
 arithmetic_expression_test.s: arithmetic_expression_test.cpp.s
@@ -374,7 +374,7 @@ arithmetic_expression_test.s: arithmetic_expression_test.cpp.s
 
 # target to generate assembly for a file
 arithmetic_expression_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/arithmetic_expression_test.dir/build.make unittest/CMakeFiles/arithmetic_expression_test.dir/arithmetic_expression_test.cpp.s
 .PHONY : arithmetic_expression_test.cpp.s
 
 bitmap_test.o: bitmap_test.cpp.o
@@ -382,7 +382,7 @@ bitmap_test.o: bitmap_test.cpp.o
 
 # target to build an object file
 bitmap_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.o
 .PHONY : bitmap_test.cpp.o
 
 bitmap_test.i: bitmap_test.cpp.i
@@ -390,7 +390,7 @@ bitmap_test.i: bitmap_test.cpp.i
 
 # target to preprocess a source file
 bitmap_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.i
 .PHONY : bitmap_test.cpp.i
 
 bitmap_test.s: bitmap_test.cpp.s
@@ -398,7 +398,7 @@ bitmap_test.s: bitmap_test.cpp.s
 
 # target to generate assembly for a file
 bitmap_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bitmap_test.dir/build.make unittest/CMakeFiles/bitmap_test.dir/bitmap_test.cpp.s
 .PHONY : bitmap_test.cpp.s
 
 bp_manager_test.o: bp_manager_test.cpp.o
@@ -406,7 +406,7 @@ bp_manager_test.o: bp_manager_test.cpp.o
 
 # target to build an object file
 bp_manager_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.o
 .PHONY : bp_manager_test.cpp.o
 
 bp_manager_test.i: bp_manager_test.cpp.i
@@ -414,7 +414,7 @@ bp_manager_test.i: bp_manager_test.cpp.i
 
 # target to preprocess a source file
 bp_manager_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.i
 .PHONY : bp_manager_test.cpp.i
 
 bp_manager_test.s: bp_manager_test.cpp.s
@@ -422,7 +422,7 @@ bp_manager_test.s: bp_manager_test.cpp.s
 
 # target to generate assembly for a file
 bp_manager_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bp_manager_test.dir/build.make unittest/CMakeFiles/bp_manager_test.dir/bp_manager_test.cpp.s
 .PHONY : bp_manager_test.cpp.s
 
 bplus_tree_test.o: bplus_tree_test.cpp.o
@@ -430,7 +430,7 @@ bplus_tree_test.o: bplus_tree_test.cpp.o
 
 # target to build an object file
 bplus_tree_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.o
 .PHONY : bplus_tree_test.cpp.o
 
 bplus_tree_test.i: bplus_tree_test.cpp.i
@@ -438,7 +438,7 @@ bplus_tree_test.i: bplus_tree_test.cpp.i
 
 # target to preprocess a source file
 bplus_tree_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.i
 .PHONY : bplus_tree_test.cpp.i
 
 bplus_tree_test.s: bplus_tree_test.cpp.s
@@ -446,7 +446,7 @@ bplus_tree_test.s: bplus_tree_test.cpp.s
 
 # target to generate assembly for a file
 bplus_tree_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/bplus_tree_test.dir/build.make unittest/CMakeFiles/bplus_tree_test.dir/bplus_tree_test.cpp.s
 .PHONY : bplus_tree_test.cpp.s
 
 clog_test.o: clog_test.cpp.o
@@ -454,7 +454,7 @@ clog_test.o: clog_test.cpp.o
 
 # target to build an object file
 clog_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.o
 .PHONY : clog_test.cpp.o
 
 clog_test.i: clog_test.cpp.i
@@ -462,7 +462,7 @@ clog_test.i: clog_test.cpp.i
 
 # target to preprocess a source file
 clog_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.i
 .PHONY : clog_test.cpp.i
 
 clog_test.s: clog_test.cpp.s
@@ -470,7 +470,7 @@ clog_test.s: clog_test.cpp.s
 
 # target to generate assembly for a file
 clog_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/clog_test.dir/build.make unittest/CMakeFiles/clog_test.dir/clog_test.cpp.s
 .PHONY : clog_test.cpp.s
 
 log_test.o: log_test.cpp.o
@@ -478,7 +478,7 @@ log_test.o: log_test.cpp.o
 
 # target to build an object file
 log_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.o
 .PHONY : log_test.cpp.o
 
 log_test.i: log_test.cpp.i
@@ -486,7 +486,7 @@ log_test.i: log_test.cpp.i
 
 # target to preprocess a source file
 log_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.i
 .PHONY : log_test.cpp.i
 
 log_test.s: log_test.cpp.s
@@ -494,7 +494,7 @@ log_test.s: log_test.cpp.s
 
 # target to generate assembly for a file
 log_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/log_test.dir/build.make unittest/CMakeFiles/log_test.dir/log_test.cpp.s
 .PHONY : log_test.cpp.s
 
 lower_bound_test.o: lower_bound_test.cpp.o
@@ -502,7 +502,7 @@ lower_bound_test.o: lower_bound_test.cpp.o
 
 # target to build an object file
 lower_bound_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.o
 .PHONY : lower_bound_test.cpp.o
 
 lower_bound_test.i: lower_bound_test.cpp.i
@@ -510,7 +510,7 @@ lower_bound_test.i: lower_bound_test.cpp.i
 
 # target to preprocess a source file
 lower_bound_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.i
 .PHONY : lower_bound_test.cpp.i
 
 lower_bound_test.s: lower_bound_test.cpp.s
@@ -518,7 +518,7 @@ lower_bound_test.s: lower_bound_test.cpp.s
 
 # target to generate assembly for a file
 lower_bound_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/lower_bound_test.dir/build.make unittest/CMakeFiles/lower_bound_test.dir/lower_bound_test.cpp.s
 .PHONY : lower_bound_test.cpp.s
 
 md5_test.o: md5_test.cpp.o
@@ -526,7 +526,7 @@ md5_test.o: md5_test.cpp.o
 
 # target to build an object file
 md5_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.o
 .PHONY : md5_test.cpp.o
 
 md5_test.i: md5_test.cpp.i
@@ -534,7 +534,7 @@ md5_test.i: md5_test.cpp.i
 
 # target to preprocess a source file
 md5_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.i
 .PHONY : md5_test.cpp.i
 
 md5_test.s: md5_test.cpp.s
@@ -542,7 +542,7 @@ md5_test.s: md5_test.cpp.s
 
 # target to generate assembly for a file
 md5_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/md5_test.dir/build.make unittest/CMakeFiles/md5_test.dir/md5_test.cpp.s
 .PHONY : md5_test.cpp.s
 
 mem_pool_test.o: mem_pool_test.cpp.o
@@ -550,7 +550,7 @@ mem_pool_test.o: mem_pool_test.cpp.o
 
 # target to build an object file
 mem_pool_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.o
 .PHONY : mem_pool_test.cpp.o
 
 mem_pool_test.i: mem_pool_test.cpp.i
@@ -558,7 +558,7 @@ mem_pool_test.i: mem_pool_test.cpp.i
 
 # target to preprocess a source file
 mem_pool_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.i
 .PHONY : mem_pool_test.cpp.i
 
 mem_pool_test.s: mem_pool_test.cpp.s
@@ -566,7 +566,7 @@ mem_pool_test.s: mem_pool_test.cpp.s
 
 # target to generate assembly for a file
 mem_pool_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/mem_pool_test.dir/build.make unittest/CMakeFiles/mem_pool_test.dir/mem_pool_test.cpp.s
 .PHONY : mem_pool_test.cpp.s
 
 persist_test.o: persist_test.cpp.o
@@ -574,7 +574,7 @@ persist_test.o: persist_test.cpp.o
 
 # target to build an object file
 persist_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.o
 .PHONY : persist_test.cpp.o
 
 persist_test.i: persist_test.cpp.i
@@ -582,7 +582,7 @@ persist_test.i: persist_test.cpp.i
 
 # target to preprocess a source file
 persist_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.i
 .PHONY : persist_test.cpp.i
 
 persist_test.s: persist_test.cpp.s
@@ -590,7 +590,7 @@ persist_test.s: persist_test.cpp.s
 
 # target to generate assembly for a file
 persist_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/persist_test.dir/build.make unittest/CMakeFiles/persist_test.dir/persist_test.cpp.s
 .PHONY : persist_test.cpp.s
 
 pidfile_test.o: pidfile_test.cpp.o
@@ -598,7 +598,7 @@ pidfile_test.o: pidfile_test.cpp.o
 
 # target to build an object file
 pidfile_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.o
 .PHONY : pidfile_test.cpp.o
 
 pidfile_test.i: pidfile_test.cpp.i
@@ -606,7 +606,7 @@ pidfile_test.i: pidfile_test.cpp.i
 
 # target to preprocess a source file
 pidfile_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.i
 .PHONY : pidfile_test.cpp.i
 
 pidfile_test.s: pidfile_test.cpp.s
@@ -614,7 +614,7 @@ pidfile_test.s: pidfile_test.cpp.s
 
 # target to generate assembly for a file
 pidfile_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/pidfile_test.dir/build.make unittest/CMakeFiles/pidfile_test.dir/pidfile_test.cpp.s
 .PHONY : pidfile_test.cpp.s
 
 record_manager_test.o: record_manager_test.cpp.o
@@ -622,7 +622,7 @@ record_manager_test.o: record_manager_test.cpp.o
 
 # target to build an object file
 record_manager_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.o
 .PHONY : record_manager_test.cpp.o
 
 record_manager_test.i: record_manager_test.cpp.i
@@ -630,7 +630,7 @@ record_manager_test.i: record_manager_test.cpp.i
 
 # target to preprocess a source file
 record_manager_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.i
 .PHONY : record_manager_test.cpp.i
 
 record_manager_test.s: record_manager_test.cpp.s
@@ -638,7 +638,7 @@ record_manager_test.s: record_manager_test.cpp.s
 
 # target to generate assembly for a file
 record_manager_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/record_manager_test.dir/build.make unittest/CMakeFiles/record_manager_test.dir/record_manager_test.cpp.s
 .PHONY : record_manager_test.cpp.s
 
 ring_buffer_test.o: ring_buffer_test.cpp.o
@@ -646,7 +646,7 @@ ring_buffer_test.o: ring_buffer_test.cpp.o
 
 # target to build an object file
 ring_buffer_test.cpp.o:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.o
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.o
 .PHONY : ring_buffer_test.cpp.o
 
 ring_buffer_test.i: ring_buffer_test.cpp.i
@@ -654,7 +654,7 @@ ring_buffer_test.i: ring_buffer_test.cpp.i
 
 # target to preprocess a source file
 ring_buffer_test.cpp.i:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.i
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.i
 .PHONY : ring_buffer_test.cpp.i
 
 ring_buffer_test.s: ring_buffer_test.cpp.s
@@ -662,7 +662,7 @@ ring_buffer_test.s: ring_buffer_test.cpp.s
 
 # target to generate assembly for a file
 ring_buffer_test.cpp.s:
-	cd /home/harry/Desktop/miniob_test/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.s
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f unittest/CMakeFiles/ring_buffer_test.dir/build.make unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.s
 .PHONY : ring_buffer_test.cpp.s
 
 # Help Target
@@ -741,6 +741,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/harry/Desktop/miniob_test/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

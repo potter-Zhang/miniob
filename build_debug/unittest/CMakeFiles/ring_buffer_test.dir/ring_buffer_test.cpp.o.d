@@ -1,5 +1,5 @@
 unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.o: \
- /home/harry/Desktop/miniob_test/unittest/ring_buffer_test.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/unittest/ring_buffer_test.cpp \
  /usr/include/stdc-predef.h /usr/local/include/gtest/gtest.h \
  /usr/include/c++/11/cstddef \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -298,5 +298,5 @@ unittest/CMakeFiles/ring_buffer_test.dir/ring_buffer_test.cpp.o: \
  /usr/local/include/gtest/gtest-typed-test.h \
  /usr/local/include/gtest/gtest_pred_impl.h \
  /usr/local/include/gtest/gtest_prod.h \
- /home/harry/Desktop/miniob_test/src/observer/net/ring_buffer.h \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/net/ring_buffer.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h

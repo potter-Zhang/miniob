@@ -50,6 +50,10 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
   const AttrType field_type = field_meta->type();
   const AttrType value_type = update.value.attr_type();
   if (field_type != value_type) {
+    if (value_type == AggregationFunc::NONE) {
+      if (!field_meta->nullable())
+        return RC::INVALID_ARGUMENT;
+    }
     if (!update.value.convert_to(field_type)) {
       return RC::SCHEMA_FIELD_TYPE_MISMATCH;
     }

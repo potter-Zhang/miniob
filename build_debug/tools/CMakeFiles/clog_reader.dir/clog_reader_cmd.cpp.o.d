@@ -1,5 +1,5 @@
 tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o: \
- /home/harry/Desktop/miniob_test/tools/clog_reader_cmd.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/tools/clog_reader_cmd.cpp \
  /usr/include/stdc-predef.h /usr/include/inttypes.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -16,7 +16,7 @@ tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/clog/clog.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/clog/clog.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/include/c++/11/list /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -208,16 +208,16 @@ tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/record/record.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/record/record.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc /usr/include/c++/11/limits \
  /usr/include/c++/11/sstream /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc \
- /home/harry/Desktop/miniob_test/src/observer/common/rc.h \
- /home/harry/Desktop/miniob_test/src/observer/common/types.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/rc.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/types.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/string.h /usr/include/strings.h /usr/include/c++/11/fstream \
  /usr/include/c++/11/bits/codecvt.h \
@@ -230,13 +230,13 @@ tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o: \
  /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h /usr/include/c++/11/functional \
  /usr/include/c++/11/bits/std_function.h \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/index/index_meta.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/field/field_meta.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/parse_defs.h \
- /home/harry/Desktop/miniob_test/src/observer/sql/parser/value.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/date.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/persist/persist.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/index/index_meta.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/field/field_meta.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/parse_defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/parser/value.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/date.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/persist/persist.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -256,7 +256,7 @@ tools/CMakeFiles/clog_reader.dir/clog_reader_cmd.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
  /usr/include/linux/falloc.h /usr/include/c++/11/stdlib.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/mutex.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/mutex.h \
  /usr/include/c++/11/condition_variable /usr/include/c++/11/chrono \
  /usr/include/c++/11/ratio /usr/include/c++/11/ctime \
  /usr/include/c++/11/bits/parse_numbers.h \

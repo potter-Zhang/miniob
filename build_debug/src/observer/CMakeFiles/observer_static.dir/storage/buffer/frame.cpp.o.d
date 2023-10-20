@@ -1,7 +1,7 @@
 src/observer/CMakeFiles/observer_static.dir/storage/buffer/frame.cpp.o: \
- /home/harry/Desktop/miniob_test/src/observer/storage/buffer/frame.cpp \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/buffer/frame.cpp \
  /usr/include/stdc-predef.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/buffer/frame.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/buffer/frame.h \
  /usr/include/pthread.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -181,9 +181,9 @@ src/observer/CMakeFiles/observer_static.dir/storage/buffer/frame.cpp.o: \
  /usr/include/x86_64-linux-gnu/asm/unistd.h \
  /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
  /usr/include/x86_64-linux-gnu/bits/syscall.h \
- /home/harry/Desktop/miniob_test/src/observer/storage/buffer/page.h \
- /home/harry/Desktop/miniob_test/src/observer/common/types.h \
- /home/harry/Desktop/miniob_test/deps/common/log/log.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/buffer/page.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/types.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/log/log.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/assert.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/istream \
  /usr/include/c++/11/ios /usr/include/c++/11/bits/ios_base.h \
@@ -215,7 +215,7 @@ src/observer/CMakeFiles/observer_static.dir/storage/buffer/frame.cpp.o: \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/harry/Desktop/miniob_test/deps/common/defs.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/defs.h \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
@@ -232,7 +232,7 @@ src/observer/CMakeFiles/observer_static.dir/storage/buffer/frame.cpp.o: \
  /usr/include/c++/11/bits/uses_allocator_args.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
  /usr/include/c++/11/pstl/execution_defs.h \
- /home/harry/Desktop/miniob_test/deps/common/lang/mutex.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/mutex.h \
  /usr/include/c++/11/condition_variable /usr/include/c++/11/stop_token \
  /usr/include/c++/11/bits/std_thread.h /usr/include/c++/11/semaphore \
  /usr/include/c++/11/bits/semaphore_base.h \
@@ -241,5 +241,5 @@ src/observer/CMakeFiles/observer_static.dir/storage/buffer/frame.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/semaphore.h \
  /usr/include/c++/11/sstream /usr/include/c++/11/bits/sstream.tcc \
  /usr/include/c++/11/shared_mutex /usr/include/c++/11/thread \
- /home/harry/Desktop/miniob_test/src/observer/session/thread_data.h \
- /home/harry/Desktop/miniob_test/src/observer/session/session.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/session/thread_data.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/session/session.h
