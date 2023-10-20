@@ -78,8 +78,8 @@ void SessionStage::cleanup()
 
 void SessionStage::handle_event(StageEvent *event)
 {
-  dynamic_cast<SessionEvent *>(event)->session()->set_sql_debug(true);
-  sql_debug("1");
+  //dynamic_cast<SessionEvent *>(event)->session()->set_sql_debug(true);
+  //sql_debug("1");
   // right now, we just support only one event.
   handle_request(event);
 
