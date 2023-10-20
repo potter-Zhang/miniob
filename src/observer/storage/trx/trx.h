@@ -147,6 +147,7 @@ public:
   virtual RC insert_record(Table *table, Record &record) = 0;
   virtual RC delete_record(Table *table, Record &record) = 0;
   virtual RC visit_record(Table *table, Record &record, bool readonly) = 0;
+  virtual RC modify_record(Table *table, Record &record, const char *field_name, Value new_value) {}
 
   virtual RC start_if_need() = 0;
   virtual RC commit() = 0;
