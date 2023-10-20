@@ -47,6 +47,9 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
   // check fields type
   const int sys_field_num = table_meta.sys_field_num();
   const FieldMeta *field_meta = table_meta.field(update.attribute_name.c_str());
+  if (field_meta == nullptr) {
+    return RC::INVALID_ARGUMENT;
+  }
   const AttrType field_type = field_meta->type();
   const AttrType value_type = update.value.attr_type();
   if (field_type != value_type) {
