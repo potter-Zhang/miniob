@@ -17,6 +17,34 @@ See the Mulan PSL v2 for more details. */
 #include "common/defs.h"
 #include "date.h"
 
+bool like_match(const char* s1, const char* s2) {
+    while (*s1 != '\0' && (*s1 == *s2 || *s2 == '_')) {
+        if (*s2 != '\'') {
+            s1++;
+        }
+        s2++;
+    }
+
+    if (*s2 == '\0') {
+        return *s1 == '\0';
+    }
+
+    if (*s2 == '%') {
+        s2++; // skip '%'
+        if (*s2 == '\0') {
+            return true;
+        }
+        while (*s1 != '\0') {
+            if (like_match(s1, s2)) {
+                return true;
+            }
+            s1++;
+        }
+    }
+
+    return false;
+}
+
 namespace common {
 
 
@@ -124,6 +152,18 @@ int compare_int_string(void *arg1, void * arg2, int length){
   int v1 = *(int*)arg1;
   int v2 = atoi((const char*)s2);
   return v1 - v2;
+}
+
+int compare_like(void *arg1, void *arg2)
+{
+  const char *s1 = (const char*)arg1;
+  const char *s2 = (const char*)arg2;
+  if(like_match(s1, s2)) {
+    return 1; // Match
+  }
+  else{
+    return 0;
+  }
 }
 
 } // namespace common

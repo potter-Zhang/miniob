@@ -7955,7 +7955,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/expr/expression.cpp.o: ../src/ob
   /usr/include/c++/11/limits \
   /usr/include/c++/11/sstream \
   /usr/include/c++/11/bits/sstream.tcc \
-  ../src/observer/common/types.h
+  ../src/observer/common/types.h \
+  ../deps/common/lang/comparator.h
 
 src/observer/CMakeFiles/observer_static.dir/sql/expr/tuple_cell.cpp.o: ../src/observer/sql/expr/tuple_cell.cpp \
   /usr/include/stdc-predef.h \

@@ -241,4 +241,5 @@ src/observer/CMakeFiles/observer_static.dir/sql/expr/expression.cpp.o: \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/storage/record/record.h \
  /usr/include/c++/11/limits /usr/include/c++/11/sstream \
  /usr/include/c++/11/bits/sstream.tcc \
- /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/types.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/types.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/comparator.h

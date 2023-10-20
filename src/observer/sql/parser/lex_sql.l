@@ -121,6 +121,8 @@ MIN                                     RETURN_TOKEN(MIN);
 COUNT                                   RETURN_TOKEN(COUNT);
 AVG                                     RETURN_TOKEN(AVG);
 SUM                                     RETURN_TOKEN(SUM);
+LIKE                                    RETURN_TOKEN(LIKE);
+NOT{WHITE_SAPCE}+LIKE                   RETURN_TOKEN(NOT_LIKE);
 GROUP{WHITE_SAPCE}+BY                   RETURN_TOKEN(GROUPBY);
 INNER{WHITE_SAPCE}+JOIN                 RETURN_TOKEN(INNERJOIN);
 NOT{WHITE_SAPCE}+NULL                   RETURN_TOKEN(NOTNULL);
@@ -142,6 +144,7 @@ NULL{WHITE_SAPCE}+IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL RETURN_TOKEN(NULLISNOTNU
 "<"                                     RETURN_TOKEN(LT);
 ">="                                    RETURN_TOKEN(GE);
 ">"                                     RETURN_TOKEN(GT);
+
 
 "+" |
 "-" |

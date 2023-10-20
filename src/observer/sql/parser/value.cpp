@@ -97,6 +97,7 @@ void Value::set_data(char *data, int length)
   switch (attr_type_) {
     case CHARS: {
       set_string(data, length);
+      return;
     } break;
     case INTS: {
       num_value_.int_value_ = *(int *)data;
@@ -252,7 +253,11 @@ std::string Value::to_string() const
         os << num_value_.bool_value_;
       } break;
       case CHARS: {
-        os << str_value_;
+        if (nullable_) {
+          os << str_value_.substr(1);
+        }
+        else
+          os << str_value_;
       } break;
       case NULLTYPE: {
         os << std::string("NULL");
@@ -445,7 +450,7 @@ bool Value::get_boolean() const
 bool Value::convert_to(AttrType new_type) {
   if (nullable_ && is_null_){
     attr_type_ = new_type;
-    length_ = 1; //图方便，可能有问题
+    length_ = 2; //图方便，可能有问题
     get_data();
     return true;
   }
@@ -466,6 +471,14 @@ bool Value::convert_to(AttrType new_type) {
       case FLOATS: {
         if (attr_type_ == INTS) {
           set_float(get_int());
+          return true;
+        }
+        return false;
+      }
+
+      case INTS: {
+        if (attr_type_ == FLOATS) {
+          set_int(get_float());
           return true;
         }
         return false;

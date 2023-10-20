@@ -112,6 +112,8 @@ ConditionSqlNode *always_false()
         LE
         GE
         NE
+        LIKE
+        NOT_LIKE
         MAX
         MIN
         COUNT
@@ -888,6 +890,8 @@ comp_op:
     | LE { $$ = LESS_EQUAL; }
     | GE { $$ = GREAT_EQUAL; }
     | NE { $$ = NOT_EQUAL; }
+    | LIKE { $$ = LIKE_A; }
+    | NOT_LIKE { $$ = LIKE_NOT; }
     ;
 
 group_by_columns:

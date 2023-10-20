@@ -7982,6 +7982,7 @@ src/observer/CMakeFiles/observer_static.dir/sql/expr/expression.cpp.o
  /usr/include/c++/11/sstream
  /usr/include/c++/11/bits/sstream.tcc
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/common/types.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/deps/common/lang/comparator.h
 
 src/observer/CMakeFiles/observer_static.dir/sql/expr/tuple_cell.cpp.o
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/expr/tuple_cell.cpp

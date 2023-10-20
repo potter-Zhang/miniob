@@ -69,9 +69,16 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
         }
       }
       else {
-        LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
-            table_name, field_meta->name(), field_type, value_type);
-        return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+        if (!values[i].convert_to(field_type)) {
+          LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
+              table_name, field_meta->name(), field_type, value_type);
+          return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+        }
+        else {
+          values[i].set_nullable(field_meta->nullable());
+          values[i].set_length(field_meta->len());
+          values[i].get_data();
+        }
       }
     }
     else {
