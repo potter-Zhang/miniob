@@ -1,6 +1,0 @@
-[2023-10-19 06:47:39.782557 pid:14919 tid:7f3217235740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
-[2023-10-19 09:19:41.702499 pid:19658 tid:7f9ccdc4d740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
-[2023-10-19 09:26:51.437421 pid:21577 tid:7f608922f740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
-[2023-10-19 09:29:30.278807 pid:22532 tid:7fd3d6f0e740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
-[2023-10-19 09:55:38.031416 pid:24289 tid:7f78fac43740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
-[2023-10-19 12:26:23.782158 pid:38880 tid:7f1d4ae7b740 ctx:0 INFO: cleanup@mem_pool.h:237] >> Successfully do cleanup, this->name:BufPool.
