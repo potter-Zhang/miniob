@@ -261,5 +261,19 @@ RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std:
       }
     }
   }
+
+  // avg还没有除以总数
+  auto iter_avg_num = num.begin();
+  for (int i = 0; i < cell_num; i ++) {
+    if (funcs_[i] == AggregationFunc::AVGFUN){
+      if (!(values[i].nullable() && values[i].is_null())){
+        if (values[i].attr_type() == AttrType::INTS){
+          values[i].set_float(values[i].get_int());
+        }
+        values[i].set_float(values[i].get_float() / *iter_avg_num);
+        iter_avg_num ++;
+      }
+    }
+  }
   return RC::SUCCESS;
 }
