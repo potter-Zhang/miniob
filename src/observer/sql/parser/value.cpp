@@ -293,9 +293,19 @@ int Value::compare(const Value &other) const
         return common::compare_date((void *)&this->num_value_.date_value_, (void *)&other.num_value_.date_value_);
       } break;
       case CHARS: {
-        return common::compare_string((void *)this->str_value_.c_str(),
+        void * pointer_this;
+        if (this->nullable_)
+          pointer_this = (void *)this->str_value_.c_str() + 1;
+        else
+          pointer_this = (void *)this->str_value_.c_str();
+        void * pointer_other;
+        if (other.nullable())
+          pointer_other = (void *)other.str_value_.c_str() + 1;
+        else
+          pointer_other = (void *)other.str_value_.c_str();
+        return common::compare_string(pointer_this,
             this->str_value_.length(),
-            (void *)other.str_value_.c_str(),
+            pointer_other,
             other.str_value_.length());
       } break;
       case BOOLEANS: {
