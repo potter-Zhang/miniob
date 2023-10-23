@@ -34,8 +34,13 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/calc_physical_operator.h"
 #include "sql/operator/update_logical_operator.h"
 #include "sql/operator/update_physical_operator.h"
+#include "sql/operator/group_logical_operator.h"
+#include "sql/operator/group_physical_operator.h"
+#include "sql/operator/aggregation_logical_operator.h"
+#include "sql/operator/aggregation_physical_operator.h"
 #include "sql/expr/expression.h"
 #include "common/log/log.h"
+#include "physical_plan_generator.h"
 
 using namespace std;
 
@@ -70,6 +75,14 @@ RC PhysicalPlanGenerator::create(LogicalOperator &logical_operator, unique_ptr<P
 
     case LogicalOperatorType::UPDATE: {
       return create_plan(static_cast<UpdateLogicalOperator &>(logical_operator), oper);
+    } break;
+
+    case LogicalOperatorType::GROUP: {
+      return create_plan(static_cast<GroupLogicalOperator &>(logical_operator), oper);
+    } break;
+
+    case LogicalOperatorType::AGGREGATION: {
+      return create_plan(static_cast<AggregationLogicalOperator &>(logical_operator), oper);
     } break;
 
     case LogicalOperatorType::EXPLAIN: {
@@ -204,12 +217,17 @@ RC PhysicalPlanGenerator::create_plan(ProjectLogicalOperator &project_oper, uniq
     }
   }
 
-  int group_by_begin = project_oper.group_by_begin();
-  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator(group_by_begin);
+  //int group_by_begin = project_oper.group_by_begin();
+  ProjectPhysicalOperator *project_operator = new ProjectPhysicalOperator();//group_by_begin);
   const vector<Field> &project_fields = project_oper.fields();
   for (const Field &field : project_fields) {
     project_operator->add_projection(field.table(), field.meta(), field.func());
   }
+  /*if (project_operator->is_aggregation() && project_operator->group_by_begin() == -1) {
+    std::vector<AggregationFunc> funcs = project_operator->funcs();
+    if (std::find(funcs.begin(), funcs.end(), AggregationFunc::NONE) != funcs.end())
+      return RC::INVALID_ARGUMENT;
+  }*/ //resolve阶段就可以做检验了
 
   if (child_phy_oper) {
     project_operator->add_child(std::move(child_phy_oper));
@@ -279,6 +297,53 @@ RC PhysicalPlanGenerator::create_plan(UpdateLogicalOperator &update_oper, unique
   }
   return rc;
 
+}
+
+RC PhysicalPlanGenerator::create_plan(GroupLogicalOperator &group_oper, std::unique_ptr<PhysicalOperator> &oper)
+{
+  vector<unique_ptr<LogicalOperator>> &child_opers = group_oper.children();
+  assert(child_opers.size() == 1);
+
+  unique_ptr<PhysicalOperator> child_physical_oper;
+  RC rc = create(*(child_opers[0]), child_physical_oper);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to create child physical operator. rc=%s", strrc(rc));
+    return rc;
+  }
+
+  const std::vector<Field>& fields = group_oper.fields();
+  int group_by_begin = group_oper.group_by_begin();
+  unique_ptr<GroupPhysicalOperator> group_physical_oper = unique_ptr<GroupPhysicalOperator>(new GroupPhysicalOperator(group_by_begin));
+  for (Field field : fields)
+    group_physical_oper->add_field(field);
+  group_physical_oper->add_child(std::move(child_physical_oper));
+  oper = std::move(group_physical_oper);
+  return rc;
+}
+
+RC PhysicalPlanGenerator::create_plan(AggregationLogicalOperator &agg_oper, std::unique_ptr<PhysicalOperator> &oper)
+{
+  vector<unique_ptr<LogicalOperator>> &child_opers = agg_oper.children();
+  assert(child_opers.size() == 1);
+
+  unique_ptr<PhysicalOperator> child_physical_oper;
+  RC rc = create(*(child_opers[0]), child_physical_oper);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to create child physical operator. rc=%s", strrc(rc));
+    return rc;
+  }
+
+  const std::vector<AggregationFunc>& funcs = agg_oper.funcs();
+  const std::vector<Field>& fields = agg_oper.fields();
+  bool group_by_exist = agg_oper.group_by_exist();
+  unique_ptr<AggregationPhysicalOperator> agg_physical_oper = unique_ptr<AggregationPhysicalOperator>(new AggregationPhysicalOperator(group_by_exist));
+  for (AggregationFunc func : funcs)
+    agg_physical_oper->add_func(func);
+  for (Field field : fields)
+    agg_physical_oper->add_field(field);
+  agg_physical_oper->add_child(std::move(child_physical_oper));
+  oper = std::move(agg_physical_oper);
+  return rc;
 }
 
 RC PhysicalPlanGenerator::create_plan(ExplainLogicalOperator &explain_oper, unique_ptr<PhysicalOperator> &oper)

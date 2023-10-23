@@ -223,6 +223,19 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     return rc;
   }
 
+  //检查简单字段和聚合字段是否在没有group by的情况下同时存在
+  bool agg_exist = false;
+  if (group_by_begin > -1){
+    for (int i = 0; i < group_by_begin; i ++){
+      if (query_fields[i].func() != AggregationFunc::NONE)
+        agg_exist = true;
+      else{
+        if (agg_exist)
+          return RC::INVALID_ARGUMENT;
+      }
+    }
+  }
+
   // everything alright
   SelectStmt *select_stmt = new SelectStmt();
   // TODO add expression copy

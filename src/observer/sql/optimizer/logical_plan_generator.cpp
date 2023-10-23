@@ -25,6 +25,8 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/project_logical_operator.h"
 #include "sql/operator/explain_logical_operator.h"
 #include "sql/operator/update_logical_operator.h"
+#include "sql/operator/group_logical_operator.h"
+#include "sql/operator/aggregation_logical_operator.h"
 
 #include "sql/stmt/stmt.h"
 #include "sql/stmt/calc_stmt.h"
@@ -116,7 +118,7 @@ RC LogicalPlanGenerator::create_plan(
     return rc;
   }
 
-  unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields, select_stmt->group_by_begin()));
+  unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));//, select_stmt->group_by_begin()));
   if (predicate_oper) {
     if (table_oper) {
       predicate_oper->add_child(std::move(table_oper));
@@ -128,7 +130,47 @@ RC LogicalPlanGenerator::create_plan(
     }
   }
 
-  logical_operator.swap(project_oper);
+  unique_ptr<LogicalOperator> group_oper;
+  int group_by_begin = select_stmt->group_by_begin();
+  if (group_by_begin > -1){
+    group_oper = unique_ptr<GroupLogicalOperator>(new GroupLogicalOperator(all_fields, group_by_begin));
+  }
+
+  unique_ptr<LogicalOperator> agg_oper;
+  bool group_exist = group_by_begin > -1;
+  int cell_num = group_exist ? group_by_begin : all_fields.size();
+  std::vector<AggregationFunc> funcs;
+  bool func_exist = false;
+  for (int i = 0; i < cell_num; i ++){
+    AggregationFunc func = all_fields[i].func();
+    if (func != NONE)
+      func_exist = true;
+    funcs.push_back(all_fields[i].func());
+  }
+  if (func_exist)
+    agg_oper = unique_ptr<AggregationLogicalOperator>(new AggregationLogicalOperator(funcs, all_fields, group_exist));
+
+  unique_ptr<LogicalOperator> oper;
+  if (agg_oper)
+    oper = std::move(agg_oper);
+  if (group_exist){
+    if (oper){
+      group_oper->add_child(std::move(project_oper));
+      oper->add_child(std::move(group_oper));
+    }
+    else{
+      oper = std::move(group_oper);
+      oper->add_child(std::move(project_oper));
+    }
+  }
+  else if(oper){
+    oper->add_child(std::move(project_oper));
+  }
+  if (!oper){
+    oper = std::move(project_oper);
+  }
+
+  logical_operator.swap(oper);
   return RC::SUCCESS;
 }
 

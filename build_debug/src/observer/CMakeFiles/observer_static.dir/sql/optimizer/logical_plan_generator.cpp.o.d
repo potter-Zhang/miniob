@@ -245,6 +245,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/optimizer/logical_plan_generator
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/join_logical_operator.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/explain_logical_operator.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/update_logical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_logical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_logical_operator.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/stmt.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/calc_stmt.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/stmt/select_stmt.h \

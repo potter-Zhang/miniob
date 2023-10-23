@@ -356,6 +356,16 @@
 },
 {
   "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
+  "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/aggregation_logical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_logical_operator.cpp",
+  "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_logical_operator.cpp"
+},
+{
+  "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
+  "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/aggregation_physical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_physical_operator.cpp",
+  "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_physical_operator.cpp"
+},
+{
+  "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
   "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/delete_logical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/delete_logical_operator.cpp",
   "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/delete_logical_operator.cpp"
 },
@@ -368,6 +378,16 @@
   "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
   "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/explain_physical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/explain_physical_operator.cpp",
   "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/explain_physical_operator.cpp"
+},
+{
+  "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
+  "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/group_logical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_logical_operator.cpp",
+  "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_logical_operator.cpp"
+},
+{
+  "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",
+  "command": "/usr/bin/c++ -DENABLE_DEBUG -DLINUX -DUNIX -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/. -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/deps -I/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer -g -std=gnu++20 -o CMakeFiles/observer_static.dir/sql/operator/group_physical_operator.cpp.o -c /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_physical_operator.cpp",
+  "file": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_physical_operator.cpp"
 },
 {
   "directory": "/home/someone/桌面/myd/miniob-2023/sdk_miniob/build/src/observer",

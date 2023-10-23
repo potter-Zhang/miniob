@@ -64,7 +64,16 @@ size_t vector_value_hash_name::operator()(const std::vector<Value> &vec) const {
     value_hash_name vhn;
     seed ^= vhn(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
-  return size_t();
+  return seed;
+}
+
+size_t vector2_value_hash_name::operator()(const std::vector<std::vector<Value>> &vec) const {
+  size_t seed = vec.size();
+  for (const std::vector<Value>& values : vec) {
+    vector_value_hash_name vhn;
+    seed ^= vhn(values) + 0x9e3679b9 + (seed << 7) + (seed >> 1);
+  }
+  return seed;
 }
 
 Value::Value(int val)
@@ -102,25 +111,25 @@ void Value::set_data(char *data, int length)
     case INTS: {
       num_value_.int_value_ = *(int *)data;
       length_ = length;
-      if (nullable_ && is_null_)
+      if (nullable_)
         length_ ++;
     } break;
     case FLOATS: {
       num_value_.float_value_ = *(float *)data;
       length_ = length;
-      if (nullable_ && is_null_)
+      if (nullable_)
         length_ ++;
     } break;
     case DATES: {
       num_value_.date_value_ = *((Date *)data);
       length_ = length;
-      if (nullable_ && is_null_)
+      if (nullable_)
         length_ ++;
     } break;
     case BOOLEANS: {
       num_value_.bool_value_ = *(int *)data != 0;
       length_ = length;
-      if (nullable_ && is_null_)
+      if (nullable_)
         length_ ++;
     } break;
     default: {
@@ -134,7 +143,7 @@ void Value::set_int(int val)
   attr_type_ = INTS;
   num_value_.int_value_ = val;
   length_ = sizeof(val);
-  if (nullable_ && is_null_)
+  if (nullable_)
     length_ ++;
   get_data();
 }
@@ -144,7 +153,7 @@ void Value::set_float(float val)
   attr_type_ = FLOATS;
   num_value_.float_value_ = val;
   length_ = sizeof(val);
-  if (nullable_ && is_null_)
+  if (nullable_)
     length_ ++;
   get_data();
 }
@@ -153,7 +162,7 @@ void Value::set_date(Date val)
   attr_type_ = DATES;
   num_value_.date_value_ = val;
   length_ = sizeof(val);
-  if (nullable_ && is_null_)
+  if (nullable_)
     length_ ++;
   get_data();
 }
@@ -162,7 +171,7 @@ void Value::set_boolean(bool val)
   attr_type_ = BOOLEANS;
   num_value_.bool_value_ = val;
   length_ = sizeof(val);
-  if (nullable_ && is_null_)
+  if (nullable_)
     length_ ++;
   get_data();
 }
@@ -176,7 +185,7 @@ void Value::set_string(const char *s, int len /*= 0*/)
     str_value_.assign(s);
   }
   length_ = str_value_.length();
-  if (nullable_ && is_null_)
+  if (nullable_)
     length_ ++;
   get_data();
 }

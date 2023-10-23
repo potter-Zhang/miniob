@@ -307,4 +307,8 @@ src/observer/CMakeFiles/observer_static.dir/sql/optimizer/physical_plan_generato
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/calc_logical_operator.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/calc_physical_operator.h \
  /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/update_logical_operator.h \
- /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/update_physical_operator.h
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/update_physical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_logical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/group_physical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_logical_operator.h \
+ /home/someone/桌面/myd/miniob-2023/sdk_miniob/src/observer/sql/operator/aggregation_physical_operator.h

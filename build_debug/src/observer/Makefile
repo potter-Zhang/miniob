@@ -850,6 +850,54 @@ sql/expr/tuple_cell.cpp.s:
 	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/expr/tuple_cell.cpp.s
 .PHONY : sql/expr/tuple_cell.cpp.s
 
+sql/operator/aggregation_logical_operator.o: sql/operator/aggregation_logical_operator.cpp.o
+.PHONY : sql/operator/aggregation_logical_operator.o
+
+# target to build an object file
+sql/operator/aggregation_logical_operator.cpp.o:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_logical_operator.cpp.o
+.PHONY : sql/operator/aggregation_logical_operator.cpp.o
+
+sql/operator/aggregation_logical_operator.i: sql/operator/aggregation_logical_operator.cpp.i
+.PHONY : sql/operator/aggregation_logical_operator.i
+
+# target to preprocess a source file
+sql/operator/aggregation_logical_operator.cpp.i:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_logical_operator.cpp.i
+.PHONY : sql/operator/aggregation_logical_operator.cpp.i
+
+sql/operator/aggregation_logical_operator.s: sql/operator/aggregation_logical_operator.cpp.s
+.PHONY : sql/operator/aggregation_logical_operator.s
+
+# target to generate assembly for a file
+sql/operator/aggregation_logical_operator.cpp.s:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_logical_operator.cpp.s
+.PHONY : sql/operator/aggregation_logical_operator.cpp.s
+
+sql/operator/aggregation_physical_operator.o: sql/operator/aggregation_physical_operator.cpp.o
+.PHONY : sql/operator/aggregation_physical_operator.o
+
+# target to build an object file
+sql/operator/aggregation_physical_operator.cpp.o:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_physical_operator.cpp.o
+.PHONY : sql/operator/aggregation_physical_operator.cpp.o
+
+sql/operator/aggregation_physical_operator.i: sql/operator/aggregation_physical_operator.cpp.i
+.PHONY : sql/operator/aggregation_physical_operator.i
+
+# target to preprocess a source file
+sql/operator/aggregation_physical_operator.cpp.i:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_physical_operator.cpp.i
+.PHONY : sql/operator/aggregation_physical_operator.cpp.i
+
+sql/operator/aggregation_physical_operator.s: sql/operator/aggregation_physical_operator.cpp.s
+.PHONY : sql/operator/aggregation_physical_operator.s
+
+# target to generate assembly for a file
+sql/operator/aggregation_physical_operator.cpp.s:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/aggregation_physical_operator.cpp.s
+.PHONY : sql/operator/aggregation_physical_operator.cpp.s
+
 sql/operator/delete_logical_operator.o: sql/operator/delete_logical_operator.cpp.o
 .PHONY : sql/operator/delete_logical_operator.o
 
@@ -921,6 +969,54 @@ sql/operator/explain_physical_operator.s: sql/operator/explain_physical_operator
 sql/operator/explain_physical_operator.cpp.s:
 	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/explain_physical_operator.cpp.s
 .PHONY : sql/operator/explain_physical_operator.cpp.s
+
+sql/operator/group_logical_operator.o: sql/operator/group_logical_operator.cpp.o
+.PHONY : sql/operator/group_logical_operator.o
+
+# target to build an object file
+sql/operator/group_logical_operator.cpp.o:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_logical_operator.cpp.o
+.PHONY : sql/operator/group_logical_operator.cpp.o
+
+sql/operator/group_logical_operator.i: sql/operator/group_logical_operator.cpp.i
+.PHONY : sql/operator/group_logical_operator.i
+
+# target to preprocess a source file
+sql/operator/group_logical_operator.cpp.i:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_logical_operator.cpp.i
+.PHONY : sql/operator/group_logical_operator.cpp.i
+
+sql/operator/group_logical_operator.s: sql/operator/group_logical_operator.cpp.s
+.PHONY : sql/operator/group_logical_operator.s
+
+# target to generate assembly for a file
+sql/operator/group_logical_operator.cpp.s:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_logical_operator.cpp.s
+.PHONY : sql/operator/group_logical_operator.cpp.s
+
+sql/operator/group_physical_operator.o: sql/operator/group_physical_operator.cpp.o
+.PHONY : sql/operator/group_physical_operator.o
+
+# target to build an object file
+sql/operator/group_physical_operator.cpp.o:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_physical_operator.cpp.o
+.PHONY : sql/operator/group_physical_operator.cpp.o
+
+sql/operator/group_physical_operator.i: sql/operator/group_physical_operator.cpp.i
+.PHONY : sql/operator/group_physical_operator.i
+
+# target to preprocess a source file
+sql/operator/group_physical_operator.cpp.i:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_physical_operator.cpp.i
+.PHONY : sql/operator/group_physical_operator.cpp.i
+
+sql/operator/group_physical_operator.s: sql/operator/group_physical_operator.cpp.s
+.PHONY : sql/operator/group_physical_operator.s
+
+# target to generate assembly for a file
+sql/operator/group_physical_operator.cpp.s:
+	cd /home/someone/桌面/myd/miniob-2023/sdk_miniob/build && $(MAKE) $(MAKESILENT) -f src/observer/CMakeFiles/observer_static.dir/build.make src/observer/CMakeFiles/observer_static.dir/sql/operator/group_physical_operator.cpp.s
+.PHONY : sql/operator/group_physical_operator.cpp.s
 
 sql/operator/index_scan_physical_operator.o: sql/operator/index_scan_physical_operator.cpp.o
 .PHONY : sql/operator/index_scan_physical_operator.o
@@ -2554,6 +2650,12 @@ help:
 	@echo "... sql/expr/tuple_cell.o"
 	@echo "... sql/expr/tuple_cell.i"
 	@echo "... sql/expr/tuple_cell.s"
+	@echo "... sql/operator/aggregation_logical_operator.o"
+	@echo "... sql/operator/aggregation_logical_operator.i"
+	@echo "... sql/operator/aggregation_logical_operator.s"
+	@echo "... sql/operator/aggregation_physical_operator.o"
+	@echo "... sql/operator/aggregation_physical_operator.i"
+	@echo "... sql/operator/aggregation_physical_operator.s"
 	@echo "... sql/operator/delete_logical_operator.o"
 	@echo "... sql/operator/delete_logical_operator.i"
 	@echo "... sql/operator/delete_logical_operator.s"
@@ -2563,6 +2665,12 @@ help:
 	@echo "... sql/operator/explain_physical_operator.o"
 	@echo "... sql/operator/explain_physical_operator.i"
 	@echo "... sql/operator/explain_physical_operator.s"
+	@echo "... sql/operator/group_logical_operator.o"
+	@echo "... sql/operator/group_logical_operator.i"
+	@echo "... sql/operator/group_logical_operator.s"
+	@echo "... sql/operator/group_physical_operator.o"
+	@echo "... sql/operator/group_physical_operator.i"
+	@echo "... sql/operator/group_physical_operator.s"
 	@echo "... sql/operator/index_scan_physical_operator.o"
 	@echo "... sql/operator/index_scan_physical_operator.i"
 	@echo "... sql/operator/index_scan_physical_operator.s"

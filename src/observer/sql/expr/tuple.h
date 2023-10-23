@@ -362,6 +362,11 @@ public:
     cells_ = cells;
   }
 
+  void set_cells_copy(const std::vector<Value> cells)
+  {
+    cells_ = cells;
+  }
+
   virtual int cell_num() const override
   {
     return static_cast<int>(cells_.size());
@@ -438,4 +443,123 @@ public:
 private:
   Tuple *left_ = nullptr;
   Tuple *right_ = nullptr;
+};
+
+/**
+ * @brief 表示分组的结果，包含vector<ProjectTuple*>
+ * @ingroup Tuple
+ * @details 一般在select语句中使用。
+ */
+class GroupTuple : public Tuple 
+{
+public:
+  GroupTuple() = default;
+  virtual ~GroupTuple()
+  {}
+
+  int cell_num() const override
+  {
+    return speces_.size();
+  }
+
+  RC cell_at(int index, Value &cell) const override
+  {
+    TupleCellSpec* spec = speces_[index];
+    if (tuple_ == nullptr)
+      return RC::EMPTY;
+    return tuple_->find_cell(*spec, cell);
+  }
+
+  RC find_cell(const TupleCellSpec &spec, Value &cell) const override
+  {
+    if (tuple_ == nullptr)
+      return RC::EMPTY;
+    return tuple_->find_cell(spec, cell);
+  }
+
+  const std::vector<TupleCellSpec *>& speces() const{
+    return speces_;
+  }
+
+  void set_tuple(Tuple* tuple){
+    tuple_ = tuple;
+  }
+
+  void add_cell_spec(TupleCellSpec *spec)
+  {
+    speces_.push_back(spec);
+  }
+
+  void set_aggregation_exist(bool aggregation_exist){
+    aggregation_exist_ = aggregation_exist;
+  }
+
+  const bool aggregation_exist() const{
+    return aggregation_exist_;
+  }
+
+private:
+  Tuple* tuple_ = nullptr;
+  std::vector<TupleCellSpec *> speces_;
+  bool aggregation_exist_ = false;
+};
+
+/**
+ * @brief 表示聚合的结果，包含group_exist
+ * @ingroup Tuple
+ * @details 一般在select语句中使用。
+ */
+class AggregationTuple : public Tuple 
+{
+public:
+  AggregationTuple() = default;
+  virtual ~AggregationTuple()
+  {}
+
+  void set_tuple(Tuple* tuple)
+  {
+    tuple_ = tuple;
+  }
+
+  int cell_num() const override
+  {
+    return speces_.size();
+  }
+
+  RC cell_at(int index, Value &cell) const override
+  {
+    TupleCellSpec* spec = speces_[index];
+    if (tuple_ == nullptr)
+      return RC::EMPTY;
+    return tuple_->find_cell(*spec, cell);
+  }
+
+  RC find_cell(const TupleCellSpec &spec, Value &cell) const override
+  {
+    if (tuple_ == nullptr)
+      return RC::EMPTY;
+    return tuple_->find_cell(spec, cell);
+  }
+
+  const std::vector<TupleCellSpec *>& speces() const{
+    return speces_;
+  }
+
+  void add_cell_spec(TupleCellSpec *spec)
+  {
+    speces_.push_back(spec);
+  }
+
+  void set_group_exist(bool group_exist){
+    group_exist_ = group_exist;
+  }
+
+  const bool group_exist() const{
+    return group_exist_;
+  }
+
+private:
+  Tuple* tuple_ = nullptr;
+  std::vector<TupleCellSpec *> speces_;
+  bool group_exist_ = false;
 };
