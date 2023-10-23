@@ -81,7 +81,8 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
             schema.append_cell(field.table_name(), field.field_name());
           else{
             const char *field_name = field.is_star() ? "*" : field.field_name();
-            schema.append_cell(field.table_name(), (func_to_string(func) + "(" + field_name + ")").data());
+            schema.append_cell(TupleCellSpec(field.table_name(), (func_to_string(func) + "(" + field_name + ")").data(), 
+              (func_to_string(func) + "(" + field.table_name() + "." + field_name + ")").data()));
           }
         } else {
           if (func == NONE)
