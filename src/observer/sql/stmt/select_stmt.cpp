@@ -228,6 +228,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     having_begin = -1;
   else
     having_begin = static_cast<int>(select_sql.conditions.size());
+  
   rc = filter_stmt->add_filter_unit(db,
         default_table,
         &table_map,
@@ -250,11 +251,15 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     }
     else {
       assert(condition.right_is_attr);
-      field_name = condition.right_attr.attribute_name.c_str(); 
-      func = condition.right_attr.func;
+      field_name = condition.right_attr.attribute_name.c_str();
     }
 
-    const FieldMeta *field_meta = default_table->table_meta().field(field_name);
+    const FieldMeta *field_meta;
+    const TableMeta& table_meta = default_table->table_meta();
+    if (0 == strcmp(field_name, "*"))
+      field_meta = table_meta.field(table_meta.sys_field_num());
+    else
+      field_meta = table_meta.field(field_name);
     query_fields.push_back(Field(default_table, field_meta));
     query_fields.back().set_func(func);
   }
