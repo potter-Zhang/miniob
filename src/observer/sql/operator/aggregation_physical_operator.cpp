@@ -187,7 +187,6 @@ RC AggregationPhysicalOperator::do_aggregation()
             temp.get_value(*tuple, value);
             if (!value.get_boolean()){
               flag = false;
-              break;
             }
           }
         }
