@@ -17,5 +17,8 @@ See the Mulan PSL v2 for more details. */
 GroupLogicalOperator::GroupLogicalOperator(const std::vector<Field> &fields) : fields_(fields)
 {}
 
-GroupLogicalOperator::GroupLogicalOperator(const std::vector<Field> &fields, int group_by_begin): fields_(fields), group_by_begin_(group_by_begin)
-{}
+GroupLogicalOperator::GroupLogicalOperator(const std::vector<Field> &fields, std::unique_ptr<Expression> expression, int group_by_begin, int attr_having_begin): 
+  fields_(fields), group_by_begin_(group_by_begin), attr_having_begin_(attr_having_begin)
+{
+  expressions_.emplace_back(std::move(expression));
+}

@@ -93,6 +93,24 @@ RC AggregationPhysicalOperator::do_aggregation()
     assert(children_[0]->type() == PhysicalOperatorType::GROUP);
     GroupPhysicalOperator* child = static_cast<GroupPhysicalOperator *>(children_[0].get());
     int group_by_begin = child->group_by_begin();
+    int attr_having_begin = child->attr_having_begin();
+    Expression* exp;
+    ConjunctionExpr *expression = nullptr;
+    //std::vector<std::unique_ptr<Expression>> expressions;
+    if (attr_having_begin != -1){
+      exp = child->expression().get();
+      // exp->type()既可能是CONJUNCTION，又可能是COMPARISON，因为logical_plan会被重写;
+      if (exp->type() == ExprType::CONJUNCTION) {
+        expression = static_cast<ConjunctionExpr *>(exp);
+        //expressions = expression->children(); // 要直接用应用unique_ptr不存在拷贝构造函数
+        assert(expression->children().size() > 0);
+        assert(expression->children()[0]->type() == ExprType::COMPARISON);
+      }
+      else {
+        assert(exp->type() == ExprType::COMPARISON);
+      }
+    }
+    
     auto groups = child->groups();
     std::vector<Value> values;
 
@@ -104,11 +122,81 @@ RC AggregationPhysicalOperator::do_aggregation()
     std::vector<int> num(avg_size, 0);
 
     for(auto group = groups.begin(); group != groups.end(); group ++) {
-      do_aggregation_(values, group->second, group_by_begin);
+      do_aggregation_(values, group->second);//, funcs_.size());
+
 
       ValueListTuple* tuple = new ValueListTuple();
-      tuple->set_cells_copy(values);
-      tuples_.push_back(tuple);
+
+      bool flag = true; //判断having是否接受
+      if (attr_having_begin != -1) {
+        if (expression) {
+          std::vector<std::unique_ptr<Expression>> &expressions = expression->children();
+          for (int i = group_by_begin; i < values.size(); i ++){ //having_funcs起始位置在正常的values值的末尾+1处
+            ComparisonExpr* comp = static_cast<ComparisonExpr *>(expressions[i - group_by_begin].get()); //保证从0开始
+            CompOp op = comp->comp();
+            if (comp->right()->type() == ExprType::FIELD){
+              assert(comp->left()->type() == ExprType::VALUE);
+              std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
+              std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
+              ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+              Value value;
+              temp.get_value(*tuple, value);
+              if (!value.get_boolean()){
+                flag = false;
+                break;
+              }
+            }
+            else{
+              assert(comp->left()->type() == ExprType::FIELD);
+              assert(comp->right()->type() == ExprType::VALUE);
+              std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
+              std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
+              ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+              Value value;
+              temp.get_value(*tuple, value);
+              if (!value.get_boolean()){
+                flag = false;
+                break;
+              }
+            }
+          }
+        }
+        else {
+          assert(fields_.size() - attr_having_begin == 1); //只有一个group by属性
+          ComparisonExpr* comp = static_cast<ComparisonExpr *>(exp);
+          CompOp op = comp->comp();
+          if (comp->right()->type() == ExprType::FIELD){
+            assert(comp->left()->type() == ExprType::VALUE);
+            std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
+            std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));//having_funcs起始位置在正常的values值的末尾+1处
+            ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+            Value value;
+            temp.get_value(*tuple, value);
+            if (!value.get_boolean()){
+              flag = false;
+              break;
+            }
+          }
+          else{
+            assert(comp->left()->type() == ExprType::FIELD);
+            assert(comp->right()->type() == ExprType::VALUE);
+            std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
+            std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));
+            ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+            Value value;
+            temp.get_value(*tuple, value);
+            if (!value.get_boolean()){
+              flag = false;
+              break;
+            }
+          }
+        }
+      }
+      if (flag) {
+        int cell_num = attr_having_begin == -1 ? values.size() : group_by_begin; //having_funcs起始位置在正常的values值的末尾+1处
+        tuple->set_cells_copy(std::vector<Value>(values.begin(), values.begin() + cell_num));
+        tuples_.push_back(tuple);
+      }
     }
   }
   else
@@ -138,7 +226,7 @@ RC AggregationPhysicalOperator::do_aggregation()
     else
       cell_num = tuples[0]->cell_num();
     
-    do_aggregation_(values, tuples, cell_num);
+    do_aggregation_(values, tuples);//, cell_num);
 
     for(Tuple* tuple : tuples)
       delete static_cast<ValueListTuple *>(tuple);
@@ -149,11 +237,12 @@ RC AggregationPhysicalOperator::do_aggregation()
   }
 }
 
-RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std::vector<ValueListTuple *> &tuples, int cell_num){
+RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std::vector<ValueListTuple *> &tuples){//, int cell_num){
   values.clear();
   if (tuples.size() == 0)
     return RC::SUCCESS;
-  values.resize(tuples[0]->cell_num());
+  int cell_num = tuples[0]->cell_num();
+  values.resize(cell_num);
 
   int avg_size = 0;
   for (auto iter = funcs_.begin(); iter != funcs_.end(); iter ++){

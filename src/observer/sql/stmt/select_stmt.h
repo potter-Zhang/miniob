@@ -61,10 +61,20 @@ public:
   {
     return group_by_begin_;
   }
+  const int having_begin() const
+  {
+    return having_begin_;
+  }
+  const int attr_having_begin() const
+  {
+    return attr_having_begin_;
+  }
 
 private:
   std::vector<Field> query_fields_;
   std::vector<Table *> tables_;
   FilterStmt *filter_stmt_ = nullptr;
   int group_by_begin_ = -1;
+  int having_begin_ = -1;
+  int attr_having_begin_ = -1;
 };

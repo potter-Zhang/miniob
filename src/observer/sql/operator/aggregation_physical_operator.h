@@ -60,7 +60,7 @@ public:
 
 private:
   RC do_aggregation();
-  RC do_aggregation_(std::vector<Value> &values, std::vector<ValueListTuple *> &tuples, int cell_num);
+  RC do_aggregation_(std::vector<Value> &values, std::vector<ValueListTuple *> &tuples);//, int cell_num);
 
 private:
   ValueListTuple* tuple_;

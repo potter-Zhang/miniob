@@ -27,7 +27,7 @@ public:
   GroupPhysicalOperator()
   {}
 
-  GroupPhysicalOperator(int group_by_begin);
+  GroupPhysicalOperator(std::unique_ptr<Expression> expr, int group_by_begin, int attr_having_begin);
 
   virtual ~GroupPhysicalOperator();
 
@@ -61,6 +61,18 @@ public:
   const int group_by_begin() const{
     return group_by_begin_;
   }
+  const int attr_having_begin() const{
+    return attr_having_begin_;
+  }
+  
+  std::unique_ptr<Expression> &expression()
+  {
+    return expression_;
+  }
+  const std::unique_ptr<Expression> &expression() const
+  {
+    return expression_;
+  }
 
 private:
   RC make_groups();
@@ -69,6 +81,8 @@ private:
   Tuple* tuple_;
   groups_map_type groups_;
   int group_by_begin_ = -1;
+  int attr_having_begin_ = -1;
+  std::unique_ptr<Expression> expression_;
   std::vector<Field> fields_;
   groups_map_type::iterator iter_;
 };

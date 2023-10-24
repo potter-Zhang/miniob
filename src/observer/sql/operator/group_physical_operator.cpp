@@ -18,7 +18,8 @@ See the Mulan PSL v2 for more details. */
 #include "storage/table/table.h"
 #include "group_physical_operator.h"
 
-GroupPhysicalOperator::GroupPhysicalOperator(int group_by_begin): group_by_begin_(group_by_begin) {}
+GroupPhysicalOperator::GroupPhysicalOperator(std::unique_ptr<Expression> expr, int group_by_begin, int attr_having_begin): 
+  expression_(std::move(expr)), group_by_begin_(group_by_begin), attr_having_begin_(attr_having_begin) {}
 GroupPhysicalOperator::~GroupPhysicalOperator() 
 {
   /*for (Field field : fields_)
@@ -63,8 +64,18 @@ RC GroupPhysicalOperator::make_groups()
       }
       values.push_back(value);
     }
+    if (attr_having_begin_ > -1) {
+      for (int i = attr_having_begin_; i < cell_num; i ++){
+        Value value;
+        RC rc = tuple->cell_at(i, value);
+        if (rc != RC::SUCCESS) {
+          return rc;    
+        }
+        values.push_back(value);
+      }
+    }
 
-    for (int i = group_by_begin_; i < cell_num; i ++) {
+    for (int i = group_by_begin_; i < (attr_having_begin_ == -1 ? cell_num : attr_having_begin_); i ++) {
       Value value;
       RC rc = tuple->cell_at(i, value);
       if (rc != RC::SUCCESS) {

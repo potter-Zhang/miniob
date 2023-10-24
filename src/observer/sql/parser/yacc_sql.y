@@ -128,6 +128,7 @@ ConditionSqlNode *always_false()
         ISNOTNULL
         NULLISNULL
         NULLISNOTNULL
+        HAVING
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -163,10 +164,12 @@ ConditionSqlNode *always_false()
 /** type 定义了各种解析后的结果输出的是什么类型。类型对应了 union 中的定义的成员变量名称 **/
 %type <number>              type
 %type <condition>           condition
+%type <condition>           agg_condition
 %type <value>               value
 %type <number>              number
 %type <comp>                comp_op
 %type <rel_attr>            rel_attr
+%type <rel_attr>            agg_attr
 %type <attr_infos>          attr_def_list
 %type <attr_info>           attr_def
 %type <attr_info>           simple_attr_def
@@ -174,7 +177,9 @@ ConditionSqlNode *always_false()
 %type <value_row>           value_row
 %type <value_rows>          value_rows
 %type <condition_list>      where
+%type <condition_list>      having
 %type <condition_list>      condition_list
+%type <condition_list>      agg_condition_list
 %type <rel_attr_list>       select_attr
 %type <relation_list>       rel_list
 %type <relation_list>       group_by_columns
@@ -525,7 +530,7 @@ update_stmt:      /*  update 语句的语法解析树*/
     }
     ;
 select_stmt:        /*  select 语句的语法解析树*/
-    SELECT select_attr FROM ID rel_list where group_by_columns
+    SELECT select_attr FROM ID rel_list where group_by_columns having
     {
       $$ = new ParsedSqlNode(SCF_SELECT);
       if ($2 != nullptr) {
@@ -549,9 +554,15 @@ select_stmt:        /*  select 语句的语法解析树*/
         std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $7;
       }
+
+      if($8 != nullptr) {
+        $$->selection.having_conditions.swap(*$8);
+        delete $8;
+      }
+
       free($4);
     }
-    | SELECT select_attr FROM ID inner_join_node where group_by_columns
+    | SELECT select_attr FROM ID inner_join_node where group_by_columns having
     {
       if ($5 != nullptr){
         $$ = $5;
@@ -576,6 +587,12 @@ select_stmt:        /*  select 语句的语法解析树*/
         std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $7;
       }
+
+      if($8 != nullptr) {
+        $$->selection.having_conditions.swap(*$8);
+        delete $8;
+      }
+
       free($4);
     }
     ;
@@ -687,6 +704,30 @@ rel_attr:
     }
     ;
 
+agg_attr:
+    func LBRACE ID RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = $3;
+      $$->func = $1;
+      free($3);
+    }
+    | func LBRACE '*' RBRACE {
+      $$ = new RelAttrSqlNode;
+      $$->attribute_name = "*";
+      if ($1 != AggregationFunc::COUNTFUN)
+        YYABORT;
+      $$->func = $1;
+    }
+    | func LBRACE ID DOT ID RBRACE {
+      $$ = new RelAttrSqlNode;;
+      $$->relation_name = $3;
+      $$->attribute_name = $5;
+      $$->func = $1;
+      free($3);
+      free($5);
+    }
+    ;
+
 attr_list:
     /* empty */
     {
@@ -746,6 +787,15 @@ where:
       $$ = $2;  
     }
     ;
+having:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | HAVING agg_condition_list {
+      $$ = $2;
+    }
+    ;
 condition_list:
     /* empty */
     {
@@ -770,6 +820,28 @@ condition_list:
       }
     }
     ;
+
+agg_condition_list:
+    agg_condition {
+      if ($1 != nullptr) {
+        $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
+      else
+        $$ = nullptr;
+    }
+    | agg_condition AND agg_condition_list {
+      $$ = $3;
+      if ($1 != nullptr){
+        if ($$ == nullptr)
+          $$ = new std::vector<ConditionSqlNode>;
+        $$->emplace_back(*$1);
+        delete $1;
+      }
+    }
+    ;
+
 condition:
     rel_attr comp_op value
     {
@@ -882,6 +954,40 @@ condition:
       $$ = always_false();
     }
     ;
+
+agg_condition:
+    agg_attr comp_op value
+    {
+      if ($3->nullable() && $3->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 1;
+        $$->left_attr = *$1;
+        $$->right_is_attr = 0;
+        $$->right_value = *$3;
+        $$->comp = $2;
+      }
+
+      delete $1;
+      delete $3;
+    }
+    | value comp_op agg_attr
+    {
+      if ($1->nullable() && $1->is_null())
+        $$ = always_false();
+      else {
+        $$ = new ConditionSqlNode;
+        $$->left_is_attr = 0;
+        $$->left_value = *$1;
+        $$->right_is_attr = 1;
+        $$->right_attr = *$3;
+        $$->comp = $2;
+      }
+
+      delete $1;
+      delete $3;
+    }
 
 comp_op:
       EQ { $$ = EQUAL_TO; }

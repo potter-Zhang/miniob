@@ -36,6 +36,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/delete_stmt.h"
 #include "sql/stmt/explain_stmt.h"
 #include "sql/stmt/update_stmt.h"
+#include "logical_plan_generator.h"
 
 using namespace std;
 
@@ -92,6 +93,7 @@ RC LogicalPlanGenerator::create_plan(
 
   const std::vector<Table *> &tables = select_stmt->tables();
   const std::vector<Field> &all_fields = select_stmt->query_fields();
+  int having_begin = select_stmt->having_begin();
   for (Table *table : tables) {
     std::vector<Field> fields;
     for (const Field &field : all_fields) {
@@ -112,7 +114,7 @@ RC LogicalPlanGenerator::create_plan(
   }
 
   unique_ptr<LogicalOperator> predicate_oper;
-  RC rc = create_plan(select_stmt->filter_stmt(), predicate_oper);
+  RC rc = create_plan(select_stmt->filter_stmt(), predicate_oper, having_begin);
   if (rc != RC::SUCCESS) {
     LOG_WARN("failed to create predicate logical plan. rc=%s", strrc(rc));
     return rc;
@@ -132,8 +134,16 @@ RC LogicalPlanGenerator::create_plan(
 
   unique_ptr<LogicalOperator> group_oper;
   int group_by_begin = select_stmt->group_by_begin();
+  int attr_having_begin = select_stmt->attr_having_begin();
+  std::unique_ptr<Expression> expression;
+  rc = get_expressions_from_filter_stmt(select_stmt->filter_stmt(), expression, having_begin);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to create having's expression. rc=%s", strrc(rc));
+    return rc;
+  }
   if (group_by_begin > -1){
-    group_oper = unique_ptr<GroupLogicalOperator>(new GroupLogicalOperator(all_fields, group_by_begin));
+    group_oper = unique_ptr<GroupLogicalOperator>(new GroupLogicalOperator(
+      all_fields, std::move(expression), group_by_begin, attr_having_begin));
   }
 
   unique_ptr<LogicalOperator> agg_oper;
@@ -146,6 +156,10 @@ RC LogicalPlanGenerator::create_plan(
     if (func != NONE)
       func_exist = true;
     funcs.push_back(all_fields[i].func());
+  }
+  if (attr_having_begin > -1){
+    for (int i = attr_having_begin; i < all_fields.size(); i ++)
+      funcs.push_back(all_fields[i].func());
   }
   if (func_exist)
     agg_oper = unique_ptr<AggregationLogicalOperator>(new AggregationLogicalOperator(funcs, all_fields, group_exist));
@@ -180,6 +194,43 @@ RC LogicalPlanGenerator::create_plan(
   std::vector<unique_ptr<Expression>> cmp_exprs;
   const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
   for (const FilterUnit *filter_unit : filter_units) {
+    const FilterObj &filter_obj_left = filter_unit->left();
+    const FilterObj &filter_obj_right = filter_unit->right();
+
+    unique_ptr<Expression> left(filter_obj_left.is_attr
+                                         ? static_cast<Expression *>(new FieldExpr(filter_obj_left.field))
+                                         : static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
+
+    unique_ptr<Expression> right(filter_obj_right.is_attr
+                                          ? static_cast<Expression *>(new FieldExpr(filter_obj_right.field))
+                                          : static_cast<Expression *>(new ValueExpr(filter_obj_right.value)));
+
+    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), std::move(left), std::move(right));
+    cmp_exprs.emplace_back(cmp_expr);
+  }
+
+  unique_ptr<PredicateLogicalOperator> predicate_oper;
+  if (!cmp_exprs.empty()) {
+    unique_ptr<ConjunctionExpr> conjunction_expr(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
+    predicate_oper = unique_ptr<PredicateLogicalOperator>(new PredicateLogicalOperator(std::move(conjunction_expr)));
+  }
+
+  logical_operator = std::move(predicate_oper);
+  return RC::SUCCESS;
+}
+
+RC LogicalPlanGenerator::create_plan(
+    FilterStmt *filter_stmt, unique_ptr<LogicalOperator> &logical_operator, int limit)
+{
+  if (limit == -1)
+    return create_plan(filter_stmt, logical_operator);
+  std::vector<unique_ptr<Expression>> cmp_exprs;
+  const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
+  int i = 0;
+  for (const FilterUnit *filter_unit : filter_units) {
+    i ++;
+    if (i > limit)
+      break;
     const FilterObj &filter_obj_left = filter_unit->left();
     const FilterObj &filter_obj_right = filter_unit->right();
 
@@ -277,8 +328,35 @@ RC LogicalPlanGenerator::create_plan(UpdateStmt *update_stmt, unique_ptr<Logical
   return rc;
 }
 
-RC LogicalPlanGenerator::create_plan(
-    ExplainStmt *explain_stmt, unique_ptr<LogicalOperator> &logical_operator)
+RC LogicalPlanGenerator::get_expressions_from_filter_stmt(
+    FilterStmt *filter_stmt, std::unique_ptr<Expression> &expression, int start)
+{
+  std::vector<unique_ptr<Expression>> cmp_exprs;
+  const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
+  if (start == -1)
+    start = filter_units.size(); //让expression为空
+  //for (const FilterUnit *filter_unit : filter_units) {
+  for (int i = start; i < filter_units.size(); i ++) {
+    const FilterObj &filter_obj_left = filter_units[i]->left();
+    const FilterObj &filter_obj_right = filter_units[i]->right();
+
+    unique_ptr<Expression> left(filter_obj_left.is_attr
+                                         ? static_cast<Expression *>(new FieldExpr(filter_obj_left.field))
+                                         : static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
+
+    unique_ptr<Expression> right(filter_obj_right.is_attr
+                                          ? static_cast<Expression *>(new FieldExpr(filter_obj_right.field))
+                                          : static_cast<Expression *>(new ValueExpr(filter_obj_right.value)));
+
+    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_units[i]->comp(), std::move(left), std::move(right));
+    cmp_exprs.emplace_back(cmp_expr);
+  }
+
+  expression = unique_ptr<ConjunctionExpr>(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
+  return RC::SUCCESS;
+}
+
+RC LogicalPlanGenerator::create_plan(ExplainStmt *explain_stmt, unique_ptr<LogicalOperator> &logical_operator)
 {
   Stmt *child_stmt = explain_stmt->child();
   unique_ptr<LogicalOperator> child_oper;

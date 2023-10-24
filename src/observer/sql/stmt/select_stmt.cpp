@@ -201,9 +201,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
       query_fields.push_back(Field(table, field_meta));
     }
-  }
-
-  LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables.size(), query_fields.size());
+  }  
 
   Table *default_table = nullptr;
   if (tables.size() == 1) {
@@ -222,6 +220,46 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     LOG_WARN("cannot construct filter stmt");
     return rc;
   }
+
+  // 把having子句插入fitler_stmt中
+  int having_begin;
+  int having_num = static_cast<int>(select_sql.having_conditions.size());
+  if (having_num == 0)
+    having_begin = -1;
+  else
+    having_begin = static_cast<int>(select_sql.conditions.size());
+  rc = filter_stmt->add_filter_unit(db,
+        default_table,
+        &table_map,
+        select_sql.having_conditions.data(),
+        static_cast<int>(select_sql.having_conditions.size()));
+  if(rc != RC::SUCCESS) {
+    LOG_WARN("cannot add having's filter conditions to filter_stmt");
+    return rc;
+  }
+
+  // 把having中的字段放到query_fields里
+  int attr_having_begin = having_num == 0 ? -1 : query_fields.size();
+  for (ConditionSqlNode condition : select_sql.having_conditions){
+    const char *table_name;
+    const char *field_name;
+    AggregationFunc func;
+    if (condition.left_is_attr) {
+      field_name = condition.left_attr.attribute_name.c_str(); 
+      func = condition.left_attr.func;
+    }
+    else {
+      assert(condition.right_is_attr);
+      field_name = condition.right_attr.attribute_name.c_str(); 
+      func = condition.right_attr.func;
+    }
+
+    const FieldMeta *field_meta = default_table->table_meta().field(field_name);
+    query_fields.push_back(Field(default_table, field_meta));
+    query_fields.back().set_func(func);
+  }
+
+  LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables.size(), query_fields.size());
 
   //检查简单字段和聚合字段是否在没有group by的情况下同时存在
   bool agg_exist = false;
@@ -243,6 +281,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->filter_stmt_ = filter_stmt;
   select_stmt->group_by_begin_ = group_by_begin;
+  select_stmt->having_begin_ = having_begin;
+  select_stmt->attr_having_begin_ = attr_having_begin;
   stmt = select_stmt;
   return RC::SUCCESS;
 }

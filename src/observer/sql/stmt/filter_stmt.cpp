@@ -18,6 +18,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/filter_stmt.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
+#include "filter_stmt.h"
 
 FilterStmt::~FilterStmt()
 {
@@ -127,5 +128,23 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
   filter_unit->set_comp(comp);
 
   // 检查两个类型是否能够比较
+  return rc;
+}
+
+RC FilterStmt::add_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
+    const ConditionSqlNode *conditions, int condition_num)
+{
+  RC rc = RC::SUCCESS;
+
+  for (int i = 0; i < condition_num; i++) {
+    FilterUnit *filter_unit = nullptr;
+    rc = create_filter_unit(db, default_table, tables, conditions[i], filter_unit);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to create filter unit. condition index=%d", i);
+      return rc;
+    }
+    filter_units_.push_back(filter_unit);
+  }
+
   return rc;
 }

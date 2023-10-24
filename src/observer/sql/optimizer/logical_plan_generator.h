@@ -17,6 +17,7 @@ See the Mulan PSL v2 for more details. */
 #include <memory>
 
 #include "common/rc.h"
+#include "sql/expr/expression.h"
 
 class Stmt;
 class CalcStmt;
@@ -40,8 +41,10 @@ private:
   RC create_plan(CalcStmt *calc_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(SelectStmt *select_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(FilterStmt *filter_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
+  RC create_plan(FilterStmt *filter_stmt, std::unique_ptr<LogicalOperator> &logical_operator, int limit);
   RC create_plan(InsertStmt *insert_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(DeleteStmt *delete_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(ExplainStmt *explain_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(UpdateStmt *update_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
+  RC get_expressions_from_filter_stmt(FilterStmt *filter_stmt, std::unique_ptr<Expression> &expression, int start);
 };

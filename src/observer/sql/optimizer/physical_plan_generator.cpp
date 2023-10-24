@@ -313,7 +313,11 @@ RC PhysicalPlanGenerator::create_plan(GroupLogicalOperator &group_oper, std::uni
 
   const std::vector<Field>& fields = group_oper.fields();
   int group_by_begin = group_oper.group_by_begin();
-  unique_ptr<GroupPhysicalOperator> group_physical_oper = unique_ptr<GroupPhysicalOperator>(new GroupPhysicalOperator(group_by_begin));
+  int attr_having_begin = group_oper.attr_having_begin();
+  unique_ptr<Expression> &expression = group_oper.expressions()[0];
+
+  unique_ptr<GroupPhysicalOperator> group_physical_oper = unique_ptr<GroupPhysicalOperator>(
+    new GroupPhysicalOperator(std::move(expression), group_by_begin, attr_having_begin));
   for (Field field : fields)
     group_physical_oper->add_field(field);
   group_physical_oper->add_child(std::move(child_physical_oper));
