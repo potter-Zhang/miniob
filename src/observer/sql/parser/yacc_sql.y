@@ -1099,7 +1099,11 @@ condition:
       $$->right_is_attr = 2;
       $$->right_select = &($2->selection);
       $$->comp = $4;
-
+      if ($$->comp == CompOp::GREAT_EQUAL || $$->comp == CompOp::GREAT_THAN) {
+        $$->comp = (CompOp)((int)$$->comp - 2);
+      } else if ($$->comp == CompOp::LESS_EQUAL || $$->comp == CompOp::LESS_THAN) {
+        $$->comp = (CompOp)((int)$$->comp + 2);
+      }
       delete $5;
     }
     ;
