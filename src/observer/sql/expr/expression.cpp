@@ -92,8 +92,13 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
   RC rc = RC::SUCCESS;
   bool left_null = left.nullable() && left.is_null();
   bool right_null = right.nullable() && right.is_null();
+  bool in_equal = comp_ == IN_OP || comp_ == NOT_IN_OP;
+  if (comp_ == NOT_IN_OP && right_null){
+    result = true;
+    return rc;
+  }
   // right.is_null() == -1表示not null
-  if (right.is_null() == -1){
+  else if (right.is_null() == -1){
     if (!left_null && right_null && comp_ == EQUAL_TO){
       result = true;
       return rc;
@@ -109,6 +114,10 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
       return rc;
     }
     result = true;
+    return rc;
+  }
+  else if (left_null && right_null && in_equal){
+    result = false;
     return rc;
   }
   else if (left_null || right_null){
