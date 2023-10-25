@@ -98,6 +98,9 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         LE
         GE
         NE
+        IN
+        NOT
+        EXISTS
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -634,6 +637,87 @@ condition:
 
       delete $1;
       delete $3;
+    }
+    | rel_attr IN LBRACE select_stmt RBRACE 
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 2;
+      $$->right_select = &($4->selection);
+      $$->comp = CompOp::IN_OP;
+
+      delete $1;
+    }
+    | rel_attr NOT IN LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 2;
+      $$->right_select = &($5->selection);
+      $$->comp = CompOp::NOT_IN_OP;
+
+      delete $1;
+    }
+    | rel_attr IN LBRACE value value_list RBRACE 
+    {
+      $$ = new ConditionSqlNode;
+      if ($5 != nullptr) {
+        $$->values.swap(*$5);
+      }
+      $$->values.emplace_back(*$4);
+      std::reverse($$->values.begin(), $$->values.end());
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 3;
+      $$->comp = CompOp::IN_OP;
+      delete $4;
+      delete $1;
+    }
+    | rel_attr NOT IN LBRACE value value_list RBRACE 
+    {
+      $$ = new ConditionSqlNode;
+      if ($5 != nullptr) {
+        $$->values.swap(*$6);
+      }
+      $$->values.emplace_back(*$5);
+      std::reverse($$->values.begin(), $$->values.end());
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 3;
+      $$->comp = CompOp::NOT_IN_OP;
+      delete $5;
+      delete $1;
+    }
+    | EXISTS LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 2;
+      $$->right_is_attr = 2;
+      $$->right_select = &($3->selection);
+      $$->comp = CompOp::EXISTS_OP;
+
+    }
+    | NOT EXISTS LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 2;
+      $$->right_is_attr = 2;
+      $$->right_select = &($4->selection);
+      $$->comp = CompOp::NOT_EXISTS_OP;
+
+    }
+    | rel_attr comp_op LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$1;
+      $$->right_is_attr = 2;
+      $$->right_select = &($4->selection);
+      $$->comp = $2;
+
+      delete $1;
     }
     ;
 

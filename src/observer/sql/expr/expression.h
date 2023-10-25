@@ -20,7 +20,9 @@ See the Mulan PSL v2 for more details. */
 
 #include "storage/field/field.h"
 #include "sql/parser/value.h"
+#include "sql/stmt/select_stmt.h"
 #include "common/log/log.h"
+//#include "sql/operator/logical_operator.h"
 
 class Tuple;
 
@@ -43,6 +45,8 @@ enum class ExprType
   COMPARISON,   ///< 需要做比较的表达式
   CONJUNCTION,  ///< 多个表达式使用同一种关系(AND或OR)来联结
   ARITHMETIC,   ///< 算术运算
+  COLLECTION,    ///< 
+  EMPTY
 };
 
 /**
@@ -72,6 +76,16 @@ public:
    * @details 有些表达式的值是固定的，比如ValueExpr，这种情况下可以直接获取值
    */
   virtual RC try_get_value(Value &value) const
+  {
+    return RC::UNIMPLENMENT;
+  }
+
+  virtual RC get_value(const Tuple &tuple, Value &value, std::vector<Value> &collection) const
+  {
+    return RC::UNIMPLENMENT;
+  }
+
+  virtual RC try_get_value(std::vector<Value> &collection) const
   {
     return RC::UNIMPLENMENT;
   }
@@ -223,6 +237,10 @@ public:
    */
   RC compare_value(const Value &left, const Value &right, bool &value) const;
 
+  RC get_value(const Tuple &tuple, Value &value, std::vector<Value> &collection) const override;
+  RC compare_value(const Value &left, std::vector<Value> &collection, bool &value) const;
+  
+
 private:
   CompOp comp_;
   std::unique_ptr<Expression> left_;
@@ -301,4 +319,33 @@ private:
   Type arithmetic_type_;
   std::unique_ptr<Expression> left_;
   std::unique_ptr<Expression> right_;
+};
+
+class EmptyExpr : public Expression {
+public:
+  EmptyExpr() = default;
+
+  virtual ~EmptyExpr() = default;
+
+  RC get_value(const Tuple &tuple, Value &value) const override { return RC::SUCCESS; }
+  RC try_get_value(Value &value) const override { return RC::SUCCESS; }
+  ExprType type() const override { return ExprType::EMPTY; }
+  AttrType value_type() const override { return AttrType::UNDEFINED; }
+};
+
+class CollectionExpr : public Expression {
+public:
+  CollectionExpr(const std::vector<Value> &values) {
+    this->values = values;
+  }
+
+  virtual ~CollectionExpr() = default;
+
+  RC try_get_value(std::vector<Value> &value) const override { value = this->values; return RC::SUCCESS; }
+  RC get_value(const Tuple &tuple, Value &value) const override { return RC::SUCCESS; }
+  ExprType type() const override { return ExprType::COLLECTION; }
+  AttrType value_type() const override { return AttrType::UNDEFINED; }
+
+private:
+  std::vector<Value> values;
 };

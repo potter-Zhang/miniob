@@ -136,19 +136,35 @@ RC LogicalPlanGenerator::create_plan(
     FilterStmt *filter_stmt, unique_ptr<LogicalOperator> &logical_operator)
 {
   std::vector<unique_ptr<Expression>> cmp_exprs;
+  std::vector<unique_ptr<LogicalOperator>> sub_queries;
   const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
   for (const FilterUnit *filter_unit : filter_units) {
     const FilterObj &filter_obj_left = filter_unit->left();
     const FilterObj &filter_obj_right = filter_unit->right();
 
-    unique_ptr<Expression> left(filter_obj_left.is_attr
-                                         ? static_cast<Expression *>(new FieldExpr(filter_obj_left.field))
-                                         : static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
+    unique_ptr<Expression> left;
+    if (filter_obj_left.is_attr == 1) {
+      left.reset(static_cast<Expression *>(new FieldExpr(filter_obj_left.field)));
+    } else if (filter_obj_right.is_attr == 0) {
+      left.reset(static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
+    } else {
+      left.reset(static_cast<Expression *>(new EmptyExpr()));
+    }
 
-    unique_ptr<Expression> right(filter_obj_right.is_attr
-                                          ? static_cast<Expression *>(new FieldExpr(filter_obj_right.field))
-                                          : static_cast<Expression *>(new ValueExpr(filter_obj_right.value)));
-
+    unique_ptr<Expression> right;
+    if (filter_obj_right.is_attr == 1) {
+      right.reset(static_cast<Expression *>(new FieldExpr(filter_obj_right.field)));
+    } else if (filter_obj_right.is_attr == 0) {
+      right.reset(static_cast<Expression *>(new ValueExpr(filter_obj_right.value)));
+    } else if (filter_obj_right.is_attr == 2) {
+      unique_ptr<LogicalOperator> sub_logical_operator;
+      create_plan(filter_obj_right.select_stmt_, sub_logical_operator);
+      sub_queries.push_back(std::move(sub_logical_operator));
+      right.reset(static_cast<Expression *>(new EmptyExpr()));
+    } else {
+      right.reset(static_cast<Expression *>(new CollectionExpr(filter_obj_right.values)));
+    }
+    
     ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), std::move(left), std::move(right));
     cmp_exprs.emplace_back(cmp_expr);
   }
@@ -159,7 +175,14 @@ RC LogicalPlanGenerator::create_plan(
     predicate_oper = unique_ptr<PredicateLogicalOperator>(new PredicateLogicalOperator(std::move(conjunction_expr)));
   }
 
+  if (!sub_queries.empty()) {
+    predicate_oper->add_child(std::move(sub_queries[0]));
+  }
+
   logical_operator = std::move(predicate_oper);
+
+  
+
   return RC::SUCCESS;
 }
 
