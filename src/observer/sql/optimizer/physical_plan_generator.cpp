@@ -184,6 +184,7 @@ RC PhysicalPlanGenerator::create_plan(PredicateLogicalOperator &pred_oper, uniqu
   ASSERT(children_opers.size() == 1, "predicate logical operator's sub oper number should be 1");
 
   LogicalOperator &child_oper = *children_opers.front();
+  
 
   unique_ptr<PhysicalOperator> child_phy_oper;
   RC rc = create(child_oper, child_phy_oper);
@@ -197,7 +198,18 @@ RC PhysicalPlanGenerator::create_plan(PredicateLogicalOperator &pred_oper, uniqu
 
   unique_ptr<Expression> expression = std::move(expressions.front());
   oper = unique_ptr<PhysicalOperator>(new PredicatePhysicalOperator(std::move(expression)));
+  if (children_opers.size() == 2) {
+    LogicalOperator &brother_oper = *children_opers[1];
+    unique_ptr<PhysicalOperator> brother_phy_oper;
+    RC rc = create(brother_oper, brother_phy_oper);
+    if (rc != RC::SUCCESS) {
+      return rc;
+    }
+    oper->add_child(std::move(brother_phy_oper));
+  }
   oper->add_child(std::move(child_phy_oper));
+
+  
   return rc;
 }
 

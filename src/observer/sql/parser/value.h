@@ -58,6 +58,10 @@ struct vector2_value_hash_name {
 class Value 
 {
 public:
+  typedef struct {
+    int d;
+  } date;
+
   Value() = default;
 
   Value(AttrType attr_type, char *data, int length = 4) : attr_type_(attr_type)
@@ -71,6 +75,7 @@ public:
   explicit Value(float val);
   explicit Value(Date val);
   explicit Value(bool val);
+  explicit Value(date val);
   explicit Value(const char *s, int len = 0);
 
   Value(const Value &other) = default;
@@ -106,11 +111,12 @@ public:
   void set_date(Date val);
   void set_boolean(bool val);
   void set_string(const char *s, int len = 0);
+  void set_date(int d);
   void set_value(const Value &value);
 
   std::string to_string() const;
 
-  int compare(const Value &other) const;
+  int compare(const Value &other  ) const;
 
   const char *data() const;
   void get_data();
@@ -141,10 +147,11 @@ public:
   int get_int() const;
   float get_float() const;
 
-  bool convert_to(AttrType);
   Date get_date() const;
   std::string get_string() const;
   bool get_boolean() const;
+
+  bool convert_to(AttrType);
 
   // friend size_t value_hash_name::operator()(const Value& p) const;
   // friend size_t vector_value_hash_name::operator()(const std::vector<Value>& vec) const;

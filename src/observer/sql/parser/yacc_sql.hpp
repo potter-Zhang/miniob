@@ -115,12 +115,15 @@ extern int yydebug;
     NULLISNULL = 316,              /* NULLISNULL  */
     NULLISNOTNULL = 317,           /* NULLISNOTNULL  */
     HAVING = 318,                  /* HAVING  */
-    NUMBER = 319,                  /* NUMBER  */
-    FLOAT = 320,                   /* FLOAT  */
-    DATE = 321,                    /* DATE  */
-    ID = 322,                      /* ID  */
-    SSS = 323,                     /* SSS  */
-    UMINUS = 324                   /* UMINUS  */
+    IN = 319,                      /* IN  */
+    NOT = 320,                     /* NOT  */
+    EXISTS = 321,                  /* EXISTS  */
+    NUMBER = 322,                  /* NUMBER  */
+    FLOAT = 323,                   /* FLOAT  */
+    DATE = 324,                    /* DATE  */
+    ID = 325,                      /* ID  */
+    SSS = 326,                     /* SSS  */
+    UMINUS = 327                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -129,7 +132,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 134 "yacc_sql.y"
+#line 137 "yacc_sql.y"
 
   ParsedSqlNode *                   sql_node;
   ConditionSqlNode *                condition;
@@ -152,7 +155,7 @@ union YYSTYPE
   char *                            dates;
   AggregationFunc                   func;
 
-#line 156 "yacc_sql.hpp"
+#line 159 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

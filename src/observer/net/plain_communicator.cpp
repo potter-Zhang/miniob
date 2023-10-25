@@ -176,7 +176,9 @@ RC PlainCommunicator::write_result(SessionEvent *event, bool &need_disconnect)
       return rc;
     }
   }
+  
   writer_->flush(); // TODO handle error
+  
   return rc;
 }
 
@@ -284,6 +286,11 @@ RC PlainCommunicator::write_result_internal(SessionEvent *event, bool &need_disc
 
   if (rc == RC::RECORD_EOF) {
     rc = RC::SUCCESS;
+  } else {
+    sql_result->close();
+    sql_result->set_return_code(rc);
+    writer_->clear();
+    return write_state(event, need_disconnect);
   }
 
   if (cell_num == 0) {

@@ -13,6 +13,7 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include <sstream>
+#include <limits>
 #include "sql/parser/value.h"
 #include "storage/field/field.h"
 #include "common/log/log.h"
@@ -99,6 +100,11 @@ Value::Value(bool val)
 Value::Value(const char *s, int len /*= 0*/)
 {
   set_string(s, len);
+}
+
+Value::Value(date val)
+{
+  set_date(val.d);
 }
 
 void Value::set_data(char *data, int length)
@@ -188,6 +194,12 @@ void Value::set_string(const char *s, int len /*= 0*/)
   if (nullable_)
     length_ ++;
   get_data();
+}
+void Value::set_date(int val)
+{
+  attr_type_ = DATES;
+  num_value_.date_value_ = val;
+  length_ = sizeof(num_value_.date_value_);
 }
 
 void Value::set_value(const Value &value)

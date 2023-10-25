@@ -119,7 +119,7 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
   int cmp_result = left.compare(right);
   result = false;
   switch (comp_) {
-    case EQUAL_TO: {
+    case EQUAL_TO: case IN_OP: case NOT_IN_OP: {
       result = (0 == cmp_result);
     } break;
     case LESS_EQUAL: {
@@ -156,6 +156,40 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
   return rc;
 }
 
+RC ComparisonExpr::compare_value(const Value &left, std::vector<Value> &collection, bool &value) const
+{
+  RC rc = RC::SUCCESS;
+  if (comp_ == EXISTS_OP) {
+    value = !collection.empty();
+    return rc;
+  }
+  if (comp_ == NOT_EXISTS_OP) {
+    value = collection.empty();
+    return rc;
+  }
+  if (comp_ < IN_OP && comp_ >= EQUAL_TO) {
+    if (collection.size() != 1) {
+      value = false;
+      return RC::INTERNAL;
+    }
+    return compare_value(left, collection[0], value);
+  }
+
+  value = comp_ == IN_OP;
+  for (Value &right : collection) {
+    bool cmp_result;
+    rc = compare_value(left, right, cmp_result);
+    if (OB_FAIL(rc)) {
+      return rc;
+    }
+    if (cmp_result) {
+      return rc;
+    }
+  }
+  value = !value;
+  return rc;
+}
+
 RC ComparisonExpr::try_get_value(Value &cell) const
 {
   if (left_->type() == ExprType::VALUE && right_->type() == ExprType::VALUE) {
@@ -181,6 +215,7 @@ RC ComparisonExpr::get_value(const Tuple &tuple, Value &value) const
 {
   Value left_value;
   Value right_value;
+  std::vector<Value> right_values;
 
   RC rc = left_->get_value(tuple, left_value);
   if (rc != RC::SUCCESS) {
@@ -194,11 +229,41 @@ RC ComparisonExpr::get_value(const Tuple &tuple, Value &value) const
   }
 
   bool bool_value = false;
+
+  if (right_->type() == ExprType::COLLECTION) {
+    right_->try_get_value(right_values);
+    rc = compare_value(left_value, right_values, bool_value);
+    if (rc == RC::SUCCESS) {
+      value.set_boolean(bool_value);
+    }
+    return rc;
+  }
+
+  
   rc = compare_value(left_value, right_value, bool_value);
   if (rc == RC::SUCCESS) {
     value.set_boolean(bool_value);
   }
   return rc;
+}
+
+
+RC ComparisonExpr::get_value(const Tuple &tuple, Value &value, std::vector<Value> &collection) const
+{
+  Value left_value;
+  RC rc = left_->get_value(tuple, left_value);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to get value of left expression. rc=%s", strrc(rc));
+    return rc;
+  }
+
+  bool bool_value = false;
+  rc = compare_value(left_value, collection, bool_value);
+  if (rc == RC::SUCCESS) {
+    value.set_boolean(bool_value);
+  }
+  return rc;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

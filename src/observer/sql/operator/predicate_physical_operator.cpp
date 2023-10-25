@@ -14,6 +14,7 @@ See the Mulan PSL v2 for more details. */
 
 #include "common/log/log.h"
 #include "sql/operator/predicate_physical_operator.h"
+#include "sql/operator/project_physical_operator.h"
 #include "storage/record/record.h"
 #include "sql/stmt/filter_stmt.h"
 #include "storage/field/field.h"
@@ -25,19 +26,69 @@ PredicatePhysicalOperator::PredicatePhysicalOperator(std::unique_ptr<Expression>
 
 RC PredicatePhysicalOperator::open(Trx *trx)
 {
+  RC rc = RC::SUCCESS;
   if (children_.size() != 1) {
     LOG_WARN("predicate operator must has one child");
-    return RC::INTERNAL;
+    children_[1]->open(trx);
+    if (children_.size() != 1) {
+    PhysicalOperator *sub_oper = children_[1].get();
+    while (RC::SUCCESS == (rc = sub_oper->next())) {
+      Tuple *tuple = sub_oper->current_tuple();
+      if (nullptr == tuple) {
+        rc = RC::INTERNAL;
+        return rc;
+      }
+
+      int cell_num = tuple->cell_num();
+      if (cell_num != 1) {
+        return RC::INTERNAL;
+      }
+
+      Value value;
+      rc = tuple->cell_at(0, value);
+      if (rc != RC::SUCCESS) {
+        return rc;
+      }
+      values_.push_back(value);
+      //printf("%s\n", value.to_string());
+     }
+  }
   }
 
   return children_[0]->open(trx);
 }
 
+/*
+while (RC::SUCCESS == (rc = sql_result->next_tuple(tuple))) {
+    assert(tuple != nullptr);
+
+    int cell_num = tuple->cell_num();
+    for (int i = 0; i < cell_num; i++) {
+      if (i != 0) {
+        const char *delim = " | ";
+        rc = writer_->writen(delim, strlen(delim));
+        if (OB_FAIL(rc)) {
+          LOG_WARN("failed to send data to client. err=%s", strerror(errno));
+          sql_result->close();
+          return rc;
+        }
+      }
+
+      Value value;
+      rc = tuple->cell_at(i, value);
+      if (rc != RC::SUCCESS) {
+        sql_result->close();
+        return rc;
+      }
+
+*/
+
 RC PredicatePhysicalOperator::next()
 {
   RC rc = RC::SUCCESS;
   PhysicalOperator *oper = children_.front().get();
-
+  
+  
   while (RC::SUCCESS == (rc = oper->next())) {
     Tuple *tuple = oper->current_tuple();
     if (nullptr == tuple) {
@@ -47,7 +98,13 @@ RC PredicatePhysicalOperator::next()
     }
 
     Value value;
-    rc = expression_->get_value(*tuple, value);
+    if (children_.size() != 1) {
+      rc = expression_->get_value(*tuple, value, values_);
+    }
+    else {
+      rc = expression_->get_value(*tuple, value);
+    }
+    
     if (rc != RC::SUCCESS) {
       return rc;
     }

@@ -119,7 +119,7 @@ RC DefaultConditionFilter::init(Table &table, const ConditionSqlNode &condition)
   return init(left, right, type_left, condition.comp);
 }
 
-bool DefaultConditionFilter::filter(const Record &rec) const
+bool DefaultConditionFilter::filter(const Record &rec, RC &rc) const
 {
   Value left_value;
   Value right_value;
@@ -137,7 +137,6 @@ bool DefaultConditionFilter::filter(const Record &rec) const
   } else {
     right_value.set_value(right_.value);
   }
-
   int cmp_result = left_value.compare(right_value);
 
   switch (comp_op_) {
@@ -211,10 +210,12 @@ RC CompositeConditionFilter::init(Table &table, const ConditionSqlNode *conditio
   return init((const ConditionFilter **)condition_filters, condition_num, true);
 }
 
-bool CompositeConditionFilter::filter(const Record &rec) const
+bool CompositeConditionFilter::filter(const Record &rec, RC &rc) const
 {
   for (int i = 0; i < filter_num_; i++) {
-    if (!filters_[i]->filter(rec)) {
+    if (!filters_[i]->filter(rec, rc)) {
+      if (OB_FAIL(rc))
+        break;
       return false;
     }
   }

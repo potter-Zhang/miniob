@@ -25,6 +25,7 @@ See the Mulan PSL v2 for more details. */
 
 class SQLStageEvent;
 class LogicalOperator;
+class PhysicalOperator;
 class Stmt;
 
 /**

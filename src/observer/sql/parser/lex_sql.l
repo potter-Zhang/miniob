@@ -99,6 +99,9 @@ CALC                                    RETURN_TOKEN(CALC);
 FROM                                    RETURN_TOKEN(FROM);
 WHERE                                   RETURN_TOKEN(WHERE);
 AND                                     RETURN_TOKEN(AND);
+IN                                      RETURN_TOKEN(IN);
+NOT                                     RETURN_TOKEN(NOT);
+EXISTS                                  RETURN_TOKEN(EXISTS);
 INSERT                                  RETURN_TOKEN(INSERT);
 INTO                                    RETURN_TOKEN(INTO);
 VALUES                                  RETURN_TOKEN(VALUES);
@@ -151,7 +154,7 @@ having                                  RETURN_TOKEN(HAVING);
 "-" |
 "*" |
 "/"                                     { return yytext[0]; }
-'{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\' yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
+\'{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\' yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
 \"{DIGIT}{4}[\-]{DIGIT}{1,2}[\-]{DIGIT}{1,2}\" yylval->dates= strdup(yytext); RETURN_TOKEN(DATE);
 \"[^"]*\"                               yylval->string = strdup(yytext); RETURN_TOKEN(SSS);
 '[^']*\'                                yylval->string = strdup(yytext); RETURN_TOKEN(SSS);

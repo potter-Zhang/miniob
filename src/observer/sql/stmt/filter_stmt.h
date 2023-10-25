@@ -18,6 +18,7 @@ See the Mulan PSL v2 for more details. */
 #include <unordered_map>
 #include "sql/parser/parse_defs.h"
 #include "sql/stmt/stmt.h"
+#include "sql/stmt/select_stmt.h"
 #include "sql/expr/expression.h"
 
 class Db;
@@ -26,14 +27,27 @@ class FieldMeta;
 
 struct FilterObj 
 {
-  bool is_attr;
+  int is_attr;
   Field field;
   Value value;
+  SelectStmt *select_stmt_;
+  std::vector<Value> values;
 
   void init_attr(const Field &field)
   {
     is_attr = true;
     this->field = field;
+  }
+
+  void init_select_stmt(SelectStmt *select_stmt)
+  {
+    is_attr = 2;
+    this->select_stmt_ = select_stmt;
+  }
+
+  void init_values(const std::vector<Value>& values) {
+    is_attr = 3;
+    this->values = values;
   }
 
   void init_value(const Value &value)

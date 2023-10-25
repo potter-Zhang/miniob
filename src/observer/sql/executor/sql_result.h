@@ -72,6 +72,7 @@ public:
   RC open();
   RC close();
   RC next_tuple(Tuple *&tuple);
+  RC peek_next_tuple() { return operator_->next();}
 
 private:
   Session *session_ = nullptr; ///< 当前所属会话

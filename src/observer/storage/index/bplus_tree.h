@@ -50,9 +50,13 @@ enum class BplusTreeOperationType
  * @brief 属性比较(BplusTree)
  * @ingroup BPlusTree
 <<<<<<< HEAD
+<<<<<<< HEAD
  * 
 =======
 >>>>>>> 6db5f5f0799d7ce0d38bcc99a331c86cb9777008
+=======
+ * 
+>>>>>>> 61ea6ebc16a2dd5369ec794ab8b56eb6008f7194
  */
 class AttrComparator 
 {
@@ -159,6 +163,7 @@ public:
       case DATES: {
         return common::date_to_str(*(Date *)v);
       }
+
       case CHARS: {
         std::string str;
         for (int i = 0; i < attr_length_; i++) {
@@ -168,7 +173,7 @@ public:
           str.push_back(v[i]);
         }
         return str;
-      }
+      } break;
       default: {
         ASSERT(false, "unknown attr type. %d", attr_type_);
       }
