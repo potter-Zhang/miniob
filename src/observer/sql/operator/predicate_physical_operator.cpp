@@ -52,6 +52,7 @@ RC PredicatePhysicalOperator::open(Trx *trx)
       values_.push_back(value);
       //printf("%s\n", value.to_string());
      }
+     
   }
   }
 

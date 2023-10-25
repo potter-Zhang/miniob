@@ -969,11 +969,33 @@ condition:
 
       delete $1;
     }
+    | value IN LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 0;
+      $$->left_value = *$1;
+      $$->right_is_attr = 2;
+      $$->right_select = &($4->selection);
+      $$->comp = CompOp::IN_OP;
+
+      delete $1;
+    }
     | rel_attr NOT IN LBRACE select_stmt RBRACE
     {
       $$ = new ConditionSqlNode;
       $$->left_is_attr = 1;
       $$->left_attr = *$1;
+      $$->right_is_attr = 2;
+      $$->right_select = &($5->selection);
+      $$->comp = CompOp::NOT_IN_OP;
+
+      delete $1;
+    }
+    | value NOT IN LBRACE select_stmt RBRACE
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 0;
+      $$->left_value = *$1;
       $$->right_is_attr = 2;
       $$->right_select = &($5->selection);
       $$->comp = CompOp::NOT_IN_OP;
@@ -995,6 +1017,21 @@ condition:
       delete $4;
       delete $1;
     }
+    | value IN LBRACE value value_list RBRACE 
+    {
+      $$ = new ConditionSqlNode;
+      if ($5 != nullptr) {
+        $$->values.swap(*$5);
+      }
+      $$->values.emplace_back(*$4);
+      std::reverse($$->values.begin(), $$->values.end());
+      $$->left_is_attr = 0;
+      $$->left_value = *$1;
+      $$->right_is_attr = 3;
+      $$->comp = CompOp::IN_OP;
+      delete $4;
+      delete $1;
+    }
     | rel_attr NOT IN LBRACE value value_list RBRACE 
     {
       $$ = new ConditionSqlNode;
@@ -1005,6 +1042,21 @@ condition:
       std::reverse($$->values.begin(), $$->values.end());
       $$->left_is_attr = 1;
       $$->left_attr = *$1;
+      $$->right_is_attr = 3;
+      $$->comp = CompOp::NOT_IN_OP;
+      delete $5;
+      delete $1;
+    }
+    | value NOT IN LBRACE value value_list RBRACE 
+    {
+      $$ = new ConditionSqlNode;
+      if ($5 != nullptr) {
+        $$->values.swap(*$6);
+      }
+      $$->values.emplace_back(*$5);
+      std::reverse($$->values.begin(), $$->values.end());
+      $$->left_is_attr = 0;
+      $$->left_value = *$1;
       $$->right_is_attr = 3;
       $$->comp = CompOp::NOT_IN_OP;
       delete $5;
@@ -1038,6 +1090,17 @@ condition:
       $$->comp = $2;
 
       delete $1;
+    }
+    | LBRACE select_stmt RBRACE comp_op rel_attr 
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 1;
+      $$->left_attr = *$5;
+      $$->right_is_attr = 2;
+      $$->right_select = &($2->selection);
+      $$->comp = $4;
+
+      delete $5;
     }
     ;
 

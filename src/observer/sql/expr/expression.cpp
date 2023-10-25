@@ -177,7 +177,11 @@ RC ComparisonExpr::compare_value(const Value &left, std::vector<Value> &collecti
     return rc;
   }
   if (comp_ < IN_OP && comp_ >= EQUAL_TO) {
-    if (collection.size() != 1) {
+    if (collection.size() == 0) {
+      value = false;
+      return rc;
+    }
+    else if (collection.size() > 1) {
       value = false;
       return RC::INTERNAL;
     }
