@@ -510,6 +510,10 @@ bool Value::convert_to(AttrType new_type) {
   }
   else{
     switch (new_type) {
+      case CHARS: {
+        set_string(to_string().c_str());
+        return true;
+      } break;
       case DATES: {
         if (attr_type_ != CHARS)
           return false;
