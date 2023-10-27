@@ -13,13 +13,14 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include "sql/stmt/update_stmt.h"
+#include "sql/parser/parse_defs.h"
 #include "sql/stmt/select_stmt.h"
 #include "common/log/log.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
 
-UpdateStmt::UpdateStmt(Table *table, std::vector<AttrValuePair> &attr_value_pair_vec, FilterStmt *filter_stmt, SelectStmt *select_stmt)
-    : table_(table), attr_value_pairs(attr_value_pair_vec), filter_stmt_(filter_stmt), select_stmt_(select_stmt)
+UpdateStmt::UpdateStmt(Table *table, std::vector<AttrValuePair> &attr_value_pair_vec, FilterStmt *filter_stmt)
+    : table_(table), attr_value_pairs(attr_value_pair_vec), filter_stmt_(filter_stmt)
 {}
 
 RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
@@ -46,12 +47,13 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
   // check fields type
   const int sys_field_num = table_meta.sys_field_num();
   for (int i = 0; i < update.attr_value_pairs.size(); i++) {
-    if (update.select != nullptr) {
-      break;
-    }
+    
     const FieldMeta *field_meta = table_meta.field(update.attr_value_pairs[i].attribute_name.c_str());
     if (field_meta == nullptr) {
       return RC::INVALID_ARGUMENT;
+    }
+    if (update.attr_value_pairs[i].ptr != nullptr) {
+      continue;
     }
     const AttrType field_type = field_meta->type();
     const AttrType value_type = update.attr_value_pairs[i].value.attr_type();
@@ -73,12 +75,18 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
     LOG_WARN("failed to create filter statement. rc=%d:%s", rc, strrc(rc));
     return rc;
   }
-  Stmt *select_stmt = nullptr;
-  if (update.select != nullptr) {
-    rc = SelectStmt::create(db, *update.select, select_stmt);
-  }
 
-  stmt = new UpdateStmt(table, update.attr_value_pairs, filter_stmt, static_cast<SelectStmt *>(select_stmt));
+  for (int i = 0; i < update.attr_value_pairs.size(); i++) {
+    if (update.attr_value_pairs[i].ptr != nullptr) {
+      SelectSqlNode selectSqlNode = *static_cast<SelectSqlNode *>(update.attr_value_pairs[i].ptr);
+      Stmt *stmt = nullptr;
+      rc = SelectStmt::create(db, selectSqlNode, stmt);
+      update.attr_value_pairs[i].ptr = stmt;
+    }
+  }
+  
+
+  stmt = new UpdateStmt(table, update.attr_value_pairs, filter_stmt);
   
   return RC::SUCCESS;
   

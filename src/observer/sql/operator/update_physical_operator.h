@@ -46,4 +46,5 @@ private:
   Table *table_ = nullptr;
   std::vector<AttrValuePair> attr_value_pair_;
   Trx *trx_;
+  RC delay_rc = RC::SUCCESS;
 };

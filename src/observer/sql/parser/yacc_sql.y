@@ -529,7 +529,7 @@ update_stmt:      /*  update 语句的语法解析树*/
         $$->update.attr_value_pairs.swap(*$7);
       }
       $$->update.relation_name = $2;
-      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, *$6});
+      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, *$6, nullptr});
       if ($8 != nullptr) {
         $$->update.conditions.swap(*$8);
         delete $8;
@@ -537,16 +537,18 @@ update_stmt:      /*  update 语句的语法解析树*/
       free($2);
       free($4);
     }
-    | UPDATE ID SET ID EQ LBRACE select_stmt RBRACE where
+    | UPDATE ID SET ID EQ LBRACE select_stmt RBRACE set_list where
     {
       $$ = new ParsedSqlNode(SCF_UPDATE);
-      
-      $$->update.relation_name = $2;
-      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, Value()});
-      $$->update.select = &$7->selection;
       if ($9 != nullptr) {
-        $$->update.conditions.swap(*$9);
-        delete $9;
+        $$->update.attr_value_pairs.swap(*$9);
+      }
+      $$->update.relation_name = $2;
+      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, Value(), &$7->selection});
+     
+      if ($10 != nullptr) {
+        $$->update.conditions.swap(*$10);
+        delete $10;
       }
       free($2);
       free($4);
@@ -564,8 +566,19 @@ set_list:
       } else {
         $$ = new std::vector<AttrValuePair>;
       }
-      $$->emplace_back(AttrValuePair{$2, *$4});
+      $$->emplace_back(AttrValuePair{$2, *$4, nullptr});
+      delete $2;
       delete $4;
+    }
+    | COMMA ID EQ LBRACE select_stmt RBRACE set_list
+    {
+      if ($7 != nullptr) {
+        $$ = $7;
+      } else {
+        $$ = new std::vector<AttrValuePair>;
+      }
+      $$->emplace_back(AttrValuePair{$2, Value(), &$5->selection});
+      delete $2;
     }
 select_stmt:        /*  select 语句的语法解析树*/
     SELECT select_attr FROM ID rel_list where group_by_columns having

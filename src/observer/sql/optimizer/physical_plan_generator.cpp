@@ -303,23 +303,23 @@ RC PhysicalPlanGenerator::create_plan(UpdateLogicalOperator &update_oper, unique
     }
   }
 
-  if (child_opers.size() != 1) {
-    LogicalOperator *child_oper = child_opers[1].get();
-    rc = create(*child_oper, select_physical_oper);
-    if (rc != RC::SUCCESS) {
-      LOG_WARN("failed to create physical operator. rc=%s", strrc(rc));
-      return rc;
-    }
-  }
-
+ 
   oper = unique_ptr<PhysicalOperator>(new UpdatePhysicalOperator(update_oper.table(), update_oper.attr_value_pair()));
 
   if (child_physical_oper) {
     oper->add_child(std::move(child_physical_oper));
   }
-  if (select_physical_oper) {
+
+  for (int i = 1; i < child_opers.size(); i++) {
+    LogicalOperator *child_oper = child_opers[i].get();
+    rc = create(*child_oper, select_physical_oper);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to create physical operator. rc=%s", strrc(rc));
+      return rc;
+    }
     oper->add_child(std::move(select_physical_oper));
   }
+  
   return rc;
 
 }
