@@ -246,13 +246,6 @@ RC LogicalPlanGenerator::create_plan(UpdateStmt *update_stmt, unique_ptr<Logical
   }
 
   unique_ptr<LogicalOperator> update_oper(new UpdateLogicalOperator(table, update_stmt->attr_value_pair()));
-  unique_ptr<LogicalOperator> select_oper;
-  if (update_stmt->select() != nullptr) {
-    rc = create_plan(update_stmt->select(), select_oper);
-    if (rc != RC::SUCCESS) {
-      return rc;
-    }
-  }
   
 
   if (predicate_oper) {
@@ -261,11 +254,15 @@ RC LogicalPlanGenerator::create_plan(UpdateStmt *update_stmt, unique_ptr<Logical
   } else {
     update_oper->add_child(std::move(table_get_oper));
   }
-
-  if (select_oper) {
-    update_oper->add_child(std::move(select_oper));
+  std::vector<AttrValuePair> &attr_value_pairs = update_stmt->attr_value_pair();
+  unique_ptr<LogicalOperator> select_oper;
+  for (int i = 0; i < attr_value_pairs.size(); i++) {
+    if (attr_value_pairs[i].ptr != nullptr) {
+      rc = create_plan(static_cast<SelectStmt *>(attr_value_pairs[i].ptr), select_oper);
+      update_oper->add_child(std::move(select_oper));
+    }
   }
-
+ 
   logical_operator = std::move(update_oper);
   return rc;
 }

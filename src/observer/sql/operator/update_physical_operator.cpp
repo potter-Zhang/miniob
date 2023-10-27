@@ -35,9 +35,12 @@ RC UpdatePhysicalOperator::open(Trx *trx)
     LOG_WARN("failed to open child operator: %s", strrc(rc));
     return rc;
   }
-
-  if (children_.size() != 1) {
-    std::unique_ptr<PhysicalOperator> &select_child = children_[1];
+  int idx = 1;
+  for (int i = 0; i < attr_value_pair_.size(); i++) {
+    if (attr_value_pair_[i].ptr == nullptr) {
+      continue;
+    }
+    std::unique_ptr<PhysicalOperator> &select_child = children_[idx++];
     rc = select_child->open(trx);
       if (rc != RC::SUCCESS) {
       LOG_WARN("failed to open child operator: %s", strrc(rc));
@@ -46,7 +49,8 @@ RC UpdatePhysicalOperator::open(Trx *trx)
     int num = 0;
     while (RC::SUCCESS == (rc = select_child->next())) {
       if (num++ >= 1) {
-        return RC::INTERNAL;
+        delay_rc = RC::INTERNAL;
+        return RC::SUCCESS;
       }
       Tuple *tuple = select_child->current_tuple();
       if (nullptr == tuple) {
@@ -62,7 +66,7 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       if (rc != RC::SUCCESS) {
         return rc;
       }
-      attr_value_pair_[0].value = value;
+      attr_value_pair_[i].value = value;
       
     }
 
@@ -112,6 +116,9 @@ RC UpdatePhysicalOperator::next()
 
   PhysicalOperator *child = children_[0].get();
   while (RC::SUCCESS == (rc = child->next())) {
+    if (delay_rc != RC::SUCCESS) {
+      return RC::INTERNAL;
+    }
     Tuple *tuple = child->current_tuple();
     if (nullptr == tuple) {
       LOG_WARN("failed to get current record: %s", strrc(rc));

@@ -144,6 +144,7 @@ struct AttrValuePair
 {
   std::string                   attribute_name;
   Value                         value;
+  void *                        ptr;
 };
 
 struct UpdateSqlNode
@@ -151,7 +152,7 @@ struct UpdateSqlNode
   std::string                   relation_name;         ///< Relation to update
   std::vector<AttrValuePair>    attr_value_pairs;        ///< 更新的字段，仅支持一个字段 
   std::vector<ConditionSqlNode> conditions;
-  SelectSqlNode *                select;
+  
 };
 
 
