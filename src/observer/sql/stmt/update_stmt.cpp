@@ -81,6 +81,9 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
       SelectSqlNode selectSqlNode = *static_cast<SelectSqlNode *>(update.attr_value_pairs[i].ptr);
       Stmt *stmt = nullptr;
       rc = SelectStmt::create(db, selectSqlNode, stmt);
+      if (OB_FAIL(rc)) {
+        return rc;
+      }
       update.attr_value_pairs[i].ptr = stmt;
     }
   }
