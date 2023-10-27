@@ -66,8 +66,12 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       if (rc != RC::SUCCESS) {
         return rc;
       }
+      value.convert_to(table_->table_meta().field(attr_value_pair_[i].attribute_name.c_str())->type());
       attr_value_pair_[i].value = value;
       
+    }
+    if (num == 0) {
+      return RC::INTERNAL;
     }
 
 

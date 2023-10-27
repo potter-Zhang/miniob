@@ -500,6 +500,8 @@ bool Value::get_boolean() const
 
 
 bool Value::convert_to(AttrType new_type) {
+  if (attr_type_ == new_type)
+    return true;
   if (nullable_ && is_null_){
     attr_type_ = new_type;
     length_ = 2; //图方便，可能有问题

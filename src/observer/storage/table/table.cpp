@@ -501,13 +501,18 @@ RC Table::modify_record(Record &record, const char *field_name, Value new_value)
   RC rc = RC::SUCCESS;
   rc = delete_entry_of_indexes(record.data(), record.rid(), true);
   const FieldMeta *field = table_meta_.field(field_name);
-    size_t copy_len = field->len();
-    if (field->type() == CHARS) {
-      const size_t data_len = new_value.length();
-      if (copy_len > data_len) {
-        copy_len = data_len + 1;
-      }
+  if (field->nullable())
+  {
+    new_value.set_nullable(true);
+    new_value.get_data();
+  }
+  size_t copy_len = field->len();
+  if (field->type() == CHARS) {
+    const size_t data_len = new_value.length();
+    if (copy_len > data_len) {
+      copy_len = data_len + 1;
     }
+  }
     
 
   rc = visit_record(record.rid(), false, [&](Record &rec) {
