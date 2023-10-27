@@ -536,7 +536,7 @@ bool Value::convert_to(AttrType new_type) {
 
       case INTS: {
         if (attr_type_ == FLOATS) {
-          set_int(get_float());
+          set_int(round(get_float()));
           return true;
         }
         return false;

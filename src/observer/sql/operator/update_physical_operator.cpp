@@ -71,7 +71,8 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       
     }
     if (num == 0) {
-      return RC::INTERNAL;
+      delay_rc = RC::INTERNAL;
+      return RC::SUCCESS;
     }
 
 
