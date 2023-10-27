@@ -22,7 +22,7 @@ See the Mulan PSL v2 for more details. */
 #include "value.h"
 #include <bits/stdc++.h>
 
-const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "ints", "floats", "dates","booleans", "null"};
+const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "text", "ints", "floats", "dates","booleans", "null"};
 
 const char *attr_type_to_string(AttrType type)
 {
@@ -114,6 +114,10 @@ void Value::set_data(char *data, int length)
       set_string(data, length);
       return;
     } break;
+    case TEXT: {
+      set_text(data, length);
+      return;
+    } break;
     case INTS: {
       num_value_.int_value_ = *(int *)data;
       length_ = length;
@@ -195,6 +199,20 @@ void Value::set_string(const char *s, int len /*= 0*/)
     length_ ++;
   get_data();
 }
+void Value::set_text(const char *s, int len /*= 0*/)
+{
+  attr_type_ = TEXT;
+  if (len > 0) {
+    len = strnlen(s, len);
+    str_value_.assign(s, len);
+  } else {
+    str_value_.assign(s);
+  }
+  length_ = str_value_.length();
+  if (nullable_)
+    length_ ++;
+  get_data();
+}
 void Value::set_date(int val)
 {
   attr_type_ = DATES;
@@ -216,6 +234,9 @@ void Value::set_value(const Value &value)
     } break;
     case CHARS: {
       set_string(value.get_string().c_str());
+    } break;
+    case TEXT: {
+      set_text(value.get_string().c_str());
     } break;
     case BOOLEANS: {
       set_boolean(value.get_boolean());

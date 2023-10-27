@@ -156,7 +156,7 @@ union YYSTYPE
   AggregationFunc                   func;
   std::vector<AttrValuePair> *      set_list;
 
-#line 163 "yacc_sql.hpp"
+#line 160 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -27,6 +27,7 @@ enum AttrType
   UNDEFINED,
   // CHARS到DATES之间是用户可以正常使用的类型，若要天街用户可以正常使用的类型(认为NULLTYPE不正常)，最好增加到CHARS和DATES之间，否则需要修改类似ChARS<= <=DATES的地方
   CHARS,          ///< 字符串类型
+  TEXT,           ///< 长字符串
   INTS,           ///< 整数类型(4字节)
   FLOATS,         ///< 浮点数类型(4字节)
   DATES,          ///< 日期类型(4字节)
@@ -111,6 +112,7 @@ public:
   void set_date(Date val);
   void set_boolean(bool val);
   void set_string(const char *s, int len = 0);
+  void set_text(const char *s, int len = 0);
   void set_date(int d);
   void set_value(const Value &value);
 

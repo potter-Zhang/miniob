@@ -530,7 +530,7 @@ update_stmt:      /*  update 语句的语法解析树*/
       }
       $$->update.relation_name = $2;
       $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, *$6});
-      if ($7 != nullptr) {
+      if ($8 != nullptr) {
         $$->update.conditions.swap(*$8);
         delete $8;
       }
