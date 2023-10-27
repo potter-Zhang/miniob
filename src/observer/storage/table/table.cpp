@@ -506,6 +506,10 @@ RC Table::modify_record(Record &record, const char *field_name, Value new_value)
     new_value.set_nullable(true);
     new_value.get_data();
   }
+  else{
+    if (new_value.nullable() && new_value.is_null())
+      return RC::INVALID_ARGUMENT;
+  }
   size_t copy_len = field->len();
   if (field->type() == CHARS) {
     const size_t data_len = new_value.length();
