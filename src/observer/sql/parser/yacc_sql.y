@@ -120,6 +120,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   char *                            string;
   int                               number;
   float                             floats;
+  std::vector<AttrValuePair> *      set_list;
 }
 
 %token <number> NUMBER
@@ -144,6 +145,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <rel_attr_list>       select_attr
 %type <relation_list>       rel_list
 %type <rel_attr_list>       attr_list
+%type <set_list>            set_list
 %type <expression>          expression
 %type <expression_list>     expression_list
 %type <sql_node>            calc_stmt
@@ -408,20 +410,51 @@ delete_stmt:    /*  delete 语句的语法解析树*/
     }
     ;
 update_stmt:      /*  update 语句的语法解析树*/
-    UPDATE ID SET ID EQ value where 
+    UPDATE ID SET ID EQ value set_list where 
     {
       $$ = new ParsedSqlNode(SCF_UPDATE);
-      $$->update.relation_name = $2;
-      $$->update.attribute_name = $4;
-      $$->update.value = *$6;
       if ($7 != nullptr) {
-        $$->update.conditions.swap(*$7);
-        delete $7;
+        $$->update.attr_value_pairs.swap(*$7);
+      }
+      $$->update.relation_name = $2;
+      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, *$6});
+      if ($7 != nullptr) {
+        $$->update.conditions.swap(*$8);
+        delete $8;
+      }
+      free($2);
+      free($4);
+    }
+    | UPDATE ID SET ID EQ LBRACE select_stmt RBRACE where
+    {
+      $$ = new ParsedSqlNode(SCF_UPDATE);
+      
+      $$->update.relation_name = $2;
+      $$->update.attr_value_pairs.emplace_back(AttrValuePair{$4, Value()});
+      $$->update.select = &$7->selection;
+      if ($9 != nullptr) {
+        $$->update.conditions.swap(*$9);
+        delete $9;
       }
       free($2);
       free($4);
     }
     ;
+set_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA ID EQ value set_list
+    {
+      if ($5 != nullptr) {
+        $$ = $5;
+      } else {
+        $$ = new std::vector<AttrValuePair>;
+      }
+      $$->emplace_back(AttrValuePair{$2, *$4});
+      delete $4;
+    }
 select_stmt:        /*  select 语句的语法解析树*/
     SELECT select_attr FROM ID rel_list where
     {

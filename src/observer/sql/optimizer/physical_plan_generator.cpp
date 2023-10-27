@@ -266,6 +266,7 @@ RC PhysicalPlanGenerator::create_plan(UpdateLogicalOperator &update_oper, unique
   vector<unique_ptr<LogicalOperator>> &child_opers = update_oper.children();
 
   unique_ptr<PhysicalOperator> child_physical_oper;
+  unique_ptr<PhysicalOperator> select_physical_oper;
   
   Value &value = update_oper.value();
 
@@ -279,10 +280,22 @@ RC PhysicalPlanGenerator::create_plan(UpdateLogicalOperator &update_oper, unique
     }
   }
 
-  oper = unique_ptr<PhysicalOperator>(new UpdatePhysicalOperator(update_oper.table(), std::move(value), update_oper.field_name()));
+  if (child_opers.size() != 1) {
+    LogicalOperator *child_oper = child_opers[1].get();
+    rc = create(*child_oper, select_physical_oper);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to create physical operator. rc=%s", strrc(rc));
+      return rc;
+    }
+  }
+
+  oper = unique_ptr<PhysicalOperator>(new UpdatePhysicalOperator(update_oper.table(), update_oper.attr_value_pair()));
 
   if (child_physical_oper) {
     oper->add_child(std::move(child_physical_oper));
+  }
+  if (select_physical_oper) {
+    oper->add_child(std::move(select_physical_oper));
   }
   return rc;
 

@@ -26,7 +26,7 @@ See the Mulan PSL v2 for more details. */
 class UpdateLogicalOperator : public LogicalOperator
 {
 public:
-  UpdateLogicalOperator(Table *table, Value value, std::string field_name);
+  UpdateLogicalOperator(Table *table, std::vector<AttrValuePair> &attr_value_pair);
   virtual ~UpdateLogicalOperator() = default;
 
   LogicalOperatorType type() const override
@@ -38,9 +38,11 @@ public:
   const Value &value() const { return value_; }
   Value &value() { return value_; }
   std::string field_name() { return field_name_; }
+  std::vector<AttrValuePair> &attr_value_pair() {return attr_value_pair_;}
 
 private:
   Table *table_ = nullptr;
+  std::vector<AttrValuePair> attr_value_pair_;
   Value value_;
   std::string field_name_;
 };

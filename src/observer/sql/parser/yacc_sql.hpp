@@ -133,8 +133,9 @@ union YYSTYPE
   char *                            string;
   int                               number;
   float                             floats;
+  std::vector<AttrValuePair> *      set_list;
 
-#line 138 "yacc_sql.hpp"
+#line 139 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

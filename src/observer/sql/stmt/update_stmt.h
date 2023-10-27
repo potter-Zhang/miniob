@@ -28,7 +28,7 @@ class UpdateStmt : public Stmt
 {
 public:
   UpdateStmt() = default;
-  UpdateStmt(Table *table, Value *value, std::string field_name, FilterStmt *filter_stmt);
+  UpdateStmt(Table *table, std::vector<AttrValuePair> &attr_values_pair_vec, FilterStmt *filter_stmt, SelectStmt *select_stmt);
 
 public:
   static RC create(Db *db, UpdateSqlNode &update_sql, Stmt *&stmt);
@@ -48,20 +48,19 @@ public:
   {
     return table_;
   }
-  Value *value() const
-  {
-    return value_;
-  }
-  std::string field_name() const
-  {
-    return field_name_;
-  }
-  
 
+  SelectStmt *select() 
+  {
+    return select_stmt_;
+  }
+
+  std::vector<AttrValuePair> &attr_value_pair() {return attr_value_pairs;}
+ 
 private:
   Table *table_ = nullptr;
-  Value *value_ = nullptr;
+  //Value *value_ = nullptr;
   FilterStmt *filter_stmt_ = nullptr;
-  std::string field_name_;
-  
+  //std::string field_name_;
+  std::vector<AttrValuePair> attr_value_pairs;
+  SelectStmt *select_stmt_ = nullptr;
 };
