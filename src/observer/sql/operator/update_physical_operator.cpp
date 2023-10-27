@@ -47,6 +47,7 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       return rc;
     }
     int num = 0;
+    const FieldMeta* fieldmeta = table_->table_meta().field(attr_value_pair_[i].attribute_name.c_str());
     while (RC::SUCCESS == (rc = select_child->next())) {
       if (num++ >= 1) {
         delay_rc = RC::INTERNAL;
@@ -66,13 +67,23 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       if (rc != RC::SUCCESS) {
         return rc;
       }
-      value.convert_to(table_->table_meta().field(attr_value_pair_[i].attribute_name.c_str())->type());
+      value.convert_to(fieldmeta->type());
       attr_value_pair_[i].value = value;
       
     }
     if (num == 0) {
-      delay_rc = RC::INTERNAL;
-      return RC::SUCCESS;
+      if (fieldmeta->nullable()) {
+        Value value;
+        value.set_nullable(true);
+        value.set_is_null(true);
+        value.set_length(fieldmeta->len());
+        value.get_data();
+        attr_value_pair_[i].value = value;
+      }
+      else {
+        delay_rc = RC::INTERNAL;
+        return RC::SUCCESS;
+      }
     }
 
 
