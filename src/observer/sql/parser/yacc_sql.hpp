@@ -154,8 +154,9 @@ union YYSTYPE
   float                             floats;
   char *                            dates;
   AggregationFunc                   func;
+  std::vector<AttrValuePair> *      set_list;
 
-#line 159 "yacc_sql.hpp"
+#line 163 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

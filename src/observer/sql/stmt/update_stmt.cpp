@@ -13,12 +13,13 @@ See the Mulan PSL v2 for more details. */
 //
 
 #include "sql/stmt/update_stmt.h"
+#include "sql/stmt/select_stmt.h"
 #include "common/log/log.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
 
-UpdateStmt::UpdateStmt(Table *table, Value *value, std::string field_name, FilterStmt *filter_stmt)
-    : table_(table), value_(value), field_name_(field_name), filter_stmt_(filter_stmt)
+UpdateStmt::UpdateStmt(Table *table, std::vector<AttrValuePair> &attr_value_pair_vec, FilterStmt *filter_stmt, SelectStmt *select_stmt)
+    : table_(table), attr_value_pairs(attr_value_pair_vec), filter_stmt_(filter_stmt), select_stmt_(select_stmt)
 {}
 
 RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
@@ -43,21 +44,24 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
   const int field_num = table_meta.field_num() - table_meta.sys_field_num();
 
   // check fields type
-  const FieldMeta *field_meta = table_meta.field(update.attribute_name.c_str());
-  if (field_meta == nullptr) {
-    return RC::INVALID_ARGUMENT;
-  }
-  const AttrType field_type = field_meta->type();
-  const AttrType value_type = update.value.attr_type();
-  if (field_type != value_type) {
-    if (value_type == AttrType::NULLTYPE) {
-      if (!field_meta->nullable())
-        return RC::INVALID_ARGUMENT;
+  const int sys_field_num = table_meta.sys_field_num();
+  for (int i = 0; i < update.attr_value_pairs.size(); i++) {
+    if (update.select != nullptr) {
+      break;
     }
-    if (!update.value.convert_to(field_type)) {
-      return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+    const FieldMeta *field_meta = table_meta.field(update.attr_value_pairs[i].attribute_name.c_str());
+    if (field_meta == nullptr) {
+      return RC::INVALID_ARGUMENT;
+    }
+    const AttrType field_type = field_meta->type();
+    const AttrType value_type = update.attr_value_pairs[i].value.attr_type();
+    if (field_type != value_type) {
+      if (!update.attr_value_pairs[i].value.convert_to(field_type)) {
+        return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+      }
     }
   }
+  
 
   std::unordered_map<std::string, Table *> table_map;
   table_map.insert(std::pair<std::string, Table *>(std::string(table_name), table));
@@ -69,8 +73,12 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
     LOG_WARN("failed to create filter statement. rc=%d:%s", rc, strrc(rc));
     return rc;
   }
+  Stmt *select_stmt = nullptr;
+  if (update.select != nullptr) {
+    rc = SelectStmt::create(db, *update.select, select_stmt);
+  }
 
-  stmt = new UpdateStmt(table, &update.value, update.attribute_name, filter_stmt);
+  stmt = new UpdateStmt(table, update.attr_value_pairs, filter_stmt, static_cast<SelectStmt *>(select_stmt));
   
   return RC::SUCCESS;
   

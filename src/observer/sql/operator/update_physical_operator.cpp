@@ -19,8 +19,8 @@ See the Mulan PSL v2 for more details. */
 
 using namespace std;
 
-UpdatePhysicalOperator::UpdatePhysicalOperator(Table *table, Value &&value, std::string field_name)
-    : table_(table), value_(std::move(value)), field_name_(field_name)
+UpdatePhysicalOperator::UpdatePhysicalOperator(Table *table, std::vector<AttrValuePair> &attr_value_pair)
+    : table_(table), attr_value_pair_(attr_value_pair)
 {}
 
 RC UpdatePhysicalOperator::open(Trx *trx)
@@ -36,10 +36,72 @@ RC UpdatePhysicalOperator::open(Trx *trx)
     return rc;
   }
 
+  if (children_.size() != 1) {
+    std::unique_ptr<PhysicalOperator> &select_child = children_[1];
+    rc = select_child->open(trx);
+      if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to open child operator: %s", strrc(rc));
+      return rc;
+    }
+    int num = 0;
+    while (RC::SUCCESS == (rc = select_child->next())) {
+      if (num++ >= 1) {
+        return RC::INTERNAL;
+      }
+      Tuple *tuple = select_child->current_tuple();
+      if (nullptr == tuple) {
+        return RC::INTERNAL;
+      }
+      int cell_num = tuple->cell_num();
+      if (cell_num != 1) {
+        return RC::INTERNAL;
+      }
+
+      Value value;
+      rc = tuple->cell_at(0, value);
+      if (rc != RC::SUCCESS) {
+        return rc;
+      }
+      attr_value_pair_[0].value = value;
+      
+    }
+
+
+  }
+
   trx_ = trx;
 
-  return rc;
+  return RC::SUCCESS;
 }
+/**
+ * if (children_.size() != 1) {
+    LOG_WARN("predicate operator must has one child");
+    children_[1]->open(trx);
+    if (children_.size() != 1) {
+    PhysicalOperator *sub_oper = children_[1].get();
+    while (RC::SUCCESS == (rc = sub_oper->next())) {
+      Tuple *tuple = sub_oper->current_tuple();
+      if (nullptr == tuple) {
+        rc = RC::INTERNAL;
+        return rc;
+      }
+
+      int cell_num = tuple->cell_num();
+      if (cell_num != 1) {
+        return RC::INTERNAL;
+      }
+
+      Value value;
+      rc = tuple->cell_at(0, value);
+      if (rc != RC::SUCCESS) {
+        return rc;
+      }
+      values_.push_back(value);
+      //printf("%s\n", value.to_string());
+     }
+  }
+  }
+*/
 
 RC UpdatePhysicalOperator::next()
 {
@@ -58,11 +120,14 @@ RC UpdatePhysicalOperator::next()
 
     RowTuple *row_tuple = static_cast<RowTuple *>(tuple);
     Record &record = row_tuple->record();
-    rc = trx_->modify_record(table_, record, field_name_.c_str(), value_);
-    if (rc != RC::SUCCESS) {
-      return rc;
+    for (int i = 0; i < attr_value_pair_.size(); i++) {
+       rc = trx_->modify_record(table_, record, attr_value_pair_[i].attribute_name.c_str(), attr_value_pair_[i].value);
+      if (rc != RC::SUCCESS) {
+        return rc;
+      }
     }
   }
+   
 
   return RC::RECORD_EOF;
 }
