@@ -118,12 +118,14 @@ extern int yydebug;
     IN = 319,                      /* IN  */
     NOT = 320,                     /* NOT  */
     EXISTS = 321,                  /* EXISTS  */
-    NUMBER = 322,                  /* NUMBER  */
-    FLOAT = 323,                   /* FLOAT  */
-    DATE = 324,                    /* DATE  */
-    ID = 325,                      /* ID  */
-    SSS = 326,                     /* SSS  */
-    UMINUS = 327                   /* UMINUS  */
+    ORDERBY = 322,                 /* ORDERBY  */
+    ASC = 323,                     /* ASC  */
+    NUMBER = 324,                  /* NUMBER  */
+    FLOAT = 325,                   /* FLOAT  */
+    DATE = 326,                    /* DATE  */
+    ID = 327,                      /* ID  */
+    SSS = 328,                     /* SSS  */
+    UMINUS = 329                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -132,7 +134,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 137 "yacc_sql.y"
+#line 139 "yacc_sql.y"
 
   ParsedSqlNode *                   sql_node;
   ConditionSqlNode *                condition;
@@ -149,6 +151,8 @@ union YYSTYPE
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
+  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>* unordered_list;
+  std::pair<RelAttrSqlNode, bool>* pair;
   char *                            string;
   int                               number;
   float                             floats;
@@ -156,7 +160,7 @@ union YYSTYPE
   AggregationFunc                   func;
   std::vector<AttrValuePair> *      set_list;
 
-#line 160 "yacc_sql.hpp"
+#line 164 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

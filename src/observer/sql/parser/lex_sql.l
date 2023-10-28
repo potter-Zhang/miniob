@@ -136,6 +136,9 @@ IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL   RETURN_TOKEN(ISNOTNULL);
 NULL{WHITE_SAPCE}+IS{WHITE_SAPCE}+NULL  RETURN_TOKEN(NULLISNULL);
 NULL{WHITE_SAPCE}+IS{WHITE_SAPCE}+NOT{WHITE_SAPCE}+NULL RETURN_TOKEN(NULLISNOTNULL);
 having                                  RETURN_TOKEN(HAVING);
+ORDER{WHITE_SAPCE}+BY                   RETURN_TOKEN(ORDERBY);
+ASC                                     RETURN_TOKEN(ASC);
+
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);

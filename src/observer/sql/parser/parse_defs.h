@@ -18,6 +18,7 @@ See the Mulan PSL v2 for more details. */
 #include <memory>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #include "sql/parser/value.h"
 
@@ -53,6 +54,19 @@ struct RelAttrSqlNode
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
   AggregationFunc func = NONE; ///< func                        聚合函数名
+  bool operator == (const RelAttrSqlNode& other) const {
+    return relation_name == other.relation_name && attribute_name == other.attribute_name && func == other.func;
+  }
+};
+
+struct RelAttrSqlNode_hash_name {
+  size_t operator()(const RelAttrSqlNode& r) const {
+    size_t seed = 0;
+    seed ^= std::hash<std::string>{}(r.relation_name) + 0x9e37a9bd + (seed << 8) + (seed >> 3);
+    seed ^= std::hash<std::string>{}(r.attribute_name) + 0x903719bd + (seed << 6) + (seed >> 2);
+    seed ^= std::hash<int>{}(r.func) + 0xa03819bd + (seed << 5) + (seed >> 4);
+    return seed;
+  }
 };
 
 /**
@@ -120,6 +134,7 @@ struct SelectSqlNode
   std::vector<ConditionSqlNode>   conditions;    ///< 查询条件，使用AND串联起来多个条件
   std::vector<std::string>        group_by_columns;///< 分组依据的列名
   std::vector<ConditionSqlNode>   having_conditions;///< having子句
+  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name> order_columns;///< 排序
 };
 
 
@@ -225,6 +240,19 @@ struct CreateIndexSqlNode
 };
 
 /**
+ * @brief create multi-index语句
+ * @ingroup SQLParser
+ * @details 创建multi索引，备选方案，直接返回success
+ * TODO
+*/
+struct CreateMultiIndexSqlNode
+{
+  std::string index_name;       ///< Index name
+  std::string relation_name;    ///< Relation name
+  std::vector<std::string> attr_list;
+};
+
+/**
  * @brief 描述一个drop index语句
  * @ingroup SQLParser
  */
@@ -307,6 +335,7 @@ enum SqlCommandFlag
   SCF_CREATE_TABLE,
   SCF_DROP_TABLE,
   SCF_CREATE_INDEX,
+  SCF_CREATE_MULTIINDEX,
   SCF_DROP_INDEX,
   SCF_SYNC,
   SCF_SHOW_TABLES,
@@ -338,6 +367,7 @@ public:
   CreateTableSqlNode        create_table;
   DropTableSqlNode          drop_table;
   CreateIndexSqlNode        create_index;
+  CreateMultiIndexSqlNode   create_multiIndex;
   DropIndexSqlNode          drop_index;
   DescTableSqlNode          desc_table;
   LoadDataSqlNode           load_data;

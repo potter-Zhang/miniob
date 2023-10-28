@@ -132,6 +132,8 @@ ConditionSqlNode *always_false()
         IN
         NOT
         EXISTS
+        ORDERBY
+        ASC
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -150,6 +152,8 @@ ConditionSqlNode *always_false()
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
+  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>* unordered_list;
+  std::pair<RelAttrSqlNode, bool>* pair;
   char *                            string;
   int                               number;
   float                             floats;
@@ -188,6 +192,9 @@ ConditionSqlNode *always_false()
 %type <relation_list>       rel_list
 %type <relation_list>       group_by_columns
 %type <string>              group_by_attr
+%type <unordered_list>      unordered_list
+%type <unordered_list>      order_list;
+%type <pair>                order_attr
 %type <relation_list>       group_by_attr_list
 %type <rel_attr_list>       attr_list
 %type <set_list>            set_list
@@ -203,6 +210,7 @@ ConditionSqlNode *always_false()
 %type <sql_node>            show_tables_stmt
 %type <sql_node>            desc_table_stmt
 %type <sql_node>            create_index_stmt
+%type <sql_node>            create_multi_index_stmt
 %type <sql_node>            drop_index_stmt
 %type <sql_node>            sync_stmt
 %type <sql_node>            begin_stmt
@@ -242,6 +250,7 @@ command_wrapper:
   | show_tables_stmt
   | desc_table_stmt
   | create_index_stmt
+  | create_multi_index_stmt
   | drop_index_stmt
   | sync_stmt
   | begin_stmt
@@ -318,6 +327,27 @@ create_index_stmt:    /*create index 语句的语法解析树*/
       create_index.index_name = $3;
       create_index.relation_name = $5;
       create_index.attribute_name = $7;
+      free($3);
+      free($5);
+      free($7);
+    }
+    ;
+
+create_multi_index_stmt:
+    CREATE INDEX ID ON ID LBRACE ID rel_list RBRACE
+    {
+      $$ = new ParsedSqlNode(SCF_CREATE_MULTIINDEX);
+      CreateMultiIndexSqlNode &create_multiIndex = $$->create_multiIndex;
+      create_multiIndex.index_name = $3;
+      create_multiIndex.relation_name = $5;
+
+      if($8 != nullptr) {
+        create_multiIndex.attr_list.swap(*$8);
+        delete $8;
+      }
+      create_multiIndex.attr_list.push_back($7);
+      std::reverse(create_multiIndex.attr_list.begin(), create_multiIndex.attr_list.end());
+
       free($3);
       free($5);
       free($7);
@@ -581,7 +611,7 @@ set_list:
       delete $2;
     }
 select_stmt:        /*  select 语句的语法解析树*/
-    SELECT select_attr FROM ID rel_list where group_by_columns having
+    SELECT select_attr FROM ID rel_list where group_by_columns having order_list
     {
       $$ = new ParsedSqlNode(SCF_SELECT);
       if ($2 != nullptr) {
@@ -611,9 +641,16 @@ select_stmt:        /*  select 语句的语法解析树*/
         delete $8;
       }
 
+      if($9 != nullptr) {
+        for (auto pair : *$9) {
+          $$->selection.order_columns.insert(pair);
+        }
+        delete $9;
+      }
+
       free($4);
     }
-    | SELECT select_attr FROM ID inner_join_node where group_by_columns having
+    | SELECT select_attr FROM ID inner_join_node where group_by_columns having order_list
     {
       if ($5 != nullptr){
         $$ = $5;
@@ -642,6 +679,13 @@ select_stmt:        /*  select 语句的语法解析树*/
       if($8 != nullptr) {
         $$->selection.having_conditions.swap(*$8);
         delete $8;
+      }
+
+      if($9 != nullptr) {
+        for (auto pair : *$9) {
+          $$->selection.order_columns.insert(pair);
+        }
+        delete $9;
       }
 
       free($4);
@@ -755,6 +799,27 @@ rel_attr:
     }
     ;
 
+order_attr:
+    rel_attr {
+      $$ = new std::pair<RelAttrSqlNode, bool>;
+      $$->first = *$1;
+      $$->second = true;
+      delete $1;
+    }
+    | rel_attr ASC {
+      $$ = new std::pair<RelAttrSqlNode, bool>;
+      $$->first = *$1;
+      $$->second = true;
+      delete $1;
+    }
+    | rel_attr DESC {
+      $$ = new std::pair<RelAttrSqlNode, bool>;
+      $$->first = *$1;
+      $$->second = false;
+      delete $1;
+    }
+    ;
+
 agg_attr:
     func LBRACE ID RBRACE {
       $$ = new RelAttrSqlNode;
@@ -792,6 +857,42 @@ attr_list:
       }
 
       $$->emplace_back(*$2);
+      delete $2;
+    }
+    ;
+
+unordered_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA order_attr unordered_list
+    {
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>;
+      }
+      
+      $$->insert(*$2);
+      delete $2;
+    }
+    ;
+
+order_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | ORDERBY order_attr unordered_list
+    {
+      if ($3 == nullptr) {
+        $$ = new std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>;
+      } else {
+        $$ = $3;
+      }
+
+      $$->insert(*$2);
       delete $2;
     }
     ;
