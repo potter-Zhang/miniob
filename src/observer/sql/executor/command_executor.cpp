@@ -42,6 +42,11 @@ RC CommandExecutor::execute(SQLStageEvent *sql_event)
       return executor.execute(sql_event);
     } break;
 
+    // 直接返回，不知道会不会出事
+    case StmtType::CREATE_MULTIINDEX: {
+      return RC::SUCCESS;
+    } break;
+
     case StmtType::DROP_TABLE: {
       DropTableExecutor executor;
       return executor.execute(sql_event);

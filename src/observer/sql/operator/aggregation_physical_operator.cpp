@@ -138,7 +138,7 @@ RC AggregationPhysicalOperator::do_aggregation()
               assert(comp->left()->type() == ExprType::VALUE);
               std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
               std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
-              ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+              ComparisonExpr temp(op, std::move(left), std::move(right));
               Value value;
               temp.get_value(*tuple, value);
               if (!value.get_boolean()){
@@ -151,7 +151,7 @@ RC AggregationPhysicalOperator::do_aggregation()
               assert(comp->right()->type() == ExprType::VALUE);
               std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
               std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
-              ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+              ComparisonExpr temp(op, std::move(left), std::move(right));
               Value value;
               temp.get_value(*tuple, value);
               if (!value.get_boolean()){
@@ -169,7 +169,7 @@ RC AggregationPhysicalOperator::do_aggregation()
             assert(comp->left()->type() == ExprType::VALUE);
             std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
             std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));//having_funcs起始位置在正常的values值的末尾+1处
-            ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+            ComparisonExpr temp(op, std::move(left), std::move(right));
             Value value;
             temp.get_value(*tuple, value);
             if (!value.get_boolean()){
@@ -182,7 +182,7 @@ RC AggregationPhysicalOperator::do_aggregation()
             assert(comp->right()->type() == ExprType::VALUE);
             std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
             std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));
-            ComparisonExpr temp = ComparisonExpr(op, std::move(left), std::move(right));
+            ComparisonExpr temp(op, std::move(left), std::move(right));
             Value value;
             temp.get_value(*tuple, value);
             if (!value.get_boolean()){

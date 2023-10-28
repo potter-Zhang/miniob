@@ -32,6 +32,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/set_variable_stmt.h"
 #include "sql/stmt/load_data_stmt.h"
 #include "sql/stmt/calc_stmt.h"
+#include "sql/stmt/create_multi_index_stmt.h"
 
 RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
 {
@@ -58,6 +59,10 @@ RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
 
     case SCF_CREATE_INDEX: {
       return CreateIndexStmt::create(db, sql_node.create_index, stmt);
+    }
+
+    case SCF_CREATE_MULTIINDEX: {
+      return CreateMultiIndexStmt::create(db, sql_node.create_multiIndex, stmt);
     }
 
     case SCF_CREATE_TABLE: {
