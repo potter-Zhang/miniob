@@ -117,7 +117,7 @@ RC OrderPhysicalOperator::sort_(std::vector<ValueListTuple*> &values, std::vecto
   if (tuples.size() == 0)
     return RC::SUCCESS;
   int cell_num = tuples[0]->cell_num();
-  std::map<std::vector<Value>, ValueListTuple*> order_filter;
+  std::multimap<std::vector<Value>, ValueListTuple*> order_filter;
 
   for (ValueListTuple* tuple : tuples) {
     std::vector<Value> values;
