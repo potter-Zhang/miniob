@@ -372,10 +372,20 @@ bool Value::operator == (const Value& other) const{
 }
 
 bool Value::operator < (const Value& other) const{
-  if (asc_)
+  if (asc_) {
+    if (nullable_ && is_null_)
+      return true;
+    else if (other.nullable_ && other.is_null_)
+      return false;
     return compare(other) < 0;
-  else
+  }
+  else {
+    if (nullable_ && is_null_)
+      return false;
+    else if (other.nullable_ && other.is_null_)
+      return true;
     return compare(other) > 0;
+  }
 }
 
 int Value::get_int() const
