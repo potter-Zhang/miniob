@@ -49,7 +49,7 @@ public:
 
 private:
   RC sort();
-  RC sort_(std::vector<ValueListTuple*> &values, std::vector<ValueListTuple *> &tuples, int is_asc_current);
+  RC sort_(std::vector<ValueListTuple*> &values, std::vector<ValueListTuple *> &tuples);//, int is_asc_current);
 
 private:
   ValueListTuple* tuple_;

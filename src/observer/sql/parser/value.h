@@ -141,6 +141,9 @@ public:
   {
     return is_null_;
   }
+  void set_asc(bool asc) {
+    asc_ = asc;
+  }
 
 public:
   /**
@@ -173,6 +176,7 @@ private:
 
   bool nullable_ = false;
   int is_null_ = 0;
+  bool asc_ = true;
   //std::string buffer_;
   //bool buffer_allocated_ = false;
 };

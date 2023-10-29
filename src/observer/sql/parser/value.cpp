@@ -372,7 +372,10 @@ bool Value::operator == (const Value& other) const{
 }
 
 bool Value::operator < (const Value& other) const{
-  return compare(other) < 0;
+  if (asc_)
+    return compare(other) < 0;
+  else
+    return compare(other) > 0;
 }
 
 int Value::get_int() const

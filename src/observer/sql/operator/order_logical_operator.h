@@ -35,7 +35,7 @@ public:
   {
     return is_asc_;
   }
-  const bool order_by_begin() const
+  const int order_by_begin() const
   {
     return order_by_begin_;
   }

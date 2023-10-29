@@ -96,8 +96,8 @@ RC OrderPhysicalOperator::sort()
   else
    cell_num = tuples[0]->cell_num();
 
-  for(int i = order_by_begin_; i < cell_num; i++)
-    sort_(values, tuples, i - order_by_begin_);
+  //for(int i = order_by_begin_; i < cell_num; i++)
+    sort_(values, tuples);//, i - order_by_begin_);
 
   for(ValueListTuple* tuple : values) {
     std::vector<Value> tuple_values = tuple->cells();
@@ -112,24 +112,27 @@ RC OrderPhysicalOperator::sort()
     delete static_cast<ValueListTuple *>(tuple);
 }
 
-RC OrderPhysicalOperator::sort_(std::vector<ValueListTuple*> &values, std::vector<ValueListTuple *> &tuples, int is_asc_current){
+RC OrderPhysicalOperator::sort_(std::vector<ValueListTuple*> &values, std::vector<ValueListTuple *> &tuples){//, int is_asc_current){
   values.clear();
   if (tuples.size() == 0)
     return RC::SUCCESS;
   int cell_num = tuples[0]->cell_num();
-  std::map<Value, ValueListTuple*> order_filter;
+  std::map<std::vector<Value>, ValueListTuple*> order_filter;
 
   for (ValueListTuple* tuple : tuples) {
-    Value value;
-    tuple->cell_at(is_asc_current, value);
-    order_filter.insert(std::pair<Value, ValueListTuple*>(value, tuple));
+    std::vector<Value> values;
+    values = tuple->cells();;
+    values.erase(values.begin(), values.begin() + order_by_begin_);
+    for (int i = 0; i < values.size(); i ++)
+      values[i].set_asc(is_asc_[i]);
+    order_filter.insert(std::pair<std::vector<Value>, ValueListTuple*>(values, tuple));
   }
 
-  if (is_asc_[is_asc_current])
+  //if (is_asc_[is_asc_current])
     for(auto iter = order_filter.begin(); iter != order_filter.end(); iter ++)
       values.push_back(iter->second);
-  else
+  /*else
     for(auto iter = order_filter.rbegin(); iter != order_filter.rend(); iter ++)
-      values.push_back(iter->second);
+      values.push_back(iter->second);*/
   return RC::SUCCESS;
 }
