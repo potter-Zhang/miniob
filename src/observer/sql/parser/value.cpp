@@ -371,6 +371,10 @@ bool Value::operator == (const Value& other) const{
   return this->attr_type_ == other.attr_type_ && compare(other) == 0;
 }
 
+bool Value::operator < (const Value& other) const{
+  return compare(other) < 0;
+}
+
 int Value::get_int() const
 {
   switch (attr_type_) {

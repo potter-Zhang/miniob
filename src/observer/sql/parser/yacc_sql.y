@@ -152,7 +152,7 @@ ConditionSqlNode *always_false()
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
-  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>* unordered_list;
+  std::vector<std::pair<RelAttrSqlNode, bool>>* unordered_list;
   std::pair<RelAttrSqlNode, bool>* pair;
   char *                            string;
   int                               number;
@@ -642,9 +642,7 @@ select_stmt:        /*  select 语句的语法解析树*/
       }
 
       if($9 != nullptr) {
-        for (auto pair : *$9) {
-          $$->selection.order_columns.insert(pair);
-        }
+        $$->selection.order_columns.swap(*$9);
         delete $9;
       }
 
@@ -682,9 +680,7 @@ select_stmt:        /*  select 语句的语法解析树*/
       }
 
       if($9 != nullptr) {
-        for (auto pair : *$9) {
-          $$->selection.order_columns.insert(pair);
-        }
+        $$->selection.order_columns.swap(*$9);
         delete $9;
       }
 
@@ -871,10 +867,10 @@ unordered_list:
       if ($3 != nullptr) {
         $$ = $3;
       } else {
-        $$ = new std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>;
+        $$ = new std::vector<std::pair<RelAttrSqlNode, bool>>;
       }
       
-      $$->insert(*$2);
+      $$->emplace_back(*$2);
       delete $2;
     }
     ;
@@ -887,12 +883,12 @@ order_list:
     | ORDERBY order_attr unordered_list
     {
       if ($3 == nullptr) {
-        $$ = new std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>;
+        $$ = new std::vector<std::pair<RelAttrSqlNode, bool>>;
       } else {
         $$ = $3;
       }
 
-      $$->insert(*$2);
+      $$->emplace_back(*$2);
       delete $2;
     }
     ;

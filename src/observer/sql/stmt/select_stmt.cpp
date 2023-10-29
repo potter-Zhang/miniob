@@ -279,15 +279,119 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     }
   }
 
+  //插入order字段
+  int order_num = select_sql.order_columns.size();
+  int order_by_begin = order_num == 0 ? -1 : query_fields.size();
+  std::vector<bool> is_asc;
+  if (order_by_begin != -1) {
+    for (int i = order_num - 1; i >= 0; i--) {
+      const std::pair<RelAttrSqlNode, bool> &order_column = select_sql.order_columns[i];
+      is_asc.push_back(order_column.second);
+      const RelAttrSqlNode &relation_attr = order_column.first;
+      int length = query_fields.size();
+      if (common::is_blank(relation_attr.relation_name.c_str()) &&
+          0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
+        // 看有没有聚合查询
+        if (relation_attr.func != NONE){
+          if (relation_attr.func != AggregationFunc::COUNTFUN){
+            LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+            return RC::SQL_SYNTAX;
+          }
+          for (Table *table : tables){
+            const TableMeta &table_meta = table->table_meta();
+            const int field_num = table_meta.field_num();
+            query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
+            query_fields.back().set_is_star(true);
+          }
+          for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+            iter->set_func(relation_attr.func);
+        }
+        else{
+          for (Table *table : tables) {
+            wildcard_fields(table, query_fields);
+          }     
+        }
+      } else if (!common::is_blank(relation_attr.relation_name.c_str())) {      
+        const char *table_name = relation_attr.relation_name.c_str();
+        const char *field_name = relation_attr.attribute_name.c_str();
+
+        if (0 == strcmp(table_name, "*")) {
+          if (0 != strcmp(field_name, "*")) {
+            LOG_WARN("invalid field name while table is *. attr=%s", field_name);
+            return RC::SCHEMA_FIELD_MISSING;
+          }
+          // 看有没有聚合查询
+          if (relation_attr.func != NONE){
+            if (relation_attr.func != AggregationFunc::COUNTFUN){
+              LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
+              return RC::SQL_SYNTAX;
+            }
+            for (Table *table : tables) {
+              wildcard_fields(table, query_fields);
+            }
+            for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+              iter->set_func(relation_attr.func);
+          }
+        } else {
+          auto iter = table_map.find(table_name);
+          if (iter == table_map.end()) {
+            LOG_WARN("no such table in from list: %s", table_name);
+            return RC::SCHEMA_FIELD_MISSING;
+          }
+
+          Table *table = iter->second;
+          if (0 == strcmp(field_name, "*")) {
+            wildcard_fields(table, query_fields);
+          } else {
+            const FieldMeta *field_meta = table->table_meta().field(field_name);
+            if (nullptr == field_meta) {
+              LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), field_name);
+              return RC::SCHEMA_FIELD_MISSING;
+            }
+
+            query_fields.push_back(Field(table, field_meta));
+            // 看有没有聚合查询
+            if (relation_attr.func != NONE){
+              for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+                iter->set_func(relation_attr.func);
+            }
+          }
+        }
+      } else {
+        if (tables.size() != 1) {
+          LOG_WARN("invalid. I do not know the attr's table. attr=%s", relation_attr.attribute_name.c_str());
+          return RC::SCHEMA_FIELD_MISSING;
+        }
+
+        Table *table = tables[0];
+        const FieldMeta *field_meta = table->table_meta().field(relation_attr.attribute_name.c_str());
+        if (nullptr == field_meta) {
+          LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), relation_attr.attribute_name.c_str());
+          return RC::SCHEMA_FIELD_MISSING;
+        }
+
+        query_fields.push_back(Field(table, field_meta));
+        // 看有没有聚合查询
+        if (relation_attr.func != NONE){
+          for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
+            iter->set_func(relation_attr.func);
+        }
+      }
+    }
+  }
+
+
   // everything alright
   SelectStmt *select_stmt = new SelectStmt();
   // TODO add expression copy
   select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
+  select_stmt->is_asc_.swap(is_asc);
   select_stmt->filter_stmt_ = filter_stmt;
   select_stmt->group_by_begin_ = group_by_begin;
   select_stmt->having_begin_ = having_begin;
   select_stmt->attr_having_begin_ = attr_having_begin;
+  select_stmt->order_by_begin_ = order_by_begin;
   stmt = select_stmt;
   return RC::SUCCESS;
 }

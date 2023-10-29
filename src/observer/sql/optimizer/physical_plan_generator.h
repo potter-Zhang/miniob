@@ -31,6 +31,7 @@ class CalcLogicalOperator;
 class UpdateLogicalOperator;
 class GroupLogicalOperator;
 class AggregationLogicalOperator;
+class OrderLogicalOperator;
 
 /**
  * @brief 物理计划生成器
@@ -58,4 +59,5 @@ private:
   RC create_plan(UpdateLogicalOperator &update_oper, std::unique_ptr<PhysicalOperator> &oper);
   RC create_plan(GroupLogicalOperator &group_oper, std::unique_ptr<PhysicalOperator> &oper);
   RC create_plan(AggregationLogicalOperator &agg_oper, std::unique_ptr<PhysicalOperator> &oper);
+  RC create_plan(OrderLogicalOperator &order_oper, std::unique_ptr<PhysicalOperator> &oper);
 };

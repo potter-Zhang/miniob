@@ -27,6 +27,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/update_logical_operator.h"
 #include "sql/operator/group_logical_operator.h"
 #include "sql/operator/aggregation_logical_operator.h"
+#include "sql/operator/order_logical_operator.h"
 
 #include "sql/stmt/stmt.h"
 #include "sql/stmt/calc_stmt.h"
@@ -184,7 +185,34 @@ RC LogicalPlanGenerator::create_plan(
     oper = std::move(project_oper);
   }
 
+  unique_ptr<OrderLogicalOperator> order_oper;
+  int stmt_order_by_begin = select_stmt->order_by_begin();
+  if (stmt_order_by_begin!= -1) {
+    int order_by_begin;
+    switch (oper->type())
+    {
+      case LogicalOperatorType::PROJECTION :
+        order_by_begin = stmt_order_by_begin;
+        break;
+      case LogicalOperatorType::GROUP :
+        order_by_begin = select_stmt->group_by_begin();
+        break;
+      case LogicalOperatorType::AGGREGATION :
+        if (order_oper->children()[0]->type() == LogicalOperatorType::GROUP)
+          order_by_begin = select_stmt->group_by_begin();
+        else
+          order_by_begin = stmt_order_by_begin;
+        break;
+      default :
+        return RC::UNIMPLENMENT;
+    }
+    order_oper = unique_ptr<OrderLogicalOperator>(new OrderLogicalOperator(select_stmt->is_asc(), order_by_begin));
+    order_oper->add_child(std::move(oper));
+    oper = std::move(order_oper);
+  }
+  
   logical_operator.swap(oper);
+  
   return RC::SUCCESS;
 }
 

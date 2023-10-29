@@ -50,6 +50,7 @@ enum class PhysicalOperatorType
   UPDATE,
   AGGREGATION,
   GROUP,
+  ORDER
 };
 
 /**

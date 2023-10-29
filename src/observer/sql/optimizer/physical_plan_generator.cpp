@@ -38,6 +38,8 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/group_physical_operator.h"
 #include "sql/operator/aggregation_logical_operator.h"
 #include "sql/operator/aggregation_physical_operator.h"
+#include "sql/operator/order_logical_operator.h"
+#include "sql/operator/order_physical_operator.h"
 #include "sql/expr/expression.h"
 #include "common/log/log.h"
 #include "physical_plan_generator.h"
@@ -84,6 +86,10 @@ RC PhysicalPlanGenerator::create(LogicalOperator &logical_operator, unique_ptr<P
     case LogicalOperatorType::AGGREGATION: {
       return create_plan(static_cast<AggregationLogicalOperator &>(logical_operator), oper);
     } break;
+
+    case LogicalOperatorType::ORDER: {
+      return create_plan(static_cast<OrderLogicalOperator &>(logical_operator), oper);
+    }
 
     case LogicalOperatorType::EXPLAIN: {
       return create_plan(static_cast<ExplainLogicalOperator &>(logical_operator), oper);
@@ -372,6 +378,26 @@ RC PhysicalPlanGenerator::create_plan(AggregationLogicalOperator &agg_oper, std:
     agg_physical_oper->add_field(field);
   agg_physical_oper->add_child(std::move(child_physical_oper));
   oper = std::move(agg_physical_oper);
+  return rc;
+}
+
+RC PhysicalPlanGenerator::create_plan(OrderLogicalOperator &order_oper, std::unique_ptr<PhysicalOperator> &oper)
+{
+  vector<unique_ptr<LogicalOperator>> &child_opers = order_oper.children();
+  assert(child_opers.size() == 1);
+
+  unique_ptr<PhysicalOperator> child_physical_oper;
+  RC rc = create(*(child_opers[0]), child_physical_oper);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to create child physical operator. rc=%s", strrc(rc));
+    return rc;
+  }
+
+  const std::vector<bool> is_asc = order_oper.is_asc();
+  int order_by_begin = order_oper.order_by_begin();
+  unique_ptr<OrderPhysicalOperator> order_physical_oper = unique_ptr<OrderPhysicalOperator>(new OrderPhysicalOperator(is_asc, order_by_begin));
+  order_physical_oper->add_child(std::move(child_physical_oper));
+  oper = std::move(order_physical_oper);
   return rc;
 }
 

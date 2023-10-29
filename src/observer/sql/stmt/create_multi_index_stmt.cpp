@@ -31,7 +31,15 @@ RC CreateMultiIndexStmt::create(Db *db, const CreateMultiIndexSqlNode &create_in
   }
 
     // 查找是否有这些属性
-  const FieldMeta *field_meta = table->table_meta().field(create_index.attr_list[0].c_str());
+  const FieldMeta *field_meta = nullptr;
+  for(int i = 0; i < create_index.attr_list.size(); ++i){
+    field_meta = table->table_meta().field(create_index.attr_list[i].c_str());
+      if (nullptr == field_meta) {
+        LOG_WARN("no such field in table. db=%s, table=%s, field name=%s", 
+             db->name(), table_name, create_index.attr_list[i].c_str());
+        return RC::SCHEMA_FIELD_NOT_EXIST;   
+      }
+  } 
   
   if (nullptr == field_meta) {
     LOG_WARN("no such field in table. db=%s, table=%s, field name=%s", 

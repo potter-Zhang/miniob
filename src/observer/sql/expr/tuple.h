@@ -387,6 +387,10 @@ public:
     return RC::INTERNAL;
   }
 
+  std::vector<Value> cells() const {
+    return cells_;
+  }
+
 private:
   std::vector<Value> cells_;
 };

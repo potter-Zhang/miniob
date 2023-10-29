@@ -134,7 +134,7 @@ struct SelectSqlNode
   std::vector<ConditionSqlNode>   conditions;    ///< 查询条件，使用AND串联起来多个条件
   std::vector<std::string>        group_by_columns;///< 分组依据的列名
   std::vector<ConditionSqlNode>   having_conditions;///< having子句
-  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name> order_columns;///< 排序
+  std::vector<std::pair<RelAttrSqlNode, bool>> order_columns;///< 排序
 };
 
 

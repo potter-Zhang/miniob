@@ -71,6 +71,7 @@ public:
   }
 
   bool operator == (const Value& other) const;
+  bool operator < (const Value& other) const;
 
   explicit Value(int val);
   explicit Value(float val);

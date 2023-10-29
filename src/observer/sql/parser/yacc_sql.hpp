@@ -151,7 +151,7 @@ union YYSTYPE
   std::vector<ConditionSqlNode> *   condition_list;
   std::vector<RelAttrSqlNode> *     rel_attr_list;
   std::vector<std::string> *        relation_list;
-  std::unordered_map<RelAttrSqlNode, bool, RelAttrSqlNode_hash_name>* unordered_list;
+  std::vector<std::pair<RelAttrSqlNode, bool>>* unordered_list;
   std::pair<RelAttrSqlNode, bool>* pair;
   char *                            string;
   int                               number;

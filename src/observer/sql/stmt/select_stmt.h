@@ -53,6 +53,10 @@ public:
   {
     return query_fields_;
   }
+  const std::vector<bool> &is_asc() const
+  {
+    return is_asc_;
+  }
   FilterStmt *filter_stmt() const
   {
     return filter_stmt_;
@@ -69,12 +73,18 @@ public:
   {
     return attr_having_begin_;
   }
+  const int order_by_begin() const
+  {
+    return order_by_begin_;
+  }
 
 private:
   std::vector<Field> query_fields_;
   std::vector<Table *> tables_;
+  std::vector<bool> is_asc_;
   FilterStmt *filter_stmt_ = nullptr;
   int group_by_begin_ = -1;
   int having_begin_ = -1;
   int attr_having_begin_ = -1;
+  int order_by_begin_ = -1;
 };

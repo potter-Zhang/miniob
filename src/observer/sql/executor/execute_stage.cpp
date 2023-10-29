@@ -71,8 +71,9 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
 
       int num = 0;
       int group_by_begin = select_stmt->group_by_begin();
+      int order_by_begin = select_stmt->order_by_begin();
       for (const Field &field : select_stmt->query_fields()) {
-        if (group_by_begin > -1 && num >= group_by_begin)
+        if (group_by_begin > -1 && num >= group_by_begin || order_by_begin > -1 && num >= order_by_begin)
           break;
         num ++;
         AggregationFunc func = field.func();
