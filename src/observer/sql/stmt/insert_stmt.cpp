@@ -48,6 +48,8 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
     return RC::SCHEMA_FIELD_MISSING;
   }
 
+  int groups = round(value_num / field_num);
+
   // check fields type 并且仅在fields type不匹配时检查nullable字段并决定是否进行转换
   const int sys_field_num = table_meta.sys_field_num();
   for (int i = 0; i < value_num; i++) {
@@ -90,6 +92,6 @@ RC InsertStmt::create(Db *db, InsertSqlNode &inserts, Stmt *&stmt)
 
   // everything alright
   stmt = new InsertStmt(table, values, value_num);
-  ((InsertStmt*)stmt)->groups_ = round(value_num / field_num);
+  ((InsertStmt*)stmt)->groups_ = groups;
   return RC::SUCCESS;
 }

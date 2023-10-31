@@ -1382,13 +1382,19 @@ MemPoolItem::unique_ptr BplusTreeHandler::make_key(std::vector<FieldMeta> &user_
     return nullptr;
   }
   int len = 0;
+  bool has_null = false;
   for (FieldMeta &field_meta : user_key) {
+    if (field_meta.nullable() && *(record_base + field_meta.offset()) == '\x01')
+      has_null = true;
     memcpy((char *)key.get() + len, record_base + field_meta.offset(), field_meta.len());
     len += field_meta.len();
   }
   long zeros = 0;
   if (unique) {
-    memcpy((char *)key.get() + len, &zeros, sizeof(RID));
+    if (!has_null)
+      memcpy((char *)key.get() + len, &zeros, sizeof(RID));
+    else
+      memcpy((char *)key.get() + len, rid, sizeof(RID));
   }
   else {
     memcpy((char *)key.get(), rid, sizeof(RID));

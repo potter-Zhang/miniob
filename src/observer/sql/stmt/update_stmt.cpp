@@ -61,6 +61,10 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
       if (!update.attr_value_pairs[i].value.convert_to(field_type)) {
         return RC::SCHEMA_FIELD_TYPE_MISMATCH;
       }
+      if (!field_meta->nullable()) {
+        if (update.attr_value_pairs[i].value.nullable() && update.attr_value_pairs[i].value.is_null())
+          return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+      }
     }
   }
   
