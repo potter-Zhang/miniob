@@ -31,6 +31,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/load_data_stmt.h"
 #include "sql/stmt/calc_stmt.h"
 #include "sql/stmt/create_unique_index_stmt.h"
+#include "sql/stmt/create_table_select_stmt.h"
 
 RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
 {
@@ -65,6 +66,10 @@ RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
 
     case SCF_CREATE_TABLE: {
       return CreateTableStmt::create(db, sql_node.create_table, stmt);
+    }
+
+    case SCF_CREATE_TABLE_SELECT: {
+      return CreateTableSelectStmt::create(db, sql_node.create_table_select, stmt);
     }
 
     case SCF_DESC_TABLE: {

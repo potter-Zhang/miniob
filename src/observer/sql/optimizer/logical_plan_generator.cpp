@@ -34,6 +34,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/delete_stmt.h"
 #include "sql/stmt/explain_stmt.h"
 #include "sql/stmt/update_stmt.h"
+#include "sql/stmt/create_table_select_stmt.h"
 
 using namespace std;
 
@@ -44,6 +45,11 @@ RC LogicalPlanGenerator::create(Stmt *stmt, unique_ptr<LogicalOperator> &logical
     case StmtType::CALC: {
       CalcStmt *calc_stmt = static_cast<CalcStmt *>(stmt);
       rc = create_plan(calc_stmt, logical_operator);
+    } break;
+
+    case StmtType::CREATE_TABLE_SELECT: {
+      CreateTableSelectStmt *create_table_select_stmt = static_cast<CreateTableSelectStmt *>(stmt);
+      rc = create_plan(create_table_select_stmt->select_stmt(), logical_operator);
     } break;
 
     case StmtType::SELECT: {

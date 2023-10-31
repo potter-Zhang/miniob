@@ -182,6 +182,12 @@ struct CreateTableSqlNode
   std::vector<AttrInfoSqlNode> attr_infos;            ///< attributes
 };
 
+struct CreateTableSelectSqlNode
+{
+  std::string                 relation_name;
+  void *                      select;            
+};
+
 /**
  * @brief 描述一个drop table语句
  * @ingroup SQLParser
@@ -292,6 +298,7 @@ enum SqlCommandFlag
   SCF_UPDATE,
   SCF_DELETE,
   SCF_CREATE_TABLE,
+  SCF_CREATE_TABLE_SELECT,
   SCF_DROP_TABLE,
   SCF_CREATE_INDEX,
   SCF_CREATE_UNIQUE_INDEX,
@@ -324,6 +331,7 @@ public:
   DeleteSqlNode             deletion;
   UpdateSqlNode             update;
   CreateTableSqlNode        create_table;
+  CreateTableSelectSqlNode  create_table_select;
   DropTableSqlNode          drop_table;
   CreateIndexSqlNode        create_index;
   CreateUniqueIndexSqlNode  create_unique_index;
