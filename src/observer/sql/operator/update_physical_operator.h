@@ -42,6 +42,8 @@ public:
 
   Tuple *current_tuple() override { return nullptr; }
 
+  RC modify(Record &record, Record &new_record);
+
 private:
   Table *table_ = nullptr;
   std::vector<AttrValuePair> attr_value_pair_;

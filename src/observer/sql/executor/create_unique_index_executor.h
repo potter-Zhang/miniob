@@ -9,17 +9,25 @@ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 See the Mulan PSL v2 for more details. */
 
 //
-// Created by wangyunlai on 2021/6/11
+// Created by Wangyunlai on 2023/4/25.
 //
 
 #pragma once
 
-namespace common {
+#include "common/rc.h"
 
+class SQLStageEvent;
 
-int compare_int(void *arg1, void *arg2);
-int compare_float(void *arg1, void *arg2);
-int compare_string(void *arg1, int arg1_max_length, void *arg2, int arg2_max_length);
-int compare_bytes(void *arg1, int arg1_max_length, void *arg2, int arg2_max_length);
+/**
+ * @brief 创建索引的执行器
+ * @ingroup Executor
+ * @note 创建索引时不能做其它操作。MiniOB当前不完善，没有对一些并发做控制，包括schema的并发。
+ */
+class CreateUniqueIndexExecutor
+{
+public:
+  CreateUniqueIndexExecutor() = default;
+  virtual ~CreateUniqueIndexExecutor() = default;
 
-}
+  RC execute(SQLStageEvent *sql_event);
+};

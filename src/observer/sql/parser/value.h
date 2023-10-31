@@ -28,7 +28,7 @@ enum AttrType
   INTS,           ///< 整数类型(4字节)
   DATES,          ///< dates
   FLOATS,         ///< 浮点数类型(4字节)
-  
+  COMPOUND,
   BOOLEANS      ///< boolean类型，当前不是由parser解析出来的，是程序内部使用的
 };
 

@@ -100,6 +100,7 @@ WHERE                                   RETURN_TOKEN(WHERE);
 AND                                     RETURN_TOKEN(AND);
 IN                                      RETURN_TOKEN(IN);
 NOT                                     RETURN_TOKEN(NOT);
+UNIQUE                                  RETURN_TOKEN(UNIQUE);
 EXISTS                                  RETURN_TOKEN(EXISTS);
 INSERT                                  RETURN_TOKEN(INSERT);
 INTO                                    RETURN_TOKEN(INTO);

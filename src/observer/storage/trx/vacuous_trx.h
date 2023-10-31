@@ -44,6 +44,8 @@ public:
   RC insert_record(Table *table, Record &record) override;
   RC delete_record(Table *table, Record &record) override;
   RC modify_record(Table *table, Record &record, const char *field_name, Value value) override;
+  RC delete_index(Table *table, Record &record);
+  RC insert_index(Table *table, Record &record);
   RC visit_record(Table *table, Record &record, bool readonly) override;
   RC start_if_need() override;
   RC commit() override;

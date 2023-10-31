@@ -52,6 +52,7 @@ public:
    * @param[out] rid    插入的记录的位置
    */
   virtual RC insert_entry(const char *record, const RID *rid) = 0;
+  
 
   /**
    * @brief 删除一条数据
@@ -60,6 +61,10 @@ public:
    * @param[in] rid   删除的记录的位置
    */
   virtual RC delete_entry(const char *record, const RID *rid) = 0;
+
+  bool get_unique() const {
+    return index_meta_.get_unique();
+  }
 
   /**
    * @brief 创建一个索引数据的扫描器
@@ -82,10 +87,14 @@ public:
 
 protected:
   RC init(const IndexMeta &index_meta, const FieldMeta &field_meta);
+  RC init(const IndexMeta &index_meta, std::vector<const FieldMeta *> &field_meta);
+  //RC init(const IndexMeta &index_meta, std::vector<FieldMeta> &field_metas);
 
 protected:
   IndexMeta index_meta_;  ///< 索引的元数据
   FieldMeta field_meta_;  ///< 当前实现仅考虑一个字段的索引
+  std::vector<FieldMeta> field_metas_;
+  
 };
 
 /**

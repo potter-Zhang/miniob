@@ -105,6 +105,13 @@ RC UpdatePhysicalOperator::open(Trx *trx)
      }
   }
   }
+
+  for (int i = 0; i < attr_value_pair_.size(); i++) {
+       rc = trx_->modify_record(table_, record, attr_value_pair_[i].attribute_name.c_str(), attr_value_pair_[i].value);
+      if (rc != RC::SUCCESS) {
+        return rc;
+      }
+    }
 */
 
 RC UpdatePhysicalOperator::next()
@@ -115,6 +122,9 @@ RC UpdatePhysicalOperator::next()
   }
 
   PhysicalOperator *child = children_[0].get();
+  
+  std::vector<Record> records;
+  std::vector<Record> old_records;
   while (RC::SUCCESS == (rc = child->next())) {
     if (delay_rc != RC::SUCCESS) {
       return RC::INTERNAL;
@@ -127,17 +137,69 @@ RC UpdatePhysicalOperator::next()
 
     RowTuple *row_tuple = static_cast<RowTuple *>(tuple);
     Record &record = row_tuple->record();
-    for (int i = 0; i < attr_value_pair_.size(); i++) {
-       rc = trx_->modify_record(table_, record, attr_value_pair_[i].attribute_name.c_str(), attr_value_pair_[i].value);
-      if (rc != RC::SUCCESS) {
-        return rc;
+
+    records.emplace_back(record);
+    trx_->delete_index(table_, record);
+    
+  }
+if (records.empty()) {
+  return RC::RECORD_EOF;
+}
+
+  for (Record &record : records) {
+    Record cpy;
+    modify(record, cpy);
+    old_records.emplace_back(cpy);
+  }
+  int i;
+  for (i = 0; i < old_records.size(); i++) {
+    rc = trx_->insert_index(table_, records[i]);
+    if (OB_FAIL(rc)) {
+      break;
+    }
+  }
+
+  if (OB_FAIL(rc)) {
+    for (i = i - 1; i >= 0; i--) {
+      if (trx_->delete_index(table_, records[i]) != RC::SUCCESS) {
+        return RC::INTERNAL;
       }
     }
   }
-   
 
-  return RC::RECORD_EOF;
+  if (rc == RC::SUCCESS) {
+    return RC::RECORD_EOF;
+  }
+  
+  for (int i = 0; i < records.size(); i++) {
+    memcpy(records[i].data(), old_records[i].data(), table_->table_meta().record_size());
+  }
+    
+  for (i = 0; i < records.size(); i++) {
+    trx_->insert_index(table_, records[i]);
+  }
+  return RC::INTERNAL;
 }
+
+RC UpdatePhysicalOperator::modify(Record &record, Record &new_record) 
+{
+  char *buf = (char *)malloc(table_->table_meta().record_size());
+  memcpy(buf, record.data(), table_->table_meta().record_size());
+  new_record.set_data_owner(buf, table_->table_meta().record_size());
+  for (AttrValuePair &a_v_pair : attr_value_pair_) {
+     const FieldMeta *field = table_->table_meta().field(a_v_pair.attribute_name.c_str());
+     size_t copy_len = field->len();
+    if (field->type() == CHARS) {
+      const size_t data_len = a_v_pair.value.length();
+      if (copy_len > data_len) {
+        copy_len = data_len + 1;
+      }
+    }
+    memcpy(record.data() + field->offset(), a_v_pair.value.data(), copy_len);
+  }
+  return RC::SUCCESS;
+}
+
 
 RC UpdatePhysicalOperator::close()
 {

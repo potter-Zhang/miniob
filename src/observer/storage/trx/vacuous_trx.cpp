@@ -66,6 +66,16 @@ RC VacuousTrx::modify_record(Table *table, Record &record, const char *field_nam
   return table->modify_record(record, field_name, value);
 }
 
+RC VacuousTrx::insert_index(Table *table, Record &record)
+{
+  return table->insert_entry_of_indexes(record.data(), record.rid());
+}
+
+RC VacuousTrx::delete_index(Table *table, Record &record)
+{
+  return table->delete_entry_of_indexes(record.data(), record.rid(), false);
+}
+
 
 RC VacuousTrx::visit_record(Table *table, Record &record, bool readonly)
 {
