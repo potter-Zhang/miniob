@@ -22,11 +22,11 @@ See the Mulan PSL v2 for more details. */
 #include "value.h"
 #include <bits/stdc++.h>
 
-const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "text", "ints", "floats", "dates","booleans", "null"};
+const char *ATTR_TYPE_NAME[] = {"undefined", "chars", "text", "ints", "floats", "dates", "compound","booleans", "null"};
 
 const char *attr_type_to_string(AttrType type)
 {
-  if (type >= UNDEFINED && type <= DATES) {
+  if (type >= UNDEFINED && type <= COMPOUND) {
     return ATTR_TYPE_NAME[type];
   }
   return "unknown";

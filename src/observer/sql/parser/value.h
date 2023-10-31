@@ -31,6 +31,7 @@ enum AttrType
   INTS,           ///< 整数类型(4字节)
   FLOATS,         ///< 浮点数类型(4字节)
   DATES,          ///< 日期类型(4字节)
+  COMPOUND,       ///< 拼接类型
   BOOLEANS,       ///< boolean类型，当前不是由parser解析出来的，是程序内部使用的
   NULLTYPE,       ///< NULL值，NULL与任何数据对比，都是false；这是一个临时类型，到了resolve阶段会被解析成对应类型
 };

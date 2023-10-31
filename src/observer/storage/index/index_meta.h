@@ -15,6 +15,7 @@ See the Mulan PSL v2 for more details. */
 #pragma once
 
 #include <string>
+#include <vector>
 #include "common/rc.h"
 
 class TableMeta;
@@ -36,10 +37,15 @@ public:
   IndexMeta() = default;
 
   RC init(const char *name, const FieldMeta &field);
+  RC init(const char *name, std::vector<const FieldMeta *>& fields, bool unique = false);
+  RC init(const char *name, std::vector<std::string> &fields, bool unique = false);
 
 public:
   const char *name() const;
   const char *field() const;
+  const char *fields(int i) const;
+  int field_num() const;
+  bool get_unique() const;
 
   void desc(std::ostream &os) const;
 
@@ -50,4 +56,6 @@ public:
 protected:
   std::string name_;   // index's name
   std::string field_;  // field's name
+  std::vector<std::string> fields_;
+  bool unique;
 };

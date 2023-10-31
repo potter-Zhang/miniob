@@ -29,7 +29,9 @@ public:
 
   RC create(const char *file_name, const IndexMeta &index_meta, const FieldMeta &field_meta);
   RC drop() override;
+  RC create(const char *file_name, const IndexMeta &index_meta, std::vector<const FieldMeta *> &field_metas);
   RC open(const char *file_name, const IndexMeta &index_meta, const FieldMeta &field_meta);
+  RC open(const char *file_name, const IndexMeta &index_meta, std::vector<const FieldMeta *> &field_metas);
   RC close();
 
   RC insert_entry(const char *record, const RID *rid) override;
@@ -63,6 +65,7 @@ public:
 
   RC open(const char *left_key, int left_len, bool left_inclusive, const char *right_key, int right_len,
       bool right_inclusive);
+  
 
 private:
   BplusTreeScanner tree_scanner_;

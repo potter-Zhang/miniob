@@ -1374,6 +1374,73 @@ MemPoolItem::unique_ptr BplusTreeHandler::make_key(const char *user_key, const R
   return key;
 }
 
+MemPoolItem::unique_ptr BplusTreeHandler::make_key(std::vector<FieldMeta> &user_key, const char *record_base, const RID *rid, bool unique)
+{
+  MemPoolItem::unique_ptr key = mem_pool_item_->alloc_unique_ptr();
+  if (key == nullptr) {
+    LOG_WARN("Failed to alloc memory for key.");
+    return nullptr;
+  }
+  int len = 0;
+  for (FieldMeta &field_meta : user_key) {
+    memcpy((char *)key.get() + len, record_base + field_meta.offset(), field_meta.len());
+    len += field_meta.len();
+  }
+  long zeros = 0;
+  if (unique) {
+    memcpy((char *)key.get() + len, &zeros, sizeof(RID));
+  }
+  else {
+    memcpy((char *)key.get(), rid, sizeof(RID));
+  }
+  return key;
+}
+
+RC BplusTreeHandler::insert_entry(const char *record_base, std::vector<FieldMeta> &user_key, const RID *rid, bool unique) 
+{
+  if (user_key.size() == 0 || rid == nullptr) {
+    LOG_WARN("Invalid arguments, key is empty or rid is empty");
+    return RC::INVALID_ARGUMENT;
+  }
+
+  MemPoolItem::unique_ptr pkey = make_key(user_key, record_base, rid, unique);
+  if (pkey == nullptr) {
+    LOG_WARN("Failed to alloc memory for key.");
+    return RC::NOMEM;
+  }
+
+  char *key = static_cast<char *>(pkey.get());
+
+  if (is_empty()) {
+    root_lock_.lock();
+    if (is_empty()) {
+      RC rc = create_new_tree(key, rid);
+      root_lock_.unlock();
+      return rc;
+    }
+    root_lock_.unlock();
+  }
+
+  LatchMemo latch_memo(disk_buffer_pool_);
+
+  Frame *frame = nullptr;
+  RC rc = find_leaf(latch_memo, BplusTreeOperationType::INSERT, key, frame);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("Failed to find leaf %s. rc=%d:%s", rid->to_string().c_str(), rc, strrc(rc));
+    return rc;
+  }
+
+  rc = insert_entry_into_leaf_node(latch_memo, frame, key, rid);
+  if (rc != RC::SUCCESS) {
+    LOG_TRACE("Failed to insert into leaf of index, rid:%s", rid->to_string().c_str());
+    return rc;
+  }
+
+  LOG_TRACE("insert entry success");
+  return RC::SUCCESS;
+
+}
+
 RC BplusTreeHandler::insert_entry(const char *user_key, const RID *rid)
 {
   if (user_key == nullptr || rid == nullptr) {
@@ -1643,6 +1710,34 @@ RC BplusTreeHandler::delete_entry(const char *user_key, const RID *rid)
 
   memcpy(key, user_key, file_header_.attr_length);
   memcpy(key + file_header_.attr_length, rid, sizeof(*rid));
+
+  BplusTreeOperationType op = BplusTreeOperationType::DELETE;
+  LatchMemo latch_memo(disk_buffer_pool_);
+
+  Frame *leaf_frame = nullptr;
+  RC rc = find_leaf(latch_memo, op, key, leaf_frame);
+  if (rc == RC::EMPTY) {
+    rc = RC::RECORD_NOT_EXIST;
+    return rc;
+  }
+  
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to find leaf page. rc =%s", strrc(rc));
+    return rc;
+  }
+
+  return delete_entry_internal(latch_memo, leaf_frame, key);
+}
+
+
+RC BplusTreeHandler::delete_entry(const char *record_base, std::vector<FieldMeta> &field_metas, const RID *rid, bool unique)
+{
+  MemPoolItem::unique_ptr pkey = make_key(field_metas, record_base, rid, unique);
+  if (nullptr == pkey) {
+    LOG_WARN("Failed to alloc memory for key. size=%d", file_header_.key_length);
+    return RC::NOMEM;
+  }
+  char *key = static_cast<char *>(pkey.get());
 
   BplusTreeOperationType op = BplusTreeOperationType::DELETE;
   LatchMemo latch_memo(disk_buffer_pool_);

@@ -87,6 +87,9 @@ public:
       case CHARS: {
         return common::compare_string((void *)v1, attr_length_, (void *)v2, attr_length_);
       }
+      case COMPOUND: {
+        return common::compare_bytes((void *)v1, attr_length_, (void *)v2, attr_length_);
+      }
       default: {
         ASSERT(false, "unknown attr type. %d", attr_type_);
         return 0;
@@ -508,6 +511,7 @@ public:
    * @note 这里假设user_key的内存大小与attr_length 一致
    */
   RC insert_entry(const char *user_key, const RID *rid);
+  RC insert_entry(const char *record_base, std::vector<FieldMeta> &user_key, const RID *rid, bool unique = false);
 
   /**
    * 从IndexHandle句柄对应的索引中删除一个值为（*pData，rid）的索引项
@@ -515,6 +519,7 @@ public:
    * @note 这里假设user_key的内存大小与attr_length 一致
    */
   RC delete_entry(const char *user_key, const RID *rid);
+  RC delete_entry(const char *record_base, std::vector<FieldMeta> &field_metas, const RID *rid, bool unique);
 
   bool is_empty() const;
 
@@ -565,6 +570,8 @@ protected:
 
   RC delete_entry_internal(LatchMemo &latch_memo, Frame *leaf_frame, const char *key);
 
+
+
   template <typename IndexNodeHandlerType>
   RC split(LatchMemo &latch_memo, Frame *frame, Frame *&new_frame);
   template <typename IndexNodeHandlerType>
@@ -584,6 +591,7 @@ protected:
   RC adjust_root(LatchMemo &latch_memo, Frame *root_frame);
 
 private:
+  common::MemPoolItem::unique_ptr make_key(std::vector<FieldMeta> &user_key, const char *record_base, const RID *rid, bool unique = false);
   common::MemPoolItem::unique_ptr make_key(const char *user_key, const RID &rid);
   void free_key(char *key);
 

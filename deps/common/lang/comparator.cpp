@@ -166,4 +166,18 @@ int compare_like(void *arg1, void *arg2)
   }
 }
 
+int compare_bytes(void *arg1, int arg1_max_length, void *arg2, int arg2_max_length)
+{
+  const char *s1 = (const char *)arg1;
+  const char *s2 = (const char *)arg2;
+  int maxlen = std::min(arg1_max_length, arg2_max_length);
+
+  for (int i = 0; i < maxlen; i++) {
+    if (s1[i] != s2[i]) {
+      return s1[i] - s2[i];
+    }
+  }
+  return 0;
+}
+
 } // namespace common
