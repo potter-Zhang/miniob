@@ -193,7 +193,7 @@ RC AggregationPhysicalOperator::do_aggregation()
       }
       if (flag) {
         int cell_num = attr_having_begin == -1 ? values.size() : group_by_begin; //having_funcs起始位置在正常的values值的末尾+1处
-        tuple->set_cells_copy(std::vector<Value>(values.begin(), values.begin() + cell_num));
+        tuple->set_cells(std::vector<Value>(values.begin(), values.begin() + cell_num));
         tuples_.push_back(tuple);
       }
     }
@@ -217,7 +217,7 @@ RC AggregationPhysicalOperator::do_aggregation()
         }
         values.push_back(value);
       }
-      tuple_copy->set_cells_copy(values);
+      tuple_copy->set_cells(values);
       tuples.push_back(tuple_copy);
     }
     if (tuples.size() == 0)
@@ -231,7 +231,7 @@ RC AggregationPhysicalOperator::do_aggregation()
       delete static_cast<ValueListTuple *>(tuple);
 
     ValueListTuple* tuple = new ValueListTuple();
-    tuple->set_cells_copy(values);
+    tuple->set_cells(values);
     tuples_.push_back(tuple);
   }
 }

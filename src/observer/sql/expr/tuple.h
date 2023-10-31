@@ -175,14 +175,14 @@ public:
     const FieldMeta *field_meta = field_expr->field().meta();
     cell.set_type(field_meta->type());
     char* pointer = this->record_->data() + field_meta->offset();
-    if (field_meta->nullable()) {
+    //if (field_meta->nullable()) {
       if (field_meta->nullable()){
         cell.set_nullable(true);
         if (pointer[0] != 0)
           cell.set_is_null(true);
         cell.set_data(pointer + 1, field_meta->len() - 1);
       }
-    }
+    //}
     else {
       cell.set_data(pointer, field_meta->len());
     }

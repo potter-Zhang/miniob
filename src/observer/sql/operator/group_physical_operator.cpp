@@ -87,13 +87,13 @@ RC GroupPhysicalOperator::make_groups()
     if (iter == groups_.end()) {
       std::vector<ValueListTuple*> values_group;
       ValueListTuple* vlt = new ValueListTuple();
-      vlt->set_cells_copy(values);
+      vlt->set_cells(values);
       values_group.push_back(vlt);
       groups_.insert(std::pair<std::vector<Value>, std::vector<ValueListTuple*>>(group_values, values_group));
     }
     else{
       ValueListTuple* vlt = new ValueListTuple();
-      vlt->set_cells_copy(values);
+      vlt->set_cells(values);
       iter->second.push_back(vlt);
     }
   }
