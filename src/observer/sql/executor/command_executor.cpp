@@ -26,6 +26,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/executor/set_variable_executor.h"
 #include "sql/executor/load_data_executor.h"
 #include "sql/executor/create_unique_index_executor.h"
+#include "sql/executor/create_table_select_executor.h"
 #include "common/log/log.h"
 
 RC CommandExecutor::execute(SQLStageEvent *sql_event)
@@ -36,7 +37,7 @@ RC CommandExecutor::execute(SQLStageEvent *sql_event)
     case StmtType::CREATE_INDEX: {
       CreateIndexExecutor executor;
       return executor.execute(sql_event);
-    } break;
+    } 
 
     case StmtType::CREATE_UNIQUE_INDEX: {
       CreateUniqueIndexExecutor executor;
@@ -46,17 +47,22 @@ RC CommandExecutor::execute(SQLStageEvent *sql_event)
     case StmtType::CREATE_TABLE: {
       CreateTableExecutor executor;
       return executor.execute(sql_event);
-    } break;
+    } 
 
     // 直接返回，不知道会不会出事
     case StmtType::CREATE_MULTIINDEX: {
       return RC::SUCCESS;
-    } break;
+    } 
 
     case StmtType::DROP_TABLE: {
       DropTableExecutor executor;
       return executor.execute(sql_event);
     }
+
+    case StmtType::CREATE_TABLE_SELECT: {
+      CreateTableSelectExecutor executor;
+      return executor.execute(sql_event);
+    } 
 
     case StmtType::DESC_TABLE: {
       DescTableExecutor executor;

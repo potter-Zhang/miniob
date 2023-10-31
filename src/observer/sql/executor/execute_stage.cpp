@@ -35,7 +35,7 @@ RC ExecuteStage::handle_request(SQLStageEvent *sql_event)
 {
   RC rc = RC::SUCCESS;
   const unique_ptr<PhysicalOperator> &physical_operator = sql_event->physical_operator();
-  if (physical_operator != nullptr) {
+  if (physical_operator != nullptr && sql_event->stmt()->type() != StmtType::CREATE_TABLE_SELECT) {
     return handle_request_with_physical_operator(sql_event);
   }
 
