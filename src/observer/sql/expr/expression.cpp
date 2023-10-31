@@ -148,12 +148,12 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
     } break;
     case LIKE_A: {
       // 实现char的like匹配
-      cmp_result = common::compare_like((void *)left.data(), (void *)right.data());
+      cmp_result = common::compare_like((void *)left.data() + left.nullable(), (void *)right.data());
       result = (1 == cmp_result);
     } break;
     case LIKE_NOT: {
         // NOT LIKE
-        cmp_result = common::compare_like((void *)left.data(), (void *)right.data());
+        cmp_result = common::compare_like((void *)left.data() + left.nullable(), (void *)right.data());
         result = (0 == cmp_result);
     } break;
     default: {

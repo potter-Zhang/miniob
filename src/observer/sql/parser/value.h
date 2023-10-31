@@ -175,7 +175,7 @@ private:
   } num_value_;
   std::string str_value_;
 
-  bool nullable_ = true;
+  bool nullable_ = false;
   int is_null_ = 0;
   bool asc_ = true;
   //std::string buffer_;

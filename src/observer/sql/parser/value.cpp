@@ -256,7 +256,13 @@ void Value::get_data()
   switch (attr_type_) {
     case CHARS: {
       if (nullable_) {
-        if (str_value_[0] == '\0')
+        if (is_null_) {
+          str_value_ = '\1';
+          for (int i = 0; i < length_ - 1; i ++)
+            str_value_ += '\0';
+          return;
+        }
+        if (str_value_[0] == '\0' || str_value_[0] == '\1')
           return;
         std::string temp;
         temp = is_null_;
@@ -357,12 +363,20 @@ int Value::compare(const Value &other) const
     float other_data = other.num_value_.int_value_;
     return common::compare_float((void *)&this->num_value_.float_value_, (void *)&other_data);
   } else if (this->attr_type_ == INTS && other.attr_type_ == CHARS) {
+    if (other.nullable_)
+      return common::compare_int_string((void *)&this->num_value_.int_value_, (void *)other.str_value_.c_str() + 1, other.str_value_.length());
     return common::compare_int_string((void *)&this->num_value_.int_value_, (void *)other.str_value_.c_str(), other.str_value_.length());
   } else if (this->attr_type_ == CHARS && other.attr_type_ == INTS) {
+    if (nullable_)
+      return common::compare_string_int((void *)this->str_value_.c_str() + 1, this->length_, (void *)&other.num_value_.int_value_);
     return common::compare_string_int((void *)this->str_value_.c_str(), this->length_, (void *)&other.num_value_.int_value_);
   } else if (this->attr_type_ == FLOATS && other.attr_type_ == CHARS) {
+    if (other.nullable_)
+      return common::compare_float_string((void *)&this->num_value_.float_value_, (void *)other.str_value_.c_str() + 1, other.str_value_.length());
     return common::compare_float_string((void *)&this->num_value_.float_value_, (void *)other.str_value_.c_str(), other.str_value_.length());
   } else if (this->attr_type_ == CHARS && other.attr_type_ == FLOATS) {
+    if (nullable_)
+      return common::compare_string_float((void *)this->str_value_.c_str() + 1, this->length_, (void *)&other.num_value_.float_value_);
     return common::compare_string_float((void *)this->str_value_.c_str(), this->length_, (void *)&other.num_value_.float_value_);
   }
   LOG_WARN("not supported");

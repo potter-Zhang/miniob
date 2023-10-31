@@ -419,6 +419,7 @@ attr_def:
     simple_attr_def
     {
       $$ = $1;
+      $$->nullable = true;
       $$->length ++;
     }
     | simple_attr_def NOTNULL

@@ -61,6 +61,18 @@ RC UpdateStmt::create(Db *db, UpdateSqlNode &update, Stmt *&stmt)
       if (!update.attr_value_pairs[i].value.convert_to(field_type)) {
         return RC::SCHEMA_FIELD_TYPE_MISMATCH;
       }
+      
+        if (field_meta->nullable()){
+          if (value_type == AttrType::NULLTYPE){
+            update.attr_value_pairs[i].value.set_length(field_meta->len());
+            update.attr_value_pairs[i].value.get_data();
+          }
+          else {
+            LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
+              table_name, field_meta->name(), field_type, value_type);
+            return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+          }
+        }
       if (!field_meta->nullable()) {
         if (update.attr_value_pairs[i].value.nullable() && update.attr_value_pairs[i].value.is_null())
           return RC::SCHEMA_FIELD_TYPE_MISMATCH;
