@@ -160,6 +160,10 @@ RC FieldMeta::from_json(const Json::Value &json_value, FieldMeta &field)
   int offset = offset_value.asInt();
   int len = len_value.asInt();
   bool visible = visible_value.asBool();
-  bool nullable = nullable_value.asBool();
+  bool nullable;
+  if (nullable_value == Json::Value::nullSingleton())
+    nullable  = true;
+  else
+    nullable = nullable_value.asBool();
   return field.init(name, type, offset, len, visible, nullable);
 }

@@ -256,6 +256,8 @@ void Value::get_data()
   switch (attr_type_) {
     case CHARS: {
       if (nullable_) {
+        if (str_value_[0] == '\0')
+          return;
         std::string temp;
         temp = is_null_;
         str_value_ = temp + str_value_;
