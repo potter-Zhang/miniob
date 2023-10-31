@@ -368,7 +368,18 @@ int Value::compare(const Value &other) const
 }
 
 bool Value::operator == (const Value& other) const{
-  return this->attr_type_ == other.attr_type_ && compare(other) == 0;
+  if (attr_type_ == other.attr_type_) {
+    bool left_null = nullable_ && is_null_;
+    bool right_null = other.nullable_ && other.is_null_;
+    if (left_null && right_null)
+      return true;
+    if (left_null || right_null)
+      return false;
+    return compare(other) == 0;
+  }    
+  else
+    return false;
+  //return this->attr_type_ == other.attr_type_ && compare(other) == 0;
 }
 
 bool Value::operator < (const Value& other) const{
