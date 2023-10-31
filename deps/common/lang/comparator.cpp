@@ -97,7 +97,7 @@ int compare_string(void *arg1, int arg1_max_length, void *arg2, int arg2_max_len
 }
 
 // 认为第一个是chars，第二个是float，null的话要注意arg1和length，length应该是不计'\0'
-int compare_string_float(void *arg1, int length, void * arg2){
+int compare_string_float(void *arg1, int length, void * arg2) {
   char *s1 = new char[length + 1];
   s1[length] = '\0';
   memcpy(s1, arg1, length);
@@ -105,11 +105,12 @@ int compare_string_float(void *arg1, int length, void * arg2){
   float v2 = *(float*)arg2;
   float cmp = v1 - v2;
   int result = 0;
+
   if (cmp > EPSILON) {
     result = 1;
   }
-  if (cmp < -EPSILON) {
-    result -1;
+  else if (cmp < -EPSILON) {
+    result = -1;
   }
   delete[] s1;
   return result;
@@ -128,7 +129,7 @@ int compare_float_string(void *arg1, void * arg2, int length){
     result = 1;
   }
   if (cmp < -EPSILON) {
-    result -1;
+    result = -1;
   }
   delete[] s2;
   return result;

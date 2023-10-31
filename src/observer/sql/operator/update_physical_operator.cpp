@@ -224,6 +224,7 @@ RC UpdatePhysicalOperator::modify(Record &record, Record &new_record)
      if (field->nullable())
       {
         a_v_pair.value.set_nullable(true);
+        a_v_pair.value.set_length(field->len());
         a_v_pair.value.get_data();
       }
       else{
