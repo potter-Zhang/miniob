@@ -124,11 +124,16 @@ public:
   {}
   FieldExpr(const Field &field) : field_(field)
   {}
+  FieldExpr(const RelAttrSqlNode &rel) : rel_(rel)
+  {}
 
   virtual ~FieldExpr() = default;
 
+  void set_table_field(const Table *table, const FieldMeta *field) { field_ = Field(table, field); }
   ExprType type() const override { return ExprType::FIELD; }
   AttrType value_type() const override { return field_.attr_type(); }
+
+  RelAttrSqlNode &rel() { return rel_; }
 
   Field &field() { return field_; }
 
@@ -142,6 +147,7 @@ public:
 
 private:
   Field field_;
+  RelAttrSqlNode rel_;
 };
 
 /**

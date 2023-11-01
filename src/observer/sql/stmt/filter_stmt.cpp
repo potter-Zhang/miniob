@@ -106,7 +106,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     FilterObj filter_obj;
     filter_obj.init_value(condition.left_value);
     filter_unit->set_left(filter_obj);
-  } 
+  } else if (condition.left_is_attr == 4) {
+    FilterObj filter_obj;
+    set_up_expression(db, default_table, tables, condition.left_expr);
+    filter_obj.init_expr(condition.left_expr);
+    filter_unit->set_left(filter_obj);
+  }
 
   if (condition.right_is_attr == 1) {
     Table *table = nullptr;
@@ -134,7 +139,13 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     
     filter_obj.init_select_stmt(static_cast<SelectStmt *>(stmt));
     filter_unit->set_right(filter_obj);
-  } else {
+  } else if (condition.right_is_attr == 4) {
+    FilterObj filter_obj;
+    set_up_expression(db, default_table, tables, condition.right_expr);
+    filter_obj.init_expr(condition.right_expr);
+    filter_unit->set_right(filter_obj);
+  }
+  else {
     FilterObj filter_obj;
     filter_obj.init_values(condition.values);
     filter_unit->set_right(filter_obj);
@@ -146,4 +157,31 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
   
   // 检查两个类型是否能够比较
   return rc;
+}
+
+RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr) {
+  if (expr->type() == ExprType::FIELD) {
+    RC rc;
+    FieldExpr *field_expr = static_cast<FieldExpr *>(expr);
+    Table *table = nullptr;
+    const FieldMeta *field = nullptr;
+    rc = get_table_and_field(db, default_table, tables, field_expr->rel(), table, field);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("cannot find attr");
+      return rc;
+    }
+    field_expr->set_table_field(table, field);
+    return rc;
+  }
+  if (expr->type() == ExprType::ARITHMETIC) {
+    ComparisonExpr *comp_expr = static_cast<ComparisonExpr *>(expr);
+    if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
+      return RC::INTERNAL;
+    }
+    if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+      return RC::INTERNAL;
+    }
+    return RC::SUCCESS;
+  }
+  
 }

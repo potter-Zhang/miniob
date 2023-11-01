@@ -151,9 +151,12 @@ RC LogicalPlanGenerator::create_plan(
     unique_ptr<Expression> left;
     if (filter_obj_left.is_attr == 1) {
       left.reset(static_cast<Expression *>(new FieldExpr(filter_obj_left.field)));
-    } else if (filter_obj_right.is_attr == 0) {
+    } else if (filter_obj_left.is_attr == 0) {
       left.reset(static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
-    } else {
+    } else if (filter_obj_left.is_attr == 4) {
+      left.reset(static_cast<Expression *>(filter_obj_left.expr));
+    }
+    else {
       left.reset(static_cast<Expression *>(new EmptyExpr()));
     }
 
@@ -167,7 +170,10 @@ RC LogicalPlanGenerator::create_plan(
       create_plan(filter_obj_right.select_stmt_, sub_logical_operator);
       sub_queries.push_back(std::move(sub_logical_operator));
       right.reset(static_cast<Expression *>(new EmptyExpr()));
-    } else {
+    } else if (filter_obj_right.is_attr == 4) {
+      right.reset(static_cast<Expression *>(filter_obj_right.expr));
+    }
+    else {
       right.reset(static_cast<Expression *>(new CollectionExpr(filter_obj_right.values)));
     }
     

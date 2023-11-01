@@ -567,6 +567,10 @@ expression:
       $$->set_name(token_name(sql_string, &@$));
       delete $1;
     }
+    | rel_attr {
+      $$ = new FieldExpr(*$1);
+      delete $1;
+    }
     ;
 
 select_attr:
@@ -790,6 +794,15 @@ condition:
       $$->comp = $2;
 
       delete $1;
+    }
+    | expression comp_op expression
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 4;
+      $$->left_expr = $1;
+      $$->comp = $2;
+      $$->right_is_attr = 4;
+      $$->right_expr = $3;
     }
     ;
 

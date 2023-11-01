@@ -32,6 +32,7 @@ struct FilterObj
   Value value;
   SelectStmt *select_stmt_;
   std::vector<Value> values;
+  Expression *expr;
 
   void init_attr(const Field &field)
   {
@@ -48,6 +49,11 @@ struct FilterObj
   void init_values(const std::vector<Value>& values) {
     is_attr = 3;
     this->values = values;
+  }
+
+  void init_expr(Expression *expr) {
+    is_attr = 4;
+    this->expr = expr;
   }
 
   void init_value(const Value &value)
@@ -120,7 +126,9 @@ public:
 
   static RC create_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
       const ConditionSqlNode &condition, FilterUnit *&filter_unit);
-
+  
+  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr);
+  
 private:
   std::vector<FilterUnit *> filter_units_;  // 默认当前都是AND关系
 };
