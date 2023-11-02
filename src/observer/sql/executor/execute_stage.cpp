@@ -72,18 +72,35 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
       int num = 0;
       int group_by_begin = select_stmt->group_by_begin();
       int order_by_begin = select_stmt->order_by_begin();
+
+      std::unordered_map<std::string, std::string> table_alias = select_stmt->table_alias();
+      std::unordered_map<std::string, std::string> table_alias_reverse;
+      for (auto pair : table_alias)
+        table_alias_reverse[pair.second] = pair.first;
+      std::vector<std::string> column_alias = select_stmt->column_alias();
+
       for (const Field &field : select_stmt->query_fields()) {
         if (group_by_begin > -1 && num >= group_by_begin || order_by_begin > -1 && num >= order_by_begin)
           break;
+        //列有别名就直接用
+        if (num < column_alias.size()) {
+          std::string &alias = column_alias[num];
+          if (alias != "") {
+            schema.append_cell(alias.c_str());
+            continue;
+          }
+        }
+
         num ++;
         AggregationFunc func = field.func();
         if (with_table_name) {
+          std::string table_name = table_alias_reverse[field.table_name()];
           if (func == NONE)
-            schema.append_cell(field.table_name(), field.field_name());
+            schema.append_cell(table_name.c_str(), field.field_name());
           else{
             const char *field_name = field.is_star() ? "*" : field.field_name();
-            schema.append_cell(TupleCellSpec(field.table_name(), (func_to_string(func) + "(" + field_name + ")").data(), 
-              (func_to_string(func) + "(" + field.table_name() + "." + field_name + ")").data()));
+            schema.append_cell(TupleCellSpec(table_name.c_str(), (func_to_string(func) + "(" + field_name + ")").data(), 
+              (func_to_string(func) + "(" + table_name + "." + field_name + ")").data()));
           }
         } else {
           if (func == NONE)

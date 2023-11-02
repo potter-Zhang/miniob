@@ -51,6 +51,28 @@ RC FilterStmt::create(Db *db, Table *default_table, std::unordered_map<std::stri
   return rc;
 }
 
+RC FilterStmt::create(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
+      const ConditionSqlNode *conditions, int condition_num, FilterStmt *&stmt, std::unordered_map<std::string, std::string> &table_alias) 
+{
+  RC rc = RC::SUCCESS;
+  stmt = nullptr;
+
+  FilterStmt *tmp_stmt = new FilterStmt();
+  for (int i = 0; i < condition_num; i++) {
+    FilterUnit *filter_unit = nullptr;
+    rc = create_filter_unit(db, default_table, tables, conditions[i], filter_unit, table_alias);
+    if (rc != RC::SUCCESS) {
+      delete tmp_stmt;
+      LOG_WARN("failed to create filter unit. condition index=%d", i);
+      return rc;
+    }
+    tmp_stmt->filter_units_.push_back(filter_unit);
+  }
+
+  stmt = tmp_stmt;
+  return rc;
+}
+
 RC get_table_and_field(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
     const RelAttrSqlNode &attr, Table *&table, const FieldMeta *&field)
 {
@@ -81,6 +103,76 @@ RC get_table_and_field(Db *db, Table *default_table, std::unordered_map<std::str
   }
 
   return RC::SUCCESS;
+}
+
+RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
+    const ConditionSqlNode &condition, FilterUnit *&filter_unit, std::unordered_map<std::string, std::string> &table_alias)
+{
+  RC rc = RC::SUCCESS;
+
+  CompOp comp = condition.comp;
+  if (comp < EQUAL_TO || comp >= NO_OP) {
+    LOG_WARN("invalid compare operator : %d", comp);
+    return RC::INVALID_ARGUMENT;
+  }
+
+  filter_unit = new FilterUnit;
+
+  if (condition.left_is_attr == 1) {
+    Table *table = nullptr;
+    const FieldMeta *field = nullptr;
+    rc = get_table_and_field(db, default_table, tables, condition.left_attr, table, field);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("cannot find attr");
+      return rc;
+    }
+    FilterObj filter_obj;
+    filter_obj.init_attr(Field(table, field));
+    filter_unit->set_left(filter_obj);
+  } else if (condition.left_is_attr == 0) {
+    FilterObj filter_obj;
+    filter_obj.init_value(condition.left_value);
+    filter_unit->set_left(filter_obj);
+  } 
+
+  if (condition.right_is_attr == 1) {
+    Table *table = nullptr;
+    const FieldMeta *field = nullptr;
+    rc = get_table_and_field(db, default_table, tables, condition.right_attr, table, field);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("cannot find attr");
+      return rc;
+    }
+    FilterObj filter_obj;
+    filter_obj.init_attr(Field(table, field));
+    filter_unit->set_right(filter_obj);
+  } else if (condition.right_is_attr == 0) {
+    FilterObj filter_obj;
+    filter_obj.init_value(condition.right_value);
+    filter_unit->set_right(filter_obj);
+  } else if (condition.right_is_attr == 2) {
+    FilterObj filter_obj;
+    Stmt *stmt = nullptr;
+    RC rc = SelectStmt::create(db, *condition.right_select, stmt, table_alias);
+    if (OB_FAIL(rc)) {
+      LOG_WARN("cannot find select stmt");
+      return rc;
+    }
+    
+    filter_obj.init_select_stmt(static_cast<SelectStmt *>(stmt));
+    filter_unit->set_right(filter_obj);
+  } else {
+    FilterObj filter_obj;
+    filter_obj.init_values(condition.values);
+    filter_unit->set_right(filter_obj);
+  }
+
+  filter_unit->set_comp(comp);
+
+  // change type of not attr into attr
+  
+  // 检查两个类型是否能够比较
+  return rc;
 }
 
 RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,

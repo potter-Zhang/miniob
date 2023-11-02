@@ -118,8 +118,14 @@ public:
   static RC create(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
       const ConditionSqlNode *conditions, int condition_num, FilterStmt *&stmt);
 
+  static RC create(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
+      const ConditionSqlNode *conditions, int condition_num, FilterStmt *&stmt, std::unordered_map<std::string, std::string> &table_alias);
+
   static RC create_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
       const ConditionSqlNode &condition, FilterUnit *&filter_unit);
+
+  static RC create_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
+      const ConditionSqlNode &condition, FilterUnit *&filter_unit, std::unordered_map<std::string, std::string> &table_alias);
 
   RC add_filter_unit(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables,
       const ConditionSqlNode *conditions, int condition_num);

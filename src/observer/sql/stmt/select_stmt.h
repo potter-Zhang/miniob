@@ -43,6 +43,7 @@ public:
 
 public:
   static RC create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt);
+  static RC create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std::unordered_map<std::string, std::string> &table_alias);
 
 public:
   const std::vector<Table *> &tables() const
@@ -77,9 +78,19 @@ public:
   {
     return order_by_begin_;
   }
+  const std::unordered_map<std::string, std::string> &table_alias() const
+  {
+    return table_alias_;
+  }
+  const std::vector<std::string> &column_alias() const
+  {
+    return column_alias_;
+  }
 
 private:
   std::vector<Field> query_fields_;
+  std::unordered_map<std::string, std::string> table_alias_;
+  std::vector<std::string> column_alias_;
   std::vector<Table *> tables_;
   std::vector<bool> is_asc_;
   FilterStmt *filter_stmt_ = nullptr;
