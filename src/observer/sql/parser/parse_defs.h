@@ -54,6 +54,7 @@ struct RelAttrSqlNode
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
   AggregationFunc func = NONE; ///< func                        聚合函数名
+  std::string column_alias;///< column alias 列别名
   bool operator == (const RelAttrSqlNode& other) const {
     return relation_name == other.relation_name && attribute_name == other.attribute_name && func == other.func;
   }
@@ -135,6 +136,8 @@ struct SelectSqlNode
   std::vector<std::string>        group_by_columns;///< 分组依据的列名
   std::vector<ConditionSqlNode>   having_conditions;///< having子句
   std::vector<std::pair<RelAttrSqlNode, bool>> order_columns;///< 排序
+  std::unordered_map<std::string, std::string> table_alias;///< 表别名
+  std::vector<std::string> column_alias;///< 列别名
 };
 
 

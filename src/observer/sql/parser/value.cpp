@@ -77,6 +77,10 @@ size_t vector2_value_hash_name::operator()(const std::vector<std::vector<Value>>
   return seed;
 }
 
+size_t string_hash_name::operator()(const std::string &str) const {
+  return std::hash<std::string>{}(str);
+}
+
 Value::Value(int val)
 {
   set_int(val);

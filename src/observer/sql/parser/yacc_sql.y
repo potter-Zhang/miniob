@@ -192,6 +192,7 @@ ConditionSqlNode *always_false()
 %type <condition_list>      agg_condition_list
 %type <rel_attr_list>       select_attr
 %type <relation_list>       rel_list
+%type <relation_list>       tables
 %type <relation_list>       group_by_columns
 %type <string>              group_by_attr
 %type <unordered_list>      unordered_list
@@ -225,6 +226,7 @@ ConditionSqlNode *always_false()
 %type <sql_node>            exit_stmt
 %type <sql_node>            command_wrapper
 %type <sql_node>            inner_join_node
+%type <sql_node>            complete_inner_join_node
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
 %type <func>                func
@@ -637,80 +639,88 @@ set_list:
       delete $2;
     }
 select_stmt:        /*  select 语句的语法解析树*/
-    SELECT select_attr FROM ID rel_list where group_by_columns having order_list
+    SELECT select_attr FROM tables where group_by_columns having order_list
     {
       $$ = new ParsedSqlNode(SCF_SELECT);
       if ($2 != nullptr) {
+        for (RelAttrSqlNode rel : *$2) {
+          $$->selection.column_alias.emplace_back(rel.column_alias);
+        }
         $$->selection.attributes.swap(*$2);
         delete $2;
       }
-      if ($5 != nullptr) {
-        $$->selection.relations.swap(*$5);
-        delete $5;
+      for(std::string &table : *$4) {
+        int pos;
+        if ((pos = table.find(" ")) != table.npos) {
+          std::string tmp = table;
+          table = tmp.substr(0, pos);
+          std::string alias = tmp.substr(pos + 1);
+          $$->selection.table_alias.insert(std::pair<std::string, std::string>(alias, table));
+          table = alias;
+        }
       }
-      $$->selection.relations.push_back($4);
+      $$->selection.relations.swap(*$4);
+      delete $4;
       std::reverse($$->selection.relations.begin(), $$->selection.relations.end());
 
-      if ($6 != nullptr) {
-        $$->selection.conditions.swap(*$6);
+      if ($5 != nullptr) {
+        $$->selection.conditions.swap(*$5);
+        delete $5;
+      }
+
+      if($6 != nullptr) {
+        $$->selection.group_by_columns.swap(*$6);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $6;
       }
 
       if($7 != nullptr) {
-        $$->selection.group_by_columns.swap(*$7);
-        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        $$->selection.having_conditions.swap(*$7);
         delete $7;
       }
 
       if($8 != nullptr) {
-        $$->selection.having_conditions.swap(*$8);
+        $$->selection.order_columns.swap(*$8);
         delete $8;
       }
-
-      if($9 != nullptr) {
-        $$->selection.order_columns.swap(*$9);
-        delete $9;
-      }
-
-      free($4);
     }
-    | SELECT select_attr FROM ID inner_join_node where group_by_columns having order_list
+    | SELECT select_attr FROM complete_inner_join_node where group_by_columns having order_list
     {
-      if ($5 != nullptr){
-        $$ = $5;
+      if ($4 != nullptr){
+        $$ = $4;
       } else {
         $$ = new ParsedSqlNode(SCF_SELECT);
       }
-      $$->selection.relations.push_back($4);
       std::reverse($$->selection.relations.begin(), $$->selection.relations.end());
 
       if ($2 != nullptr) {
+        for (RelAttrSqlNode rel : *$2) {
+          $$->selection.column_alias.emplace_back(rel.column_alias);
+        }
         $$->selection.attributes.swap(*$2);
         delete $2;
       }
 
-      if ($6 != nullptr) {
-        std::copy($6->begin(), $6->end(), std::back_inserter($$->selection.conditions));
+      if ($5 != nullptr) {
+        std::copy($5->begin(), $5->end(), std::back_inserter($$->selection.conditions));
+        delete $5;
+      }
+
+      if($6 != nullptr) {
+        $$->selection.group_by_columns.swap(*$6);
+        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
         delete $6;
       }
 
       if($7 != nullptr) {
-        $$->selection.group_by_columns.swap(*$7);
-        std::reverse($$->selection.group_by_columns.begin(), $$->selection.group_by_columns.end());
+        $$->selection.having_conditions.swap(*$7);
         delete $7;
       }
 
       if($8 != nullptr) {
-        $$->selection.having_conditions.swap(*$8);
+        $$->selection.order_columns.swap(*$8);
         delete $8;
       }
-
-      if($9 != nullptr) {
-        $$->selection.order_columns.swap(*$9);
-        delete $9;
-      }
-
-      free($4);
     }
     ;
 calc_stmt:
@@ -773,6 +783,30 @@ select_attr:
       attr.relation_name  = "";
       attr.attribute_name = "*";
       $$->emplace_back(attr);
+    }
+    | rel_attr ID attr_list {
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::vector<RelAttrSqlNode>;
+      }
+      $1->column_alias = $2;
+      $$->emplace_back(*$1);
+      
+      delete $1;
+      free($2);
+    }
+    | rel_attr AS ID attr_list {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<RelAttrSqlNode>;
+      }
+      $1->column_alias = $3;
+      $$->emplace_back(*$1);
+      
+      delete $1;
+      free($3);
     }
     | rel_attr attr_list {
       if ($2 != nullptr) {
@@ -934,7 +968,70 @@ rel_list:
       $$->push_back($2);
       free($2);
     }
+    | COMMA ID ID rel_list {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+
+      std::string name($2);
+      name = name + " " + $3;
+      $$->push_back(name);
+      free($2);
+      free($3);
+    }
+    | COMMA ID AS ID rel_list {
+      if ($5 != nullptr) {
+        $$ = $5;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+
+      std::string name($2);
+      name = name + " " + $4;
+      $$->push_back(name);
+      free($2);
+      free($4);
+    }
     ;
+
+tables:
+    ID rel_list {
+      if ($2 != nullptr) {
+        $$ = $2;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+      $$->push_back($1);
+      free($1);
+    }
+    | ID ID rel_list {
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+      std::string name($1);
+      name = name + " " + $2;
+      $$->push_back(name);
+      free($1);
+      free($2);
+    }
+    | ID AS ID rel_list {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<std::string>;
+      }
+      std::string name($1);
+      name = name + " " + $3;
+      $$->push_back(name);
+      free($1);
+      free($3);
+    }
+    ;
+
 func:
     MAX {
       $$ = AggregationFunc::MAXFUN;
@@ -1389,6 +1486,32 @@ inner_join_node:
       $$->selection.relations.push_back($2);
       free($2);
     }
+    | INNERJOIN ID ID inner_join_node
+    {      
+      if ($4 != nullptr){
+        $$ = $4;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($3);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($3, $2));
+      free($2);
+      free($3);
+    }
+    | INNERJOIN ID AS ID inner_join_node
+    {      
+      if ($5 != nullptr){
+        $$ = $5;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($4);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($4, $2));
+      free($2);
+      free($4);
+    }
     | INNERJOIN ID ON condition_list inner_join_node
     {
       if ($5 != nullptr){
@@ -1402,6 +1525,80 @@ inner_join_node:
       std::copy($4->begin(), $4->end(), std::back_inserter($$->selection.conditions));
       $$->selection.relations.push_back($2);
       free($2);
+    }
+    | INNERJOIN ID ID ON condition_list inner_join_node
+    {
+      if ($6 != nullptr){
+        $$ = $6;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      if ($5 == nullptr)
+        YYABORT;
+      std::copy($5->begin(), $5->end(), std::back_inserter($$->selection.conditions));
+      $$->selection.relations.push_back($3);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($3, $2));
+      free($2);
+      free($3);
+    }
+    | INNERJOIN ID AS ID ON condition_list inner_join_node
+    {
+      if ($7 != nullptr){
+        $$ = $7;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      if ($6 == nullptr)
+        YYABORT;
+      std::copy($6->begin(), $6->end(), std::back_inserter($$->selection.conditions));
+      $$->selection.relations.push_back($4);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($4, $2));
+      free($2);
+      free($4);
+    }
+    ;
+
+complete_inner_join_node:
+    ID inner_join_node
+    {
+      if ($2 != nullptr) {
+        $$ = $2;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($1);
+      free($1);
+    }
+    | ID ID inner_join_node
+    {
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($2);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($2, $1));
+
+      free($1);
+      free($2);
+    }
+    | ID AS ID inner_join_node
+    {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new ParsedSqlNode(SCF_SELECT);
+      }
+
+      $$->selection.relations.push_back($3);
+      $$->selection.table_alias.insert(std::pair<std::string, std::string>($3, $1));
+
+      free($1);
+      free($3);
     }
     ;
 

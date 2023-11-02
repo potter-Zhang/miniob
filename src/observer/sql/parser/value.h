@@ -53,6 +53,10 @@ struct vector2_value_hash_name {
   size_t operator()(const std::vector<std::vector<Value>>& vec) const;
 };
 
+struct string_hash_name {
+  size_t operator()(const std::string& str) const;
+};
+
 /**
  * @brief 属性的值
  * 
