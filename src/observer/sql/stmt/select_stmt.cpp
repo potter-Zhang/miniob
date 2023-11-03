@@ -65,9 +65,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     Table* table = db->find_table(iter->second.c_str());
     table_map.insert(std::pair<std::string, Table *>(iter->first, table));
     tables.push_back(table);
-  }
-
-  std::unordered_map<std::string, std::string> table_alias = select_stmt->table_alias_;
+  }  
 
   for (size_t i = 0; i < select_sql.relations.size(); i++) {
     const char *table_name = select_sql.relations[i].c_str();
@@ -88,8 +86,10 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
     tables.push_back(table);
     table_map.insert(std::pair<std::string, Table *>(table_name, table));
-    table_alias.insert(std::pair<std::string, std::string>(table_name, table_name));
-  } 
+    select_stmt->table_alias_.insert(std::pair<std::string, std::string>(table_name, table_name));
+  }
+
+  std::unordered_map<std::string, std::string> table_alias = select_stmt->table_alias_;
 
   // collect query fields in `select` statement
   std::vector<Field> query_fields;
@@ -446,12 +446,18 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   // collect tables in `from` statement
   std::vector<Table *> tables;
   std::unordered_map<std::string, Table *> table_map;
+
+  Table *default_table = nullptr;
  
   for (auto iter = select_stmt->table_alias_.begin(); iter != select_stmt->table_alias_.end(); iter ++) {
     Table* table = db->find_table(iter->second.c_str());
     table_map.insert(std::pair<std::string, Table *>(iter->first, table));
     tables.push_back(table);
   }
+
+  int num1= tables.size();
+  if (num1 == 1)
+    default_table = tables[0];
 
   std::unordered_map<std::string, std::string> table_alias_copy = select_stmt->table_alias_;
 
@@ -463,6 +469,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     tables.push_back(table);
     table_alias_copy.insert(std::pair<std::string, std::string>(iter->first, iter->second));
   }
+
+  int num2 = tables.size();
 
   for (size_t i = 0; i < select_sql.relations.size(); i++) {
     const char *table_name = select_sql.relations[i].c_str();
@@ -485,6 +493,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     table_map.insert(std::pair<std::string, Table *>(table_name, table));
     table_alias_copy.insert(std::pair<std::string, std::string>(table_name, table_name));
   }
+
+  int num3 = tables.size();
+  if (num3 - (num2 - num1) == 1)
+    if (default_table == nullptr)
+      default_table = tables[num3 - 1];
 
   // collect query fields in `select` statement
   std::vector<Field> query_fields;
@@ -624,12 +637,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
       query_fields.push_back(Field(table, field_meta));
     }
-  }  
-
-  Table *default_table = nullptr;
-  if (tables.size() == 1) {
-    default_table = tables[0];
-  }
+  }    
 
   // create filter statement in `where` statement
 
