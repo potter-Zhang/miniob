@@ -384,15 +384,39 @@ public:
 
   virtual RC find_cell(const TupleCellSpec &spec, Value &cell) const override
   {
-    return RC::INTERNAL;
+    const char *table_name = spec.table_name();
+    const char *field_name = spec.field_name();
+
+    bool flag = false;
+    for (Field* field : speces_)
+      if (0 == strcmp(table_name, field->table_name())) {
+        flag = true;
+        break;
+      }
+    if (!flag)
+      return RC::NOTFOUND;
+
+    for (size_t i = 0; i < speces_.size(); ++i) {
+      const Field *field = speces_[i];
+      if (0 == strcmp(field_name, field->field_name())) {
+        return cell_at(i, cell);
+      }
+    }
+    return RC::NOTFOUND;
   }
 
   std::vector<Value> cells() const {
     return cells_;
   }
 
+  void add_cell_spec(Field *spec)
+  {
+    speces_.emplace_back(spec);
+  }
+
 private:
   std::vector<Value> cells_;
+  std::vector<Field *> speces_;
 };
 
 /**

@@ -63,7 +63,7 @@ private:
   RC do_aggregation_(std::vector<Value> &values, std::vector<ValueListTuple *> &tuples);//, int cell_num);
 
 private:
-  ValueListTuple* tuple_;
+  ValueListTuple* tuple_ = nullptr;
   std::vector<Field> fields_;
   std::vector<AggregationFunc> funcs_;
   bool group_by_exist_ = false;

@@ -93,9 +93,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
   // collect query fields in `select` statement
   std::vector<Field> query_fields;
+  
   for (int i = static_cast<int>(select_sql.attributes.size()) - 1; i >= 0; i--) {
     const RelAttrSqlNode &relation_attr = select_sql.attributes[i];
     int length = query_fields.size();
+    
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
         0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
       // 看有没有聚合查询
@@ -249,6 +251,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     LOG_WARN("cannot construct filter stmt");
     return rc;
   }
+
 
   // 把having子句插入fitler_stmt中
   int having_begin;
@@ -410,6 +413,20 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   }
 
 
+
+  std::vector<std::unique_ptr<Expression>> expressions;
+  for (const RelAttrSqlNode &n : select_sql.attributes) {
+   
+    expressions.emplace_back(n.expr);
+  }
+  for (auto &expr : expressions) {
+    if (expr == nullptr)
+      continue;
+    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
+      return RC::INTERNAL;
+    }
+  }
+
   // everything alright
   //SelectStmt *select_stmt = new SelectStmt();
   // TODO add expression copy
@@ -421,6 +438,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
   select_stmt->having_begin_ = having_begin;
   select_stmt->attr_having_begin_ = attr_having_begin;
   select_stmt->order_by_begin_ = order_by_begin;
+  select_stmt->expressions_ .swap(expressions);
   stmt = select_stmt;
   return RC::SUCCESS;
 }
@@ -812,6 +830,17 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     }
   }
 
+  std::vector<std::unique_ptr<Expression>> expressions;
+  for (const RelAttrSqlNode &n : select_sql.attributes) {
+      expressions.emplace_back(n.expr);
+  }
+  for (auto &expr : expressions) {
+    if (expr == nullptr)
+      continue;
+    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
+      return RC::INTERNAL;
+    }
+  }
 
   // everything alright
   
@@ -824,6 +853,43 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   select_stmt->having_begin_ = having_begin;
   select_stmt->attr_having_begin_ = attr_having_begin;
   select_stmt->order_by_begin_ = order_by_begin;
+  select_stmt->expressions_ .swap(expressions);
   stmt = select_stmt;
   return RC::SUCCESS;
 }
+
+RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr)
+  {
+     if (expr->type() == ExprType::FIELD) {
+      RC rc;
+      FieldExpr *field_expr = static_cast<FieldExpr *>(expr);
+      Table *table = nullptr;
+      const FieldMeta *field = nullptr;
+      rc = field_expr->get_table_and_field(db, default_table, tables);
+      if (rc != RC::SUCCESS) {
+        
+        return rc;
+      }
+      //field_expr->set_table_field(table, field);
+      return rc;
+    }
+    if (expr->type() == ExprType::ARITHMETIC) {
+      ArithmeticExpr *comp_expr = static_cast<ArithmeticExpr *>(expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
+        return RC::INTERNAL;
+      }
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+        return RC::INTERNAL;
+      }
+      return RC::SUCCESS;
+    }
+
+    if (expr->type() == ExprType::FUNCTION) {
+      FunctionExpr *func_expr = static_cast<FunctionExpr *>(expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, func_expr->expr()))) {
+        return RC::INTERNAL;
+      }
+      return RC::SUCCESS;
+    }
+    
+  }

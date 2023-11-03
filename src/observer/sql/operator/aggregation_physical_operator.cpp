@@ -34,6 +34,9 @@ AggregationPhysicalOperator::~AggregationPhysicalOperator()
     delete tuple;
   }
   tuples_.clear();
+
+  if (tuple_ != nullptr)
+    delete tuple_;
 }
 
 RC AggregationPhysicalOperator::open(Trx *trx) 
@@ -53,6 +56,10 @@ RC AggregationPhysicalOperator::open(Trx *trx)
   if (tuples_.size() > 0)
     iter_ = tuples_.begin();
 
+  tuple_ = new ValueListTuple();
+  for (Field &field : fields_)
+    tuple_->add_cell_spec(&field);
+
   return RC::SUCCESS; 
 }
 
@@ -60,7 +67,7 @@ RC AggregationPhysicalOperator::next()
 {
   if (tuples_.size() == 0 || iter_ == tuples_.end())
     return RC::RECORD_EOF;
-  tuple_ = *iter_;
+  tuple_->set_cells((*iter_)->cells());
   iter_ ++;
   return RC::SUCCESS;
 }

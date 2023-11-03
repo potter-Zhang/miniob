@@ -122,12 +122,15 @@ extern int yydebug;
     ASC = 323,                     /* ASC  */
     UNIQUE = 324,                  /* UNIQUE  */
     AS = 325,                      /* AS  */
-    NUMBER = 326,                  /* NUMBER  */
-    FLOAT = 327,                   /* FLOAT  */
-    DATE = 328,                    /* DATE  */
-    ID = 329,                      /* ID  */
-    SSS = 330,                     /* SSS  */
-    UMINUS = 331                   /* UMINUS  */
+    LENGTH = 326,                  /* LENGTH  */
+    ROUND = 327,                   /* ROUND  */
+    DATE_FORMAT = 328,             /* DATE_FORMAT  */
+    NUMBER = 329,                  /* NUMBER  */
+    FLOAT = 330,                   /* FLOAT  */
+    DATE = 331,                    /* DATE  */
+    ID = 332,                      /* ID  */
+    SSS = 333,                     /* SSS  */
+    UMINUS = 334                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -136,7 +139,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 141 "yacc_sql.y"
+#line 200 "yacc_sql.y"
 
   ParsedSqlNode *                   sql_node;
   ConditionSqlNode *                condition;
@@ -162,7 +165,7 @@ union YYSTYPE
   AggregationFunc                   func;
   std::vector<AttrValuePair> *      set_list;
 
-#line 166 "yacc_sql.hpp"
+#line 169 "yacc_sql.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

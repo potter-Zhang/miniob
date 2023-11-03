@@ -17,7 +17,8 @@ See the Mulan PSL v2 for more details. */
 #include "storage/record/record.h"
 #include "storage/table/table.h"
 
-OrderPhysicalOperator::OrderPhysicalOperator(std::vector<bool> is_asc, int order_by_begin) : is_asc_(is_asc), order_by_begin_(order_by_begin){}
+OrderPhysicalOperator::OrderPhysicalOperator(std::vector<bool> is_asc, int order_by_begin) : 
+  is_asc_(is_asc), order_by_begin_(order_by_begin) {}
 
 OrderPhysicalOperator::~OrderPhysicalOperator() 
 {
@@ -25,6 +26,9 @@ OrderPhysicalOperator::~OrderPhysicalOperator()
     delete tuple;
   }
   tuples_.clear();
+
+  if (tuple_ != nullptr)
+    delete tuple_;
 }
 
 RC OrderPhysicalOperator::open(Trx *trx) 
@@ -44,6 +48,10 @@ RC OrderPhysicalOperator::open(Trx *trx)
   if (tuples_.size() > 0)
     iter_ = tuples_.begin();
 
+  tuple_ = new ValueListTuple();
+  for (Field &field : fields_)
+    tuple_->add_cell_spec(&field);
+
   return RC::SUCCESS; 
 }
 
@@ -51,6 +59,7 @@ RC OrderPhysicalOperator::next()
 {
   if (tuples_.size() == 0 || iter_ == tuples_.end())
     return RC::RECORD_EOF;
+  tuple_->set_cells((*iter_)->cells());
   tuple_ = *iter_;
   iter_ ++;
   return RC::SUCCESS;
@@ -62,6 +71,11 @@ RC OrderPhysicalOperator::close()
     children_[0]->close();
   }
   return RC::SUCCESS;
+}
+
+void OrderPhysicalOperator::add_field(const Field &field)
+{
+  fields_.push_back(field);
 }
 
 Tuple *OrderPhysicalOperator::current_tuple() 

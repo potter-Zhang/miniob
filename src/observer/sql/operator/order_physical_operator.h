@@ -36,6 +36,8 @@ public:
   RC next() override;
   RC close() override;
 
+  void add_field(const Field &field);
+
   int cell_num() const
   {
     return tuple_->cell_num();
@@ -47,14 +49,19 @@ public:
     return tuple_;
   }
 
+  std::vector<Field> fields() const{
+    return fields_;
+  }
+
 private:
   RC sort();
   RC sort_(std::vector<ValueListTuple*> &values, std::vector<ValueListTuple *> &tuples);//, int is_asc_current);
 
 private:
-  ValueListTuple* tuple_;
+  ValueListTuple* tuple_ = nullptr;
   std::vector<bool> is_asc_;
   int order_by_begin_ = -1;
   std::vector<ValueListTuple *> tuples_;
   std::vector<ValueListTuple *>::iterator iter_;
+  std::vector<Field> fields_;
 };

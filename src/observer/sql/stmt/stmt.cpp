@@ -36,6 +36,12 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/create_unique_index_stmt.h"
 #include "sql/stmt/create_table_select_stmt.h"
 
+#include "storage/db/db.h"
+#include "storage/table/table.h"
+#include "common/rc.h"
+#include "common/log/log.h"
+#include "common/lang/string.h"
+
 RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
 {
   stmt = nullptr;
@@ -126,3 +132,4 @@ RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
   }
   return RC::UNIMPLENMENT;
 }
+

@@ -28,6 +28,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/group_logical_operator.h"
 #include "sql/operator/aggregation_logical_operator.h"
 #include "sql/operator/order_logical_operator.h"
+#include "sql/operator/trans_logical_operator.h"
 
 #include "sql/stmt/stmt.h"
 #include "sql/stmt/calc_stmt.h"
@@ -127,7 +128,9 @@ RC LogicalPlanGenerator::create_plan(
     return rc;
   }
 
-  unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));//, select_stmt->group_by_begin()));
+
+  unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));
+  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(std::move(select_stmt->expressions())));
   if (predicate_oper) {
     if (table_oper) {
       predicate_oper->add_child(std::move(table_oper));
@@ -212,13 +215,13 @@ RC LogicalPlanGenerator::create_plan(
       default :
         return RC::UNIMPLENMENT;
     }
-    order_oper = unique_ptr<OrderLogicalOperator>(new OrderLogicalOperator(select_stmt->is_asc(), order_by_begin));
+    order_oper = unique_ptr<OrderLogicalOperator>(new OrderLogicalOperator(all_fields, select_stmt->is_asc(), order_by_begin));
     order_oper->add_child(std::move(oper));
     oper = std::move(order_oper);
   }
-  
-  logical_operator.swap(oper);
-  
+
+  trans_oper->add_child(std::move(oper));
+  logical_operator.swap(trans_oper);
   return RC::SUCCESS;
 }
 
@@ -235,9 +238,12 @@ RC LogicalPlanGenerator::create_plan(
     unique_ptr<Expression> left;
     if (filter_obj_left.is_attr == 1) {
       left.reset(static_cast<Expression *>(new FieldExpr(filter_obj_left.field)));
-    } else if (filter_obj_right.is_attr == 0) {
+    } else if (filter_obj_left.is_attr == 0) {
       left.reset(static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
-    } else {
+    } else if (filter_obj_left.is_attr == 4) {
+      left.reset(static_cast<Expression *>(filter_obj_left.expr));
+    }
+    else {
       left.reset(static_cast<Expression *>(new EmptyExpr()));
     }
 
@@ -251,7 +257,10 @@ RC LogicalPlanGenerator::create_plan(
       create_plan(filter_obj_right.select_stmt_, sub_logical_operator);
       sub_queries.push_back(std::move(sub_logical_operator));
       right.reset(static_cast<Expression *>(new EmptyExpr()));
-    } else {
+    } else if (filter_obj_right.is_attr == 4) {
+      right.reset(static_cast<Expression *>(filter_obj_right.expr));
+    }
+    else {
       right.reset(static_cast<Expression *>(new CollectionExpr(filter_obj_right.values)));
     }
     

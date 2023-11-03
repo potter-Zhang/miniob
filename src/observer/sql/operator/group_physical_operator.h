@@ -79,7 +79,7 @@ private:
   RC make_groups();
 
 private:  
-  Tuple* tuple_;
+  ValueListTuple* tuple_ = nullptr;
   groups_map_type groups_;
   int group_by_begin_ = -1;
   int attr_having_begin_ = -1;

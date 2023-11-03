@@ -40,6 +40,8 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/aggregation_physical_operator.h"
 #include "sql/operator/order_logical_operator.h"
 #include "sql/operator/order_physical_operator.h"
+#include "sql/operator/trans_physical_operator.h"
+#include "sql/operator/trans_logical_operator.h"
 #include "sql/expr/expression.h"
 #include "common/log/log.h"
 #include "physical_plan_generator.h"
@@ -99,12 +101,18 @@ RC PhysicalPlanGenerator::create(LogicalOperator &logical_operator, unique_ptr<P
       return create_plan(static_cast<JoinLogicalOperator &>(logical_operator), oper);
     } break;
 
+    case LogicalOperatorType::TRANSFORM: {
+      return create_plan(static_cast<TransformLogicalOperator &>(logical_operator), oper);
+    }
+
     default: {
       return RC::INVALID_ARGUMENT;
     }
   }
   return rc;
 }
+
+
 
 RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, unique_ptr<PhysicalOperator> &oper)
 {
@@ -257,6 +265,31 @@ RC PhysicalPlanGenerator::create_plan(ProjectLogicalOperator &project_oper, uniq
   return rc;
 }
 
+RC PhysicalPlanGenerator::create_plan(TransformLogicalOperator &trans_oper, unique_ptr<PhysicalOperator> &oper)
+{
+  vector<unique_ptr<LogicalOperator>> &children_opers = trans_oper.children();
+  ASSERT(children_opers.size() == 1, "predicate logical operator's sub oper number should be 1");
+
+  LogicalOperator &child_oper = *children_opers.front();
+  
+  unique_ptr<PhysicalOperator> child_phy_oper;
+  RC rc = create(child_oper, child_phy_oper);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to create child operator of predicate operator. rc=%s", strrc(rc));
+    return rc;
+  }
+
+  vector<unique_ptr<Expression>> &expressions = trans_oper.expressions();
+
+  oper = unique_ptr<PhysicalOperator>(new TransformPhysicalOperator(std::move(expressions)));
+  
+  if (child_phy_oper) {
+    oper->add_child(std::move(child_phy_oper));
+  }
+  return rc;
+}
+  
+
 RC PhysicalPlanGenerator::create_plan(InsertLogicalOperator &insert_oper, unique_ptr<PhysicalOperator> &oper)
 {
   Table *table = insert_oper.table();
@@ -395,7 +428,10 @@ RC PhysicalPlanGenerator::create_plan(OrderLogicalOperator &order_oper, std::uni
 
   const std::vector<bool> is_asc = order_oper.is_asc();
   int order_by_begin = order_oper.order_by_begin();
+  const std::vector<Field>& fields = order_oper.fields();
   unique_ptr<OrderPhysicalOperator> order_physical_oper = unique_ptr<OrderPhysicalOperator>(new OrderPhysicalOperator(is_asc, order_by_begin));
+  for (Field field : fields)
+    order_physical_oper->add_field(field);
   order_physical_oper->add_child(std::move(child_physical_oper));
   oper = std::move(order_physical_oper);
   return rc;

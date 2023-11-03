@@ -55,6 +55,62 @@ ConditionSqlNode *always_false()
   return result;
 }
 
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  FunctionExpr *f_expr = new FunctionExpr(type, expr);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         const char *format,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  std::string format_string = std::string(format);
+  FunctionExpr *f_expr = new FunctionExpr(type, expr, format_string);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         int round,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  FunctionExpr *f_expr = new FunctionExpr(type, expr, round);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
+{
+  if (expr->type() == ExprType::FIELD) {
+    FieldExpr *f_expr = static_cast<FieldExpr *>(expr);
+   
+    rel_attr_node = f_expr->rel();
+   
+    //std::cout << rel_attr_node.attribute_name << std::endl;
+    return;
+  }
+  if (expr->type() == ExprType::ARITHMETIC) {
+    ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
+    field_extract(a_expr->left().get(), rel_attr_node);
+    field_extract(a_expr->right().get(), rel_attr_node);
+    return;
+  }
+  if (expr->type() == ExprType::FUNCTION) {
+    FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
+    field_extract(f_expr->expr(), rel_attr_node);
+    return;
+  }
+}
+
 %}
 
 %define api.pure full
@@ -136,6 +192,9 @@ ConditionSqlNode *always_false()
         ASC
         UNIQUE
         AS
+        LENGTH
+        ROUND
+        DATE_FORMAT
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -731,6 +790,14 @@ calc_stmt:
       $$->calc.expressions.swap(*$2);
       delete $2;
     }
+    | SELECT expression_list
+    {
+      //std::cout << "calc" << std::endl;
+      $$ = new ParsedSqlNode(SCF_CALC);
+      std::reverse($2->begin(), $2->end());
+      $$->calc.expressions.swap(*$2);
+      delete $2;
+    }
     ;
 
 expression_list:
@@ -746,6 +813,38 @@ expression_list:
       } else {
         $$ = new std::vector<Expression *>;
       }
+      $$->emplace_back($1);
+    }
+    | expression ID COMMA expression_list
+    {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<Expression *>;
+      }
+      $1->set_name($2);
+      $$->emplace_back($1);
+    }
+    | expression AS ID COMMA expression_list
+    {
+      if ($5 != nullptr) {
+        $$ = $5;
+      } else {
+        $$ = new std::vector<Expression *>;
+      }
+      $1->set_name($3);
+      $$->emplace_back($1);
+    }
+    | expression ID
+    {
+      $$ = new std::vector<Expression*>;
+      $1->set_name($2);
+      $$->emplace_back($1);
+    }
+    | expression AS ID
+    {
+      $$ = new std::vector<Expression*>;
+      $1->set_name($3);
       $$->emplace_back($1);
     }
     ;
@@ -766,11 +865,29 @@ expression:
       $$ = $2;
       $$->set_name(token_name(sql_string, &@$));
     }
+    | LENGTH LBRACE expression RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::LENGTH, $3, sql_string, &@$);
+      //std::cout << "length" << std::endl;
+    }
+    | ROUND LBRACE expression COMMA NUMBER RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::ROUND, $3, $5, sql_string, &@$);
+    }
+    | DATE_FORMAT LBRACE expression COMMA SSS RBRACE {
+      char *tmp = common::substr($5,1,strlen($5)-2);
+      $$ = create_function_expression(FunctionExpr::Type::DATE_FORMAT, $3, tmp, sql_string, &@$);
+      free(tmp);
+    }
     | '-' expression %prec UMINUS {
       $$ = create_arithmetic_expression(ArithmeticExpr::Type::NEGATIVE, $2, nullptr, sql_string, &@$);
     }
     | value {
+      //std::cout << "value" << std::endl;
       $$ = new ValueExpr(*$1);
+      $$->set_name(token_name(sql_string, &@$));
+      delete $1;
+    }
+    | rel_attr {
+      $$ = new FieldExpr(*$1);
       $$->set_name(token_name(sql_string, &@$));
       delete $1;
     }
@@ -782,7 +899,9 @@ select_attr:
       RelAttrSqlNode attr;
       attr.relation_name  = "";
       attr.attribute_name = "*";
+      attr.expr = nullptr;
       $$->emplace_back(attr);
+      
     }
     | rel_attr ID attr_list {
       if ($3 != nullptr) {
@@ -815,6 +934,19 @@ select_attr:
         $$ = new std::vector<RelAttrSqlNode>;
       }
       $$->emplace_back(*$1);
+      delete $1;
+    }
+    | expression_list {
+      $$ = new std::vector<RelAttrSqlNode>;
+      std::reverse($1->begin(), $1->end());
+      for (auto &expr : *$1) {
+        RelAttrSqlNode rel_attr_node;
+        //std::cout << "field ex" << std::endl;
+        field_extract(expr, rel_attr_node);
+        rel_attr_node.expr = expr;
+        $$->emplace_back(rel_attr_node);
+      }
+     
       delete $1;
     }
     ;
@@ -1371,6 +1503,15 @@ condition:
         $$->comp = (CompOp)((int)$$->comp + 2);
       }
       delete $5;
+    }
+    | expression comp_op expression
+    {
+      $$ = new ConditionSqlNode;
+      $$->left_is_attr = 4;
+      $$->left_expr = $1;
+      $$->comp = $2;
+      $$->right_is_attr = 4;
+      $$->right_expr = $3;
     }
     ;
 

@@ -27,6 +27,7 @@ See the Mulan PSL v2 for more details. */
 #include "storage/default/default_handler.h"
 #include "sql/executor/command_executor.h"
 #include "sql/operator/calc_physical_operator.h"
+#include "sql/operator/trans_physical_operator.h"
 
 using namespace std;
 using namespace common;
@@ -79,9 +80,31 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
         table_alias_reverse[pair.second] = pair.first;
       std::vector<std::string> column_alias = select_stmt->column_alias();
 
+      TransformPhysicalOperator *trans_oper = static_cast<TransformPhysicalOperator *>(physical_operator.get());
+
+      std::unordered_map<int, std::string> exp_map;
+      int exp_pos = 0;
+      for (unique_ptr<Expression> &expression : trans_oper->expressions()) {
+        if (expression == nullptr) {
+          exp_pos ++;
+          continue;
+        }
+        if (expression->type() == ExprType::FUNCTION || expression->type() == ExprType::ARITHMETIC) {
+          exp_map.insert(std::pair<int, std::string>(exp_pos, expression->name()));
+        }
+        exp_pos ++;
+      }
+
       for (const Field &field : select_stmt->query_fields()) {
         if (group_by_begin > -1 && num >= group_by_begin || order_by_begin > -1 && num >= order_by_begin)
           break;
+
+        //expr
+        auto exp_iter = exp_map.find(num);
+        if (exp_iter != exp_map.end()) {
+          schema.append_cell(exp_iter->second.c_str());
+          continue;
+        }
         //列有别名就直接用
         if (num < column_alias.size()) {
           std::string &alias = column_alias[num];
@@ -89,7 +112,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
             schema.append_cell(alias.c_str());
             continue;
           }
-        }
+        }    
 
         num ++;
         AggregationFunc func = field.func();

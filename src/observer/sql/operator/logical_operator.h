@@ -43,7 +43,8 @@ enum class LogicalOperatorType
   UPDATE,     ///< 更新
   AGGREGATION,///< 聚合
   GROUP,      ///< 分组
-  ORDER      ///< 排序
+  ORDER,      ///< 排序
+  TRANSFORM   ///< 变换
 };
 
 /**

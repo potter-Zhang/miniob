@@ -28,6 +28,8 @@ GroupPhysicalOperator::~GroupPhysicalOperator()
     for(ValueListTuple* tuple : iter.second)
       delete tuple;
   }
+  if (tuple_ != nullptr)
+    delete tuple_;
 }
 RC GroupPhysicalOperator::open(Trx *trx)
 {
@@ -46,7 +48,10 @@ RC GroupPhysicalOperator::open(Trx *trx)
   if (groups_.size() > 0)
     iter_ = groups_.begin();
 
-  return RC::SUCCESS; 
+  tuple_ = new ValueListTuple();
+  for (Field &field : fields_)
+    tuple_->add_cell_spec(&field);
+  return RC::SUCCESS;
 }
 
 RC GroupPhysicalOperator::make_groups()
@@ -103,7 +108,7 @@ RC GroupPhysicalOperator::next()
 { 
   if (groups_.size() == 0 || iter_ == groups_.end())
     return RC::RECORD_EOF;
-  tuple_ = iter_->second[0];
+  tuple_->set_cells(iter_->second[0]->cells());
   iter_ ++;
   return RC::SUCCESS;
 }

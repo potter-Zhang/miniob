@@ -141,6 +141,9 @@ having                                  RETURN_TOKEN(HAVING);
 ORDER{WHITE_SAPCE}+BY                   RETURN_TOKEN(ORDERBY);
 ASC                                     RETURN_TOKEN(ASC);
 
+LENGTH                                  RETURN_TOKEN(LENGTH);
+ROUND                                   RETURN_TOKEN(ROUND);
+DATE_FORMAT                             RETURN_TOKEN(DATE_FORMAT);
 {ID}                                    yylval->string=strdup(yytext); RETURN_TOKEN(ID);
 "("                                     RETURN_TOKEN(LBRACE);
 ")"                                     RETURN_TOKEN(RBRACE);

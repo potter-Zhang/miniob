@@ -15,7 +15,7 @@
 class OrderLogicalOperator : public LogicalOperator 
 {
 public:
-  OrderLogicalOperator(const std::vector<bool> &is_asc, int order_by_begin);
+  OrderLogicalOperator(const std::vector<Field> &fields, const std::vector<bool> &is_asc, int order_by_begin);
   virtual ~OrderLogicalOperator() = default;
 
   LogicalOperatorType type() const override
@@ -40,8 +40,13 @@ public:
     return order_by_begin_;
   }
 
+  std::vector<Field> fields() const{
+    return fields_;
+  }
+
 private:
   std::vector<bool> is_asc_;
 
   int order_by_begin_ = -1;
+  std::vector<Field> fields_;
 };

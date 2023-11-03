@@ -58,6 +58,8 @@ struct RelAttrSqlNode
   bool operator == (const RelAttrSqlNode& other) const {
     return relation_name == other.relation_name && attribute_name == other.attribute_name && func == other.func;
   }
+  Expression *expr;
+ 
 };
 
 struct RelAttrSqlNode_hash_name {
@@ -69,6 +71,8 @@ struct RelAttrSqlNode_hash_name {
     return seed;
   }
 };
+
+
 
 /**
  * @brief 描述比较运算符
@@ -102,12 +106,20 @@ enum CompOp
  */
 struct SelectSqlNode;
 
+/**
+ * is_attr == 0 -> value
+ * is_attr == 1 -> attr
+ * is_attr == 2 -> select_stmt
+ * is_attr == 3 -> values
+ * is_attr == 4 -> expression
+*/
 struct ConditionSqlNode
 {
   int             left_is_attr;    ///< TRUE if left-hand side is an attribute
                                    ///< 1时，操作符左边是属性名，0时，是属性值
   Value           left_value;      ///< left-hand side value if left_is_attr = FALSE
   RelAttrSqlNode  left_attr;       ///< left-hand side attribute
+  Expression *    left_expr;
   CompOp          comp;            ///< comparison operator
   int             right_is_attr;   ///< TRUE if right-hand side is an attribute
                                    ///< 1时，操作符右边是属性名，0时，是属性值
@@ -115,6 +127,7 @@ struct ConditionSqlNode
   Value           right_value;     ///< right-hand side value if right_is_attr = FALSE
   SelectSqlNode   *right_select;    ///< right-hand side select stmt if right_is_attr = 2
   std::vector<Value> values;        /// 
+  Expression *     right_expr;
 };
 
 /**
