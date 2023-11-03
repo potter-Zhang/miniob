@@ -22,6 +22,10 @@ See the Mulan PSL v2 for more details. */
 #include "sql/parser/value.h"
 #include "sql/stmt/select_stmt.h"
 #include "common/log/log.h"
+#include "storage/db/db.h"
+#include "common/rc.h"
+#include "common/log/log.h"
+#include "common/lang/string.h"
 //#include "sql/operator/logical_operator.h"
 
 class Tuple;
@@ -46,6 +50,7 @@ enum class ExprType
   CONJUNCTION,  ///< 多个表达式使用同一种关系(AND或OR)来联结
   ARITHMETIC,   ///< 算术运算
   COLLECTION,    ///< 
+  FUNCTION,
   EMPTY
 };
 
@@ -130,6 +135,35 @@ public:
   virtual ~FieldExpr() = default;
 
   void set_table_field(const Table *table, const FieldMeta *field) { field_ = Field(table, field); }
+  RC get_table_and_field(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables)
+  {
+    Table *table;
+    const FieldMeta *field;
+    if (common::is_blank(rel_.relation_name.c_str())) {
+      table = default_table;
+    } else if (nullptr != tables) {
+      auto iter = tables->find(rel_.relation_name);
+      if (iter != tables->end()) {
+        table = iter->second;
+      }
+    } else {
+      table = db->find_table(rel_.relation_name.c_str());
+    }
+    if (nullptr == table) {
+      
+      return RC::SCHEMA_TABLE_NOT_EXIST;
+    }
+
+    field = table->table_meta().field(rel_.attribute_name.c_str());
+    if (nullptr == field) {
+      
+      table = nullptr;
+      return RC::SCHEMA_FIELD_NOT_EXIST;
+    }
+    field_ = Field(table, field);
+
+    return RC::SUCCESS;
+  }
   ExprType type() const override { return ExprType::FIELD; }
   AttrType value_type() const override { return field_.attr_type(); }
 
@@ -354,4 +388,41 @@ public:
 
 private:
   std::vector<Value> values;
+};
+
+class FunctionExpr : public Expression {
+public:
+  enum class Type {
+    LENGTH,
+    ROUND,
+    DATE_FORMAT
+  };
+public:
+  FunctionExpr(Type type, Expression *expr) : function_type_(type), expr_(expr) {}
+  FunctionExpr(Type type, Expression *expr, std::string &format) : function_type_(type), expr_(expr), format_(format) {}
+  FunctionExpr(Type type, Expression *expr, int round) : function_type_(type), expr_(expr), round_(round) {}
+
+  virtual ~FunctionExpr() = default;
+
+  ExprType type() const override { return ExprType::FUNCTION; }
+
+  AttrType value_type() const override;
+
+  RC get_value(const Tuple &tuple, Value &value) const override;
+  RC try_get_value(Value &value) const override;
+  Expression *expr() { return expr_; }
+  Type function_type() const { return function_type_; }
+
+private:
+  // real functions
+  RC length(Value &value) const;
+  RC round(Value &value) const;
+  RC date_format(Value &value) const;
+
+  
+private:
+  Type function_type_;
+  Expression *expr_;
+  std::string format_;
+  int round_;
 };

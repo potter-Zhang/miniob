@@ -65,9 +65,14 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
   // collect query fields in `select` statement
   std::vector<Field> query_fields;
+  std::vector<std::unique_ptr<Expression>> expressions;
+  for (const RelAttrSqlNode &n : select_sql.attributes) {
+      expressions.emplace_back(n.expr);
+  }
+  
   for (int i = static_cast<int>(select_sql.attributes.size()) - 1; i >= 0; i--) {
     const RelAttrSqlNode &relation_attr = select_sql.attributes[i];
-
+    
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
         0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
       for (Table *table : tables) {
@@ -143,12 +148,56 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     return rc;
   }
 
+  for (auto &expr : expressions) {
+    if (expr == nullptr)
+      continue;
+    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
+      return RC::INTERNAL;
+    }
+  }
   // everything alright
   SelectStmt *select_stmt = new SelectStmt();
   // TODO add expression copy
   select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->filter_stmt_ = filter_stmt;
+  select_stmt->expressions_ .swap(expressions);
   stmt = select_stmt;
   return RC::SUCCESS;
 }
+
+RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr)
+  {
+     if (expr->type() == ExprType::FIELD) {
+      RC rc;
+      FieldExpr *field_expr = static_cast<FieldExpr *>(expr);
+      Table *table = nullptr;
+      const FieldMeta *field = nullptr;
+      rc = field_expr->get_table_and_field(db, default_table, tables);
+      if (rc != RC::SUCCESS) {
+        
+        return rc;
+      }
+      //field_expr->set_table_field(table, field);
+      return rc;
+    }
+    if (expr->type() == ExprType::ARITHMETIC) {
+      ArithmeticExpr *comp_expr = static_cast<ArithmeticExpr *>(expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
+        return RC::INTERNAL;
+      }
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+        return RC::INTERNAL;
+      }
+      return RC::SUCCESS;
+    }
+
+    if (expr->type() == ExprType::FUNCTION) {
+      FunctionExpr *func_expr = static_cast<FunctionExpr *>(expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, func_expr->expr()))) {
+        return RC::INTERNAL;
+      }
+      return RC::SUCCESS;
+    }
+    
+  }

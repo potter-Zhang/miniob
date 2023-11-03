@@ -16,13 +16,17 @@ See the Mulan PSL v2 for more details. */
 
 #include <vector>
 #include <memory>
+#include <unordered_map> 
 
 #include "common/rc.h"
 #include "sql/stmt/stmt.h"
 #include "storage/field/field.h"
+#include "sql/stmt/stmt.h"
+#include "sql/expr/expression.h"
 
 class FieldMeta;
 class FilterStmt;
+class CalcStmt;
 class Db;
 class Table;
 
@@ -57,9 +61,18 @@ public:
   {
     return filter_stmt_;
   }
+  std::vector<std::unique_ptr<Expression>> &expressions() 
+  {
+    return expressions_;
+  }
+
+  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr);
+  
+ 
 
 private:
   std::vector<Field> query_fields_;
   std::vector<Table *> tables_;
   FilterStmt *filter_stmt_ = nullptr;
+  std::vector<std::unique_ptr<Expression>> expressions_;
 };

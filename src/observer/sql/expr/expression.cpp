@@ -14,7 +14,7 @@ See the Mulan PSL v2 for more details. */
 
 #include "sql/expr/expression.h"
 #include "sql/expr/tuple.h"
-
+#include <math.h>
 using namespace std;
 
 RC FieldExpr::get_value(const Tuple &tuple, Value &value) const
@@ -395,4 +395,116 @@ RC ArithmeticExpr::try_get_value(Value &value) const
   }
 
   return calc_value(left_value, right_value, value);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+AttrType FunctionExpr::value_type() const
+{
+  switch (function_type_)
+  {
+  case Type::LENGTH:
+    return AttrType::INTS;
+
+  case Type::ROUND:
+    return AttrType::FLOATS;
+
+  case Type::DATE_FORMAT:
+    return AttrType::CHARS;
+
+  default:
+    return AttrType::UNDEFINED;
+  }
+}
+
+RC FunctionExpr::length(Value &value) const
+{
+  if (value.attr_type() != AttrType::CHARS) {
+    return RC::INVALID_ARGUMENT;
+  }
+  // TODO deal with null
+  int len = value.get_string().size();
+
+  value.set_int(len);
+  return RC::SUCCESS;
+}
+
+RC FunctionExpr::round(Value &value) const
+{
+  if (value.attr_type() != AttrType::FLOATS) {
+    return RC::INVALID_ARGUMENT;
+  }
+  float f = value.get_float();
+  std::stringstream ss;
+  ss.setf(ios::fixed);
+  ss.precision(round_);
+  ss << f;
+  ss >> f;
+  value.set_float(f);
+  return RC::SUCCESS;
+
+}
+
+RC FunctionExpr::date_format(Value &value) const
+{
+  if (value.attr_type() != AttrType::DATES) {
+    return RC::INVALID_ARGUMENT;
+  }
+
+  tm date_struct;
+  int date = value.get_date();
+  date_struct.tm_mday = date % 100;
+  date /= 100;
+  date_struct.tm_mon = date % 100 - 1;
+  date /= 100;
+  date_struct.tm_year = date - 1900;
+
+  int buf_size = format_.size() + 30;
+  
+  char buf[buf_size];
+  strftime(buf, buf_size, format_.c_str(), &date_struct);
+
+  value.set_string(buf);
+  return RC::SUCCESS;
+
+}
+
+RC FunctionExpr::try_get_value(Value &value) const 
+{
+  RC rc = expr_->try_get_value(value);
+  if (OB_FAIL(rc)) {
+    return rc;
+  }
+  switch (function_type_)
+  {
+  case Type::LENGTH:
+    return length(value);
+  case Type::ROUND:
+    return round(value);
+  case Type::DATE_FORMAT:
+    return date_format(value);
+  
+  default:
+    return RC::INVALID_ARGUMENT;
+  }
+}
+
+RC FunctionExpr::get_value(const Tuple &tuple, Value &value) const
+{
+  RC rc = expr_->get_value(tuple, value);
+  if (OB_FAIL(rc)) {
+    return rc;
+  }
+  switch (function_type_)
+  {
+  case Type::LENGTH:
+    return length(value);
+  case Type::ROUND:
+    return round(value);
+  case Type::DATE_FORMAT:
+    return date_format(value);
+  
+  default:
+    return RC::INVALID_ARGUMENT;
+  }
+  
 }

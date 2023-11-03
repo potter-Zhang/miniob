@@ -41,6 +41,60 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   return expr;
 }
 
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  FunctionExpr *f_expr = new FunctionExpr(type, expr);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         const char *format,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  std::string format_string = std::string(format);
+  FunctionExpr *f_expr = new FunctionExpr(type, expr, format_string);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+FunctionExpr *create_function_expression(FunctionExpr::Type type, 
+                                         Expression *expr,
+                                         int round,
+                                         const char *sql_string,
+                                         YYLTYPE *llocp)
+{
+  FunctionExpr *f_expr = new FunctionExpr(type, expr, round);
+  f_expr->set_name(token_name(sql_string, llocp));
+  return f_expr;
+}
+
+void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
+{
+  if (expr->type() == ExprType::FIELD) {
+    FieldExpr *f_expr = static_cast<FieldExpr *>(expr);
+    rel_attr_node = f_expr->rel();
+    //std::cout << rel_attr_node.attribute_name << std::endl;
+    return;
+  }
+  if (expr->type() == ExprType::ARITHMETIC) {
+    ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
+    field_extract(a_expr->left().get(), rel_attr_node);
+    field_extract(a_expr->right().get(), rel_attr_node);
+    return;
+  }
+  if (expr->type() == ExprType::FUNCTION) {
+    FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
+    field_extract(f_expr->expr(), rel_attr_node);
+    return;
+  }
+}
+
 %}
 
 %define api.pure full
@@ -103,6 +157,9 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
         EXISTS
         UNIQUE
         AS
+        LENGTH
+        ROUND
+        DATE_FORMAT
 
 /** union 中定义各种数据类型，真实生成的代码也是union类型，所以不能有非POD类型的数据 **/
 %union {
@@ -559,6 +616,16 @@ expression:
       $$ = $2;
       $$->set_name(token_name(sql_string, &@$));
     }
+    | LENGTH LBRACE expression RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::LENGTH, $3, sql_string, &@$);
+      //std::cout << "length" << std::endl;
+    }
+    | ROUND LBRACE expression COMMA NUMBER RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::ROUND, $3, $5, sql_string, &@$);
+    }
+    | DATE_FORMAT LBRACE expression COMMA SSS RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::DATE_FORMAT, $3, $5, sql_string, &@$);
+    }
     | '-' expression %prec UMINUS {
       $$ = create_arithmetic_expression(ArithmeticExpr::Type::NEGATIVE, $2, nullptr, sql_string, &@$);
     }
@@ -579,7 +646,9 @@ select_attr:
       RelAttrSqlNode attr;
       attr.relation_name  = "";
       attr.attribute_name = "*";
+      attr.expr = nullptr;
       $$->emplace_back(attr);
+      
     }
     | rel_attr attr_list {
       if ($2 != nullptr) {
@@ -588,6 +657,19 @@ select_attr:
         $$ = new std::vector<RelAttrSqlNode>;
       }
       $$->emplace_back(*$1);
+      delete $1;
+    }
+    | expression_list {
+      $$ = new std::vector<RelAttrSqlNode>;
+      std::reverse($1->begin(), $1->end());
+      for (auto &expr : *$1) {
+        RelAttrSqlNode rel_attr_node;
+        //std::cout << "field ex" << std::endl;
+        field_extract(expr, rel_attr_node);
+        rel_attr_node.expr = expr;
+        $$->emplace_back(rel_attr_node);
+      }
+     
       delete $1;
     }
     ;

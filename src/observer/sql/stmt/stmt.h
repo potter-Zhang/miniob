@@ -16,8 +16,11 @@ See the Mulan PSL v2 for more details. */
 
 #include "common/rc.h"
 #include "sql/parser/parse_defs.h"
+#include <unordered_map>
 
 class Db;
+class Table;
+class FieldMeta;
 
 /**
  * @brief Statement SQL语句解析后通过Resolver转换成Stmt
@@ -89,3 +92,7 @@ public:
 
 private:
 };
+
+
+
+

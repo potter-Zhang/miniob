@@ -25,6 +25,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/operator/project_logical_operator.h"
 #include "sql/operator/explain_logical_operator.h"
 #include "sql/operator/update_logical_operator.h"
+#include "sql/operator/trans_logical_operator.h"
 
 #include "sql/stmt/stmt.h"
 #include "sql/stmt/calc_stmt.h"
@@ -122,7 +123,9 @@ RC LogicalPlanGenerator::create_plan(
     return rc;
   }
 
+
   unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));
+  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(std::move(select_stmt->expressions())));
   if (predicate_oper) {
     if (table_oper) {
       predicate_oper->add_child(std::move(table_oper));
@@ -133,8 +136,8 @@ RC LogicalPlanGenerator::create_plan(
       project_oper->add_child(std::move(table_oper));
     }
   }
-
-  logical_operator.swap(project_oper);
+  trans_oper->add_child(std::move(project_oper));
+  logical_operator.swap(trans_oper);
   return RC::SUCCESS;
 }
 
