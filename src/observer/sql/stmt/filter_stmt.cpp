@@ -133,7 +133,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     FilterObj filter_obj;
     filter_obj.init_value(condition.left_value);
     filter_unit->set_left(filter_obj);
-  } 
+  } else if (condition.left_is_attr == 4) {
+    FilterObj filter_obj;
+    set_up_expression(db, default_table, tables, condition.left_expr);
+    filter_obj.init_expr(condition.left_expr);
+    filter_unit->set_left(filter_obj);
+  }
 
   if (condition.right_is_attr == 1) {
     Table *table = nullptr;
@@ -160,6 +165,11 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     }
     
     filter_obj.init_select_stmt(static_cast<SelectStmt *>(stmt));
+    filter_unit->set_right(filter_obj);
+  } else if (condition.right_is_attr == 4) {
+    FilterObj filter_obj;
+    set_up_expression(db, default_table, tables, condition.right_expr);
+    filter_obj.init_expr(condition.right_expr);
     filter_unit->set_right(filter_obj);
   } else {
     FilterObj filter_obj;
@@ -289,13 +299,21 @@ RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
     return rc;
   }
   if (expr->type() == ExprType::ARITHMETIC) {
-    ComparisonExpr *comp_expr = static_cast<ComparisonExpr *>(expr);
-    if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
+    ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
+    if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->left().get()))) {
       return RC::INTERNAL;
     }
-    if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+    if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->right().get()))) {
       return RC::INTERNAL;
     }
+    return RC::SUCCESS;
+  }
+  if (expr->type() == ExprType::FUNCTION) {
+    FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
+    if (OB_FAIL(set_up_expression(db, default_table, tables, f_expr->expr()))) {
+      return RC::INTERNAL;
+    }
+   
     return RC::SUCCESS;
   }
   
