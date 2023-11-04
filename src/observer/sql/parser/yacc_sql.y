@@ -893,6 +893,9 @@ expression:
       $$ = create_function_expression(FunctionExpr::Type::LENGTH, $3, sql_string, &@$);
       //std::cout << "length" << std::endl;
     }
+    | ROUND LBRACE expression RBRACE {
+      $$ = create_function_expression(FunctionExpr::Type::ROUND, $3, 0, sql_string, &@$);
+    }
     | ROUND LBRACE expression COMMA NUMBER RBRACE {
       $$ = create_function_expression(FunctionExpr::Type::ROUND, $3, $5, sql_string, &@$);
     }
@@ -991,6 +994,12 @@ rel_attr:
       $$->attribute_name = $3;
       free($1);
       free($3);
+    }
+    | ID DOT '*' {
+      $$ = new RelAttrSqlNode;
+      $$->relation_name  = $1;
+      $$->attribute_name = '*';
+      free($1);
     }
     | func LBRACE ID RBRACE {
       $$ = new RelAttrSqlNode;
@@ -1301,7 +1310,7 @@ agg_condition_list:
     ;
 
 condition:
-    rel_attr comp_op value
+    /*rel_attr comp_op value
     {
       if ($3->nullable() && $3->is_null())
         $$ = always_false();
@@ -1363,7 +1372,7 @@ condition:
       delete $1;
       delete $3;
     }
-    | value ISNULL
+    |*/ value ISNULL
     {
       $$ = always_false();
 
@@ -1533,16 +1542,16 @@ condition:
       $$->comp = CompOp::NOT_EXISTS_OP;
 
     }
-    | rel_attr comp_op LBRACE select_stmt RBRACE
+    | expression comp_op LBRACE select_stmt RBRACE
     {
       $$ = new ConditionSqlNode;
-      $$->left_is_attr = 1;
-      $$->left_attr = *$1;
+      $$->left_is_attr = 4;
+      $$->left_expr = $1;
       $$->right_is_attr = 2;
       $$->right_select = &($4->selection);
       $$->comp = $2;
 
-      delete $1;
+      
     }
     | LBRACE select_stmt RBRACE comp_op rel_attr 
     {
@@ -1567,6 +1576,7 @@ condition:
       $$->comp = $2;
       $$->right_is_attr = 4;
       $$->right_expr = $3;
+    
     }
     ;
 
