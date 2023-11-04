@@ -101,7 +101,7 @@ RC OrderPhysicalOperator::sort()
       }
       values.push_back(value);
     }
-    tuple_copy->set_cells_copy(values);
+    tuple_copy->set_cells(values);
     tuples.push_back(tuple_copy);
   }
   if (tuples.size() == 0)
