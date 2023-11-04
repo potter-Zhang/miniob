@@ -17,6 +17,7 @@ See the Mulan PSL v2 for more details. */
 #include "common/lang/comparator.h"
 
 #include <math.h>
+#include <iomanip>
 using namespace std;
 
 RC FieldExpr::get_value(const Tuple &tuple, Value &value) const
@@ -507,18 +508,81 @@ RC FunctionExpr::date_format(Value &value) const
   tm date_struct;
   Date date_t = value.get_date();
   int date = date_t.value();
-  date_struct.tm_mday = date % 100;
+  int day = date % 100;
+  int last_digit_of_day = day % 10;
   date /= 100;
-  date_struct.tm_mon = date % 100 - 1;
+  int month = date % 100;
   date /= 100;
-  date_struct.tm_year = date - 1900;
+  int year = date;
 
-  int buf_size = format_.size() + 30;
-  
-  char buf[buf_size];
-  strftime(buf, buf_size, format_.c_str(), &date_struct);
+  std::stringstream formatted_date;
 
-  value.set_string(buf);
+  for (int i = 0; i < format_.size(); i++) {
+    if (format_[i] != '%') {
+      formatted_date << format_[i];
+      continue;
+    } 
+    if (++i >= format_.size()) {
+      formatted_date << format_[i - 1];
+      break;
+    }
+    switch (format_[i])
+    {
+    case 'b':
+      formatted_date << month_name[month - 1].substr(0, 3);
+      break;
+    case 'c':
+      formatted_date << month;
+      break;
+    case 'D': {
+      std::string tmp;
+      if (last_digit_of_day == 1) 
+        tmp = "st";
+      else if (last_digit_of_day == 2)
+        tmp = "nd";
+      else if (last_digit_of_day == 3)
+        tmp = "rd";
+      else 
+        tmp = "th";
+      formatted_date << day << tmp;
+    } break;
+    case 'd':
+      formatted_date << setw(2) << setfill('0') << day;
+      break;
+    case 'e':
+      formatted_date << day;
+      break;
+    case 'j': {
+      int sum_of_day = 0;
+      int leap_year = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+      for (int i = 0; i < month; i++) {
+        sum_of_day += month_day[i];
+        if (i == 1) {
+          sum_of_day += leap_year;
+        }
+      }
+      formatted_date << setw(3) << setfill('0') << sum_of_day;
+    } break;
+    case 'M':
+      formatted_date << month_name[month - 1];
+      break;
+    case 'm':
+      formatted_date << month;
+      break;
+    case 'Y':
+       formatted_date << year;
+       break;
+    case 'y':
+        formatted_date << setw(2) << setfill('0') << year % 100;
+       break;
+    default:
+        formatted_date << format_[i];
+      break;
+    }
+  }
+
+
+  value.set_string(formatted_date.str().c_str());
   return RC::SUCCESS;
 
 }

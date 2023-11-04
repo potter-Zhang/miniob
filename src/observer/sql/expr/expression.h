@@ -397,6 +397,8 @@ public:
     ROUND,
     DATE_FORMAT
   };
+ static constexpr int month_day[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+ 
 public:
   FunctionExpr(Type type, Expression *expr) : function_type_(type), expr_(expr) {}
   FunctionExpr(Type type, Expression *expr, std::string &format) : function_type_(type), expr_(expr), format_(format) {}
@@ -426,3 +428,5 @@ private:
   std::string format_;
   int round_;
 };
+
+const std::string month_name[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};

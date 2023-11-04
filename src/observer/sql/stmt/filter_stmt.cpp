@@ -135,7 +135,10 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_left(filter_obj);
   } else if (condition.left_is_attr == 4) {
     FilterObj filter_obj;
-    set_up_expression(db, default_table, tables, condition.left_expr);
+    RC rc = set_up_expression(db, default_table, tables, condition.left_expr);
+    if (OB_FAIL(rc)) {
+      return rc;
+    }
     filter_obj.init_expr(condition.left_expr);
     filter_unit->set_left(filter_obj);
   }
@@ -168,7 +171,10 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_right(filter_obj);
   } else if (condition.right_is_attr == 4) {
     FilterObj filter_obj;
-    set_up_expression(db, default_table, tables, condition.right_expr);
+    RC rc = set_up_expression(db, default_table, tables, condition.right_expr);
+    if (OB_FAIL(rc)) {
+      return rc;
+    }
     filter_obj.init_expr(condition.right_expr);
     filter_unit->set_right(filter_obj);
   } else {
@@ -215,7 +221,10 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_left(filter_obj);
   } else if (condition.left_is_attr == 4) {
     FilterObj filter_obj;
-    set_up_expression(db, default_table, tables, condition.left_expr);
+    RC rc = set_up_expression(db, default_table, tables, condition.left_expr);
+    if (OB_FAIL(rc)) {
+      return rc;
+    }
     filter_obj.init_expr(condition.left_expr);
     filter_unit->set_left(filter_obj);
   }
@@ -248,7 +257,10 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_right(filter_obj);
   } else if (condition.right_is_attr == 4) {
     FilterObj filter_obj;
-    set_up_expression(db, default_table, tables, condition.right_expr);
+    RC rc = set_up_expression(db, default_table, tables, condition.right_expr);
+    if (OB_FAIL(rc)) {
+      return rc;
+    }
     filter_obj.init_expr(condition.right_expr);
     filter_unit->set_right(filter_obj);
   }
