@@ -517,7 +517,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   int num2 = tables.size();
 
-  int actual_table_num = 0;
+  //int actual_table_num = 0;
   for (size_t i = 0; i < select_sql.relations.size(); i++) {
     const char *table_name = select_sql.relations[i].c_str();
     if (nullptr == table_name) {
@@ -525,12 +525,9 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
       return RC::INVALID_ARGUMENT;
     }
 
-    Table *table = db->find_table(table_name);
-    if (nullptr != table)
-      actual_table_num ++;
-
     if (table_map.find(table_name) != table_map.end())
       continue;
+    Table *table = db->find_table(table_name);
     if (nullptr == table) {      
       LOG_WARN("no such table. db=%s, table_name=%s", db->name(), table_name);
       return RC::SCHEMA_TABLE_NOT_EXIST;
@@ -545,8 +542,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   int num3 = tables.size();
 
-  assert(actual_table_num > 0);
-  if (actual_table_num == 1)
+  //assert(actual_table_num > 0);
+  if (select_sql.relations.size() == 1)
     if (default_table == nullptr)
       default_table = tables[num3 - 1];
 

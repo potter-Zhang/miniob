@@ -104,13 +104,13 @@ void SessionStage::handle_request(StageEvent *event)
   SQLStageEvent sql_event(sev, sql);
 
   //'-'号后加空格
-  std::string str = sql_event.sql();
+  /*std::string str = sql_event.sql();
   size_t pos = str.find('-');
   while (pos != std::string::npos) {
     str.insert(pos + 1, " ");
     pos = str.find('-', pos + 2); // 跳过已插入的空格
   }
-  sql_event.set_sql(str.c_str());
+  sql_event.set_sql(str.c_str());*/
 
   RC rc = handle_sql(&sql_event);
   if (rc != RC::SUCCESS)
