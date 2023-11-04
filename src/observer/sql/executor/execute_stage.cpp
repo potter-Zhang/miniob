@@ -14,6 +14,7 @@ See the Mulan PSL v2 for more details. */
 
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "sql/executor/execute_stage.h"
 
@@ -79,6 +80,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
       for (auto pair : table_alias)
         table_alias_reverse[pair.second] = pair.first;
       std::vector<std::string> column_alias = select_stmt->column_alias();
+      std::reverse(column_alias.begin(), column_alias.end());
 
       TransformPhysicalOperator *trans_oper = static_cast<TransformPhysicalOperator *>(physical_operator.get());
 
@@ -103,6 +105,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
         auto exp_iter = exp_map.find(num);
         if (exp_iter != exp_map.end()) {
           schema.append_cell(exp_iter->second.c_str());
+          num ++;
           continue;
         }
         //列有别名就直接用
@@ -110,6 +113,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
           std::string &alias = column_alias[num];
           if (alias != "") {
             schema.append_cell(alias.c_str());
+            num ++;
             continue;
           }
         }    

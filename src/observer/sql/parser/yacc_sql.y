@@ -94,7 +94,7 @@ void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
     FieldExpr *f_expr = static_cast<FieldExpr *>(expr);
    
     rel_attr_node = f_expr->rel();
-   
+    rel_attr_node.column_alias = expr->name();
     //std::cout << rel_attr_node.attribute_name << std::endl;
     return;
   }
@@ -262,6 +262,7 @@ void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
 %type <set_list>            set_list
 %type <expression>          expression
 %type <expression_list>     expression_list
+%type <expression_list>     part_expression_list
 %type <sql_node>            calc_stmt
 %type <sql_node>            select_stmt
 %type <sql_node>            insert_stmt
@@ -800,50 +801,73 @@ calc_stmt:
     }
     ;
 
-expression_list:
-    expression
+part_expression_list:    
+     /* empty */
     {
-      $$ = new std::vector<Expression*>;
-      $$->emplace_back($1);
+      $$ = nullptr;
     }
-    | expression COMMA expression_list
+    | COMMA expression part_expression_list
     {
       if ($3 != nullptr) {
         $$ = $3;
       } else {
         $$ = new std::vector<Expression *>;
       }
-      $$->emplace_back($1);
+
+      $$->emplace_back($2);
     }
-    | expression ID COMMA expression_list
+    | COMMA expression ID part_expression_list
     {
       if ($4 != nullptr) {
         $$ = $4;
       } else {
         $$ = new std::vector<Expression *>;
       }
-      $1->set_name($2);
-      $$->emplace_back($1);
+      $2->set_name($3);
+      $$->emplace_back($2);
     }
-    | expression AS ID COMMA expression_list
+    | COMMA expression AS ID part_expression_list
     {
       if ($5 != nullptr) {
         $$ = $5;
       } else {
         $$ = new std::vector<Expression *>;
       }
-      $1->set_name($3);
+      $2->set_name($4);
+      $$->emplace_back($2);
+    }
+    ;
+
+expression_list:
+    expression part_expression_list
+    {
+      if ($2 != nullptr) {
+        $$ = $2;
+      } else {
+        $$ = new std::vector<Expression*>;
+      }
+
       $$->emplace_back($1);
     }
-    | expression ID
+    | expression ID part_expression_list
     {
-      $$ = new std::vector<Expression*>;
+      if ($3 != nullptr) {
+        $$ = $3;
+      } else {
+        $$ = new std::vector<Expression*>;
+      }
+
       $1->set_name($2);
       $$->emplace_back($1);
     }
-    | expression AS ID
+    | expression AS ID part_expression_list
     {
-      $$ = new std::vector<Expression*>;
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<Expression*>;
+      }
+
       $1->set_name($3);
       $$->emplace_back($1);
     }
@@ -888,28 +912,34 @@ expression:
     }
     | rel_attr {
       $$ = new FieldExpr(*$1);
-      $$->set_name(token_name(sql_string, &@$));
+      $$->set_name("");
+      //$$->set_name(token_name(sql_string, &@$));
       delete $1;
     }
     ;
 
 select_attr:
-    '*' {
+    expression_list
+    {
       $$ = new std::vector<RelAttrSqlNode>;
-      RelAttrSqlNode attr;
-      attr.relation_name  = "";
-      attr.attribute_name = "*";
-      attr.expr = nullptr;
-      $$->emplace_back(attr);
-      
+      for (auto &expr : *$1) {
+        RelAttrSqlNode rel_attr_node;
+        //std::cout << "field ex" << std::endl;
+        field_extract(expr, rel_attr_node);
+        rel_attr_node.expr = expr;
+        $$->emplace_back(rel_attr_node);
+      }
+     
+      delete $1;
     }
-    | rel_attr ID attr_list {
+    /*| rel_attr ID attr_list {
       if ($3 != nullptr) {
         $$ = $3;
       } else {
         $$ = new std::vector<RelAttrSqlNode>;
       }
       $1->column_alias = $2;
+      $1->expr = nullptr;
       $$->emplace_back(*$1);
       
       delete $1;
@@ -922,6 +952,7 @@ select_attr:
         $$ = new std::vector<RelAttrSqlNode>;
       }
       $1->column_alias = $3;
+      $1->expr = nullptr;
       $$->emplace_back(*$1);
       
       delete $1;
@@ -933,21 +964,18 @@ select_attr:
       } else {
         $$ = new std::vector<RelAttrSqlNode>;
       }
+      $1->expr = nullptr;
       $$->emplace_back(*$1);
       delete $1;
-    }
-    | expression_list {
+    }*/
+    | '*' {
       $$ = new std::vector<RelAttrSqlNode>;
-      std::reverse($1->begin(), $1->end());
-      for (auto &expr : *$1) {
-        RelAttrSqlNode rel_attr_node;
-        //std::cout << "field ex" << std::endl;
-        field_extract(expr, rel_attr_node);
-        rel_attr_node.expr = expr;
-        $$->emplace_back(rel_attr_node);
-      }
-     
-      delete $1;
+      RelAttrSqlNode attr;
+      attr.relation_name  = "";
+      attr.attribute_name = "*";
+      attr.expr = nullptr;
+      $$->emplace_back(attr);
+      
     }
     ;
 
@@ -1044,8 +1072,35 @@ attr_list:
         $$ = new std::vector<RelAttrSqlNode>;
       }
 
+      $2->expr = nullptr;
       $$->emplace_back(*$2);
       delete $2;
+    }
+    | COMMA rel_attr ID attr_list {
+      if ($4 != nullptr) {
+        $$ = $4;
+      } else {
+        $$ = new std::vector<RelAttrSqlNode>;
+      }
+
+      $2->column_alias = $3;
+      $2->expr = nullptr;
+      $$->emplace_back(*$2);
+      delete $2;
+      free($3);
+    }
+    | COMMA rel_attr AS ID attr_list {
+      if ($5 != nullptr) {
+        $$ = $5;
+      } else {
+        $$ = new std::vector<RelAttrSqlNode>;
+      }
+
+      $2->column_alias = $4;
+      $2->expr = nullptr;
+      $$->emplace_back(*$2);
+      delete $2;
+      free($4);
     }
     ;
 

@@ -62,14 +62,16 @@ public:
             break;
         }
 
-        Value value;
+        
         std::vector<Value> values;
         for (int i = 0; i < expressions_.size(); i++) {
           if (expressions_[i] != nullptr) {
+            Value value;
             expressions_[i]->get_value(*tuple, value);
             values.emplace_back(value);
           }
           else {
+            Value value;
             int cell_num = tuple->cell_num();
             for (int i = 0; i < cell_num; i++) {
                 tuple->cell_at(i, value);

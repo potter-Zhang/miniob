@@ -60,6 +60,8 @@ RC AggregationPhysicalOperator::open(Trx *trx)
   for (Field &field : fields_)
     tuple_->add_cell_spec(&field);
 
+  tuple_->set_funcs(funcs_);
+
   return RC::SUCCESS; 
 }
 

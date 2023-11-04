@@ -300,11 +300,16 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
   //检查简单字段和聚合字段是否在没有group by的情况下同时存在
   bool agg_exist = false;
+  int non_agg_num = 0;
   if (group_by_begin == -1){
     for (int i = 0; i < query_fields.size(); i ++){
-      if (query_fields[i].func() != AggregationFunc::NONE)
+      if (query_fields[i].func() != AggregationFunc::NONE) {
+        if (non_agg_num > 0)
+          return RC::INVALID_ARGUMENT;
         agg_exist = true;
+      }
       else{
+        non_agg_num ++;
         if (agg_exist)
           return RC::INVALID_ARGUMENT;
       }
@@ -415,12 +420,33 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
 
   std::vector<std::unique_ptr<Expression>> expressions;
-  for (const RelAttrSqlNode &n : select_sql.attributes) {
-   
-    expressions.emplace_back(n.expr);
+  for (auto iter = select_sql.attributes.rbegin(); iter != select_sql.attributes.rend(); iter ++) {
+    if (iter->attribute_name == "*") {      
+      if (iter->func == NONE) {
+        std::vector<Field> fields;
+        for (Table* table : tables)
+          wildcard_fields(table, fields);
+        for (Field field : fields)
+          expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
+      }
+      else {
+        for (Table *table : tables){
+          const TableMeta &table_meta = table->table_meta();
+          const int field_num = table_meta.field_num();
+          Field field(table, table_meta.field(table_meta.sys_field_num()));
+          field.set_is_star(true);
+          field.set_func(COUNTFUN);
+          expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
+        }
+      }
+    }
+    else 
+      expressions.emplace_back(iter->expr);
   }
   for (auto &expr : expressions) {
     if (expr == nullptr)
+      continue;
+    if (static_cast<FieldExpr *>(expr.get())->rel().attribute_name == "")
       continue;
     if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
       return RC::INTERNAL;
@@ -718,11 +744,16 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   //检查简单字段和聚合字段是否在没有group by的情况下同时存在
   bool agg_exist = false;
+  int non_agg_num = 0;
   if (group_by_begin == -1){
-    for (int i = 0; i < query_fields.size(); i ++){
-      if (query_fields[i].func() != AggregationFunc::NONE)
+    for (int i = 0; i < query_fields.size(); i ++) {
+      if (query_fields[i].func() != AggregationFunc::NONE) {
+        if (non_agg_num > 0)
+          return RC::INVALID_ARGUMENT;
         agg_exist = true;
+      }
       else{
+        non_agg_num ++;
         if (agg_exist)
           return RC::INVALID_ARGUMENT;
       }
@@ -831,11 +862,33 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   }
 
   std::vector<std::unique_ptr<Expression>> expressions;
-  for (const RelAttrSqlNode &n : select_sql.attributes) {
-      expressions.emplace_back(n.expr);
+  for (auto iter = select_sql.attributes.rbegin(); iter != select_sql.attributes.rend(); iter ++) {
+    if (iter->attribute_name == "*") {      
+      if (iter->func == NONE) {
+        std::vector<Field> fields;
+        for (Table* table : tables)
+          wildcard_fields(table, fields);
+        for (Field field : fields)
+          expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
+      }
+      else {
+        for (Table *table : tables){
+          const TableMeta &table_meta = table->table_meta();
+          const int field_num = table_meta.field_num();
+          Field field(table, table_meta.field(table_meta.sys_field_num()));
+          field.set_is_star(true);
+          field.set_func(COUNTFUN);
+          expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
+        }
+      }
+    }
+    else 
+      expressions.emplace_back(iter->expr);
   }
   for (auto &expr : expressions) {
     if (expr == nullptr)
+      continue;
+    if (static_cast<FieldExpr *>(expr.get())->rel().attribute_name == "")
       continue;
     if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
       return RC::INTERNAL;

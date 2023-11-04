@@ -176,12 +176,10 @@ public:
     cell.set_type(field_meta->type());
     char* pointer = this->record_->data() + field_meta->offset();
     if (field_meta->nullable()) {
-      if (field_meta->nullable()){
-        cell.set_nullable(true);
-        if (pointer[0] != 0)
-          cell.set_is_null(true);
-        cell.set_data(pointer + 1, field_meta->len() - 1);
-      }
+      cell.set_nullable(true);
+      if (pointer[0] != 0)
+        cell.set_is_null(true);
+      cell.set_data(pointer + 1, field_meta->len() - 1);
     }
     else {
       cell.set_data(pointer, field_meta->len());
@@ -362,6 +360,11 @@ public:
     cells_ = cells;
   }
 
+  void set_funcs(const std::vector<AggregationFunc> &funcs)
+  {
+    funcs_ = funcs;
+  }
+
   void set_cells_copy(const std::vector<Value> cells)
   {
     cells_ = cells;
@@ -387,18 +390,23 @@ public:
     const char *table_name = spec.table_name();
     const char *field_name = spec.field_name();
 
-    bool flag = false;
-    for (Field* field : speces_)
-      if (0 == strcmp(table_name, field->table_name())) {
-        flag = true;
-        break;
+    for (size_t i = 0; i < speces_.size(); ++i) {
+      const Field *field = speces_[i];
+      if (0 == strcmp(field_name, field->field_name()) && 0 == strcmp(table_name, field->table_name())) {
+        return cell_at(i, cell);
       }
-    if (!flag)
-      return RC::NOTFOUND;
+    }
+    return RC::NOTFOUND;
+  }
+
+  RC find_cell(const TupleCellSpec &spec, AggregationFunc func, Value &cell) const
+  {
+    const char *table_name = spec.table_name();
+    const char *field_name = spec.field_name();
 
     for (size_t i = 0; i < speces_.size(); ++i) {
       const Field *field = speces_[i];
-      if (0 == strcmp(field_name, field->field_name())) {
+      if (0 == strcmp(field_name, field->field_name()) && 0 == strcmp(table_name, field->table_name()) && func == funcs_[i]) {
         return cell_at(i, cell);
       }
     }
@@ -414,9 +422,15 @@ public:
     speces_.emplace_back(spec);
   }
 
+  const std::vector<AggregationFunc> &funcs() const
+  {
+    return funcs_;
+  }
+
 private:
   std::vector<Value> cells_;
   std::vector<Field *> speces_;
+  std::vector<AggregationFunc> funcs_;
 };
 
 /**

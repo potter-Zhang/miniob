@@ -155,7 +155,7 @@ public:
     }
 
     field = table->table_meta().field(rel_.attribute_name.c_str());
-    if (nullptr == field) {
+    if (nullptr == field && rel_.attribute_name != "*") {
       
       table = nullptr;
       return RC::SCHEMA_FIELD_NOT_EXIST;

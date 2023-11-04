@@ -60,7 +60,6 @@ RC OrderPhysicalOperator::next()
   if (tuples_.size() == 0 || iter_ == tuples_.end())
     return RC::RECORD_EOF;
   tuple_->set_cells((*iter_)->cells());
-  tuple_ = *iter_;
   iter_ ++;
   return RC::SUCCESS;
 }

@@ -21,7 +21,11 @@ using namespace std;
 
 RC FieldExpr::get_value(const Tuple &tuple, Value &value) const
 {
-  return tuple.find_cell(TupleCellSpec(table_name(), field_name()), value);
+  AggregationFunc func = field_.func();
+  if (func == NONE)
+    return tuple.find_cell(TupleCellSpec(table_name(), field_name()), value);
+  else
+    return static_cast<const ValueListTuple&>(tuple).find_cell(TupleCellSpec(table_name(), field_name()), func, value);
 }
 
 RC ValueExpr::get_value(const Tuple &tuple, Value &value) const
