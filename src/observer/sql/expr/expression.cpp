@@ -185,7 +185,7 @@ RC ComparisonExpr::compare_value(const Value &left, std::vector<Value> &collecti
   if (comp_ < IN_OP && comp_ >= EQUAL_TO) {
     if (collection.size() == 0) {
       value = false;
-      return rc;
+      return RC::INVALID_ARGUMENT;
     }
     else if (collection.size() > 1) {
       value = false;
@@ -489,6 +489,7 @@ RC FunctionExpr::round(Value &value) const
     return RC::INVALID_ARGUMENT;
   }
   float f = value.get_float();
+  
   std::stringstream ss;
   ss.setf(ios::fixed);
   ss.precision(round_);

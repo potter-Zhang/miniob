@@ -440,8 +440,9 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
         }
       }
     }
-    else 
+    else {
       expressions.emplace_back(iter->expr);
+    }
   }
   for (auto &expr : expressions) {
     if (expr == nullptr)
@@ -888,8 +889,9 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
         }
       }
     }
-    else 
+    else {
       expressions.emplace_back(iter->expr);
+    }
   }
   for (auto &expr : expressions) {
     if (expr == nullptr)

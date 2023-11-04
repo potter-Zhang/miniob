@@ -161,7 +161,8 @@ public:
       return RC::SCHEMA_FIELD_NOT_EXIST;
     }
     field_ = Field(table, field);
-
+    if (field_.func() == NONE)
+      field_.set_func(rel_.func);
     return RC::SUCCESS;
   }
   ExprType type() const override { return ExprType::FIELD; }
@@ -178,6 +179,10 @@ public:
   const char *field_name() const { return field_.field_name(); }
 
   RC get_value(const Tuple &tuple, Value &value) const override;
+
+  void set_func(AggregationFunc func) {
+    field_.set_func(func);
+  }
 
 private:
   Field field_;
