@@ -58,7 +58,7 @@ public:
         Tuple *tuple = oper->current_tuple();
         if (nullptr == tuple) {
             rc = RC::INTERNAL;
-            LOG_WARN("failed to get tuple from operator");
+            sql_debug("trans failed to get tuple from operator");
             break;
         }
 

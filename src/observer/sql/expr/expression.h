@@ -26,6 +26,7 @@ See the Mulan PSL v2 for more details. */
 #include "common/rc.h"
 #include "common/log/log.h"
 #include "common/lang/string.h"
+#include "event/sql_debug.h"
 //#include "sql/operator/logical_operator.h"
 
 class Tuple;
