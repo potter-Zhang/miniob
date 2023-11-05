@@ -175,8 +175,6 @@ void SessionStage::handle_request(StageEvent *event)
  */
 RC SessionStage::handle_sql(SQLStageEvent *sql_event)
 {
-  dynamic_cast<SessionEvent *>(sql_event)->session()->set_sql_debug(true);
-  //sql_debug("1");
   RC rc = query_cache_stage_.handle_request(sql_event);
   if (OB_FAIL(rc)) {
     LOG_TRACE("failed to do query cache. rc=%s", strrc(rc));
@@ -185,25 +183,25 @@ RC SessionStage::handle_sql(SQLStageEvent *sql_event)
 
   rc = parse_stage_.handle_request(sql_event);
   if (OB_FAIL(rc)) {
-    sql_debug("failed to do parse. rc=%s", strrc(rc));
+    LOG_TRACE("failed to do parse. rc=%s", strrc(rc));
     return rc;
   }
 
   rc = resolve_stage_.handle_request(sql_event);
   if (OB_FAIL(rc)) {
-    sql_debug("failed to do resolve. rc=%s", strrc(rc));
+    LOG_TRACE("failed to do resolve. rc=%s", strrc(rc));
     return rc;
   }
   
   rc = optimize_stage_.handle_request(sql_event);
   if (rc != RC::UNIMPLENMENT && rc != RC::SUCCESS) {
-    sql_debug("failed to do optimize. rc=%s", strrc(rc));
+    LOG_TRACE("failed to do optimize. rc=%s", strrc(rc));
     return rc;
   }
   
   rc = execute_stage_.handle_request(sql_event);
   if (OB_FAIL(rc)) {
-    sql_debug("failed to do execute. rc=%s", strrc(rc));
+    LOG_TRACE("failed to do execute. rc=%s", strrc(rc));
     return rc;
   }
 

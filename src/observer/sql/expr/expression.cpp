@@ -185,11 +185,9 @@ RC ComparisonExpr::compare_value(const Value &left, std::vector<Value> &collecti
   if (comp_ < IN_OP && comp_ >= EQUAL_TO) {
     if (collection.size() == 0) {
       value = false;
-      sql_debug("false and %s", strrc(rc));
       return rc;
     }
     else if (collection.size() > 1) {
-      sql_debug("collection size > 1");
       value = false;
       return RC::INTERNAL;
     }
