@@ -95,7 +95,7 @@ public:
     return expressions_;
   }
 
-  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr);
+  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, std::unique_ptr<Expression> &expr);
   
  
 

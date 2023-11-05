@@ -419,7 +419,7 @@ public:
 
   RC get_value(const Tuple &tuple, Value &value) const override;
   RC try_get_value(Value &value) const override;
-  Expression *expr() { return expr_; }
+  std::unique_ptr<Expression> &expr() { return expr_; }
   Type function_type() const { return function_type_; }
 
 private:
@@ -431,7 +431,7 @@ private:
   
 private:
   Type function_type_;
-  Expression *expr_;
+  std::unique_ptr<Expression> expr_;
   std::string format_;
   int round_;
 };

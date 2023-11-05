@@ -107,7 +107,7 @@ void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
   }
   if (expr->type() == ExprType::FUNCTION) {
     FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
-    field_extract(f_expr->expr(), rel_attr_node);
+    field_extract(f_expr->expr().get(), rel_attr_node);
     return;
   }
 }

@@ -323,7 +323,7 @@ RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
   }
   if (expr->type() == ExprType::FUNCTION) {
     FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
-    if (OB_FAIL(set_up_expression(db, default_table, tables, f_expr->expr()))) {
+    if (OB_FAIL(set_up_expression(db, default_table, tables, f_expr->expr().get()))) {
       return RC::INTERNAL;
     }
    

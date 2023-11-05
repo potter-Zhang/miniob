@@ -320,6 +320,13 @@ RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std:
           } break;
           case AggregationFunc::AVGFUN: {
             if (!(value.nullable() && value.is_null())){
+              if (values[i].nullable() && values[i].is_null()) {
+                values[i] = value;
+                (*iter_avg_num) ++;
+                iter_avg_num ++;
+                continue;
+              }
+
               (*iter_avg_num) ++;
               iter_avg_num ++;
               switch (value.attr_type()) {
@@ -339,6 +346,12 @@ RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std:
           } break;
           case AggregationFunc::SUMFUN: {
             if (!(value.nullable() && value.is_null())){
+              if (values[i].nullable() && values[i].is_null()) {
+                values[i] = value;
+                continue;
+              }
+
+
               switch (value.attr_type()) {
                 // INTS时，最后的结果放在Value.float_value_
                 case AttrType::INTS: {
