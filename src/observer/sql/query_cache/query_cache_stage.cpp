@@ -34,7 +34,7 @@ RC QueryCacheStage::handle_request(SQLStageEvent *sql_event)
 {
   //int len = std::string("select * from ssq_1 where id = (select ssq_2.id from ssq_2 where col2 = 2);").size();
   
-  if (sql_event->sql().substr(0, 75) == "select * from ssq_1 where id = (select ssq_2.id from ssq_2 where col2 = 2);") {
+  /*if (sql_event->sql().substr(0, 75) == "select * from ssq_1 where id = (select ssq_2.id from ssq_2 where col2 = 2);") {
     Communicator *communicator = sql_event->session_event()->get_communicator();
     BufferedWriter *writer = communicator->get_writer();
 
@@ -42,14 +42,14 @@ RC QueryCacheStage::handle_request(SQLStageEvent *sql_event)
       int32_t write_size;
       writer->write(s.c_str(), s.size(), write_size);
     }
-    writer->flush();
+    //writer->flush();
   }
   if (start) {
     sql_stmt.emplace_back(sql_event->sql());
   }
   if (sql_event->sql().substr(0, 38) == "INSERT INTO ssq_1 VALUES (1, 4, 11.2);") {
     start = true;
-  }
+  }*/
   
 
   return RC::SUCCESS;

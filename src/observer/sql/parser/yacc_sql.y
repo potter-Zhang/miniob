@@ -908,6 +908,10 @@ expression:
     | '-' expression %prec UMINUS {
       $$ = create_arithmetic_expression(ArithmeticExpr::Type::NEGATIVE, $2, nullptr, sql_string, &@$);
     }
+    | expression NUMBER {
+      Expression *num_expr = new ValueExpr(Value($2));
+      $$ = create_arithmetic_expression(ArithmeticExpr::Type::ADD, $1, num_expr, sql_string, &@$);
+    }
     | value {
       //std::cout << "value" << std::endl;
       $$ = new ValueExpr(*$1);

@@ -56,6 +56,11 @@ struct FilterObj
     this->expr = expr;
   }
 
+  void init_expr(Expression *expr, SelectStmt *select_stmt)
+  {
+    
+  }
+
   void init_value(const Value &value)
   {
     is_attr = false;

@@ -31,6 +31,6 @@ public:
 
 public:
   RC handle_request(SQLStageEvent *sql_event);
-  std::vector<std::string> sql_stmt;
-  bool start = false;
+  // std::vector<std::string> sql_stmt;
+  // bool start = false;
 };

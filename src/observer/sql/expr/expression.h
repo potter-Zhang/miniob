@@ -52,6 +52,7 @@ enum class ExprType
   ARITHMETIC,   ///< 算术运算
   COLLECTION,    ///< 
   FUNCTION,
+  STMT,
   EMPTY
 };
 
@@ -436,3 +437,13 @@ private:
 };
 
 const std::string month_name[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+class StmtExpr : public Expression {
+  StmtExpr(SelectSqlNode select) :select_(select) {}
+
+
+
+private:
+  SelectSqlNode select_;
+  
+};

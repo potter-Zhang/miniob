@@ -492,7 +492,7 @@ RC FunctionExpr::round(Value &value) const
   
   std::stringstream ss;
   ss.setf(ios::fixed);
-  f += 1 / pow(10, round_ + 1);
+  f += 1.0 / pow(10, round_ + 3);
   ss.precision(round_);
   ss << fixed << f;
   ss >> f;

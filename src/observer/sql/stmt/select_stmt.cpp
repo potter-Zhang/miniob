@@ -511,6 +511,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   std::unordered_map<std::string, std::string> table_alias_copy = select_stmt->table_alias_;
 
+  std::unordered_map<std::string, Table *> table_map_local = table_map;
+
   for (auto iter = table_alias.begin(); iter != table_alias.end(); iter ++) {
     if (table_map.find(iter->first) != table_map.end())
       continue;
@@ -523,6 +525,9 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   int num2 = tables.size();
 
   //int actual_table_num = 0;
+
+  int need_help = 0;
+
   for (size_t i = 0; i < select_sql.relations.size(); i++) {
     const char *table_name = select_sql.relations[i].c_str();
     if (nullptr == table_name) {
@@ -532,7 +537,12 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
     auto iter = table_map.find(table_name);
     if (iter != table_map.end()) {
+      need_help ++;
       raw_tables.push_back(iter->second);
+      if (table_map_local.find(table_name) == table_map_local.end()) {
+        Table *table = db->find_table(table_name);
+        table_map_local.insert(std::pair<std::string, Table *>(table_name, table));
+      }
       continue;
     }
     Table *table = db->find_table(table_name);
@@ -546,15 +556,25 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     tables.push_back(table);
     raw_tables.push_back(table);
     table_map.insert(std::pair<std::string, Table *>(table_name, table));
+    table_map_local.insert(std::pair<std::string, Table *>(table_name, table));
     table_alias_copy.insert(std::pair<std::string, std::string>(table_name, table_name));
   }
 
   int num3 = tables.size();
 
   //assert(actual_table_num > 0);
-  if (select_sql.relations.size() == 1)
+  if (table_map_local.size() == 1)
     if (default_table == nullptr)
-      default_table = tables[num3 - 1];
+      default_table = table_map_local.begin()->second;
+  else
+    default_table = nullptr;
+
+  std::vector<Table *> tables_to_swap;
+  select_stmt->tables_.clear();
+  for (auto iter = table_map_local.begin(); iter != table_map_local.end(); iter ++) {
+    select_stmt->tables_.push_back(iter->second);
+  }
+  tables_to_swap = select_stmt->tables_;
 
   // collect query fields in `select` statement
   std::vector<Field> query_fields;
@@ -569,7 +589,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
           LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
           return RC::SQL_SYNTAX;
         }
-        for (Table *table : tables){
+        for (Table *table : tables_to_swap){
           const TableMeta &table_meta = table->table_meta();
           const int field_num = table_meta.field_num();
           query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
@@ -579,7 +599,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
           iter->set_func(relation_attr.func);
       }
       else{
-        for (Table *table : tables) {
+        for (Table *table : tables_to_swap) {
           wildcard_fields(table, query_fields);
         }     
       }
@@ -598,7 +618,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
             LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
             return RC::SQL_SYNTAX;
           }
-          for (Table *table : tables) {
+          for (Table *table : tables_to_swap) {
             wildcard_fields(table, query_fields);
           }
           for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
@@ -630,12 +650,12 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
         }
       }
     } else {
-      if (tables.size() != 1) {
+      if (tables_to_swap.size() != 1) {
         LOG_WARN("invalid. I do not know the attr's table. attr=%s", relation_attr.attribute_name.c_str());
         return RC::SCHEMA_FIELD_MISSING;
       }
 
-      Table *table = tables[0];
+      Table *table = tables_to_swap[0];
       const FieldMeta *field_meta = table->table_meta().field(relation_attr.attribute_name.c_str());
       if (nullptr == field_meta) {
         LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), relation_attr.attribute_name.c_str());
@@ -680,12 +700,12 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
       query_fields.push_back(Field(table, field_meta));
     }
     else{
-      if (tables.size() != 1) {
+      if (tables_to_swap.size() != 1) {
         LOG_WARN("invalid. I do not know the attr's table. attr=%s", column.c_str());
         return RC::SCHEMA_FIELD_MISSING;
       }
 
-      Table *table = tables[0];
+      Table *table = tables_to_swap[0];
       const FieldMeta *field_meta = table->table_meta().field(column.c_str());
       if (nullptr == field_meta) {
         LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), column.c_str());
@@ -701,7 +721,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   FilterStmt *filter_stmt = nullptr;
   RC rc = FilterStmt::create(db,
       default_table,
-      &table_map,
+      &table_map_local,
       select_sql.conditions.data(),
       static_cast<int>(select_sql.conditions.size()),
       filter_stmt, table_alias_copy);
@@ -720,7 +740,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   rc = filter_stmt->add_filter_unit(db,
         default_table,
-        &table_map,
+        &table_map_local,
         select_sql.having_conditions.data(),
         static_cast<int>(select_sql.having_conditions.size()));
   if(rc != RC::SUCCESS) {
@@ -753,7 +773,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     query_fields.back().set_func(func);
   }
 
-  LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables.size(), query_fields.size());
+  LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables_to_swap.size(), query_fields.size());
 
   //检查简单字段和聚合字段是否在没有group by的情况下同时存在
   bool agg_exist = false;
@@ -791,7 +811,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
             LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
             return RC::SQL_SYNTAX;
           }
-          for (Table *table : tables){
+          for (Table *table : tables_to_swap){
             const TableMeta &table_meta = table->table_meta();
             const int field_num = table_meta.field_num();
             query_fields.push_back(Field(table, table_meta.field(table_meta.sys_field_num())));
@@ -801,7 +821,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
             iter->set_func(relation_attr.func);
         }
         else{
-          for (Table *table : tables) {
+          for (Table *table : tables_to_swap) {
             wildcard_fields(table, query_fields);
           }     
         }
@@ -820,7 +840,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
               LOG_WARN("invalid aggregation query: AggregationFunc(%d) of *", relation_attr.func);
               return RC::SQL_SYNTAX;
             }
-            for (Table *table : tables) {
+            for (Table *table : tables_to_swap) {
               wildcard_fields(table, query_fields);
             }
             for (auto iter = query_fields.begin() + length; iter != query_fields.end(); iter++)
@@ -852,12 +872,12 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
           }
         }
       } else {
-        if (tables.size() != 1) {
+        if (tables_to_swap.size() != 1) {
           LOG_WARN("invalid. I do not know the attr's table. attr=%s", relation_attr.attribute_name.c_str());
           return RC::SCHEMA_FIELD_MISSING;
         }
 
-        Table *table = tables[0];
+        Table *table = tables_to_swap[0];
         const FieldMeta *field_meta = table->table_meta().field(relation_attr.attribute_name.c_str());
         if (nullptr == field_meta) {
           LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), relation_attr.attribute_name.c_str());
@@ -882,13 +902,13 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
         if (iter->relation_name != "")
           wildcard_fields(table_map[iter->relation_name] ,fields);
         else
-          for (Table* table : raw_tables)
+          for (Table* table : tables_to_swap)//raw_tables)
             wildcard_fields(table, fields);
         for (Field field : fields)
           expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
       }
       else {
-        for (Table *table : tables){
+        for (Table *table : tables_to_swap){
           const TableMeta &table_meta = table->table_meta();
           const int field_num = table_meta.field_num();
           Field field(table, table_meta.field(table_meta.sys_field_num()));
@@ -912,10 +932,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     }
   }
 
-  // everything alright
+  // everything alright 
   
+
   // TODO add expression copy
-  select_stmt->tables_.swap(tables);
+  //select_stmt->tables_.swap(tables);
   select_stmt->query_fields_.swap(query_fields);
   select_stmt->is_asc_.swap(is_asc);
   select_stmt->filter_stmt_ = filter_stmt;
