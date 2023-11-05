@@ -568,7 +568,7 @@ RC FunctionExpr::date_format(Value &value) const
       formatted_date << month_name[month - 1];
       break;
     case 'm':
-      formatted_date << month;
+      formatted_date << setw(2) << setfill('0') << month;
       break;
     case 'Y':
        formatted_date << year;

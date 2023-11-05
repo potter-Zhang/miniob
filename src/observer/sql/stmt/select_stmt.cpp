@@ -424,8 +424,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     if (iter->attribute_name == "*") {      
       if (iter->func == NONE) {
         std::vector<Field> fields;
-        for (Table* table : tables)
-          wildcard_fields(table, fields);
+        if (iter->relation_name != "")
+          wildcard_fields(table_map[iter->relation_name] ,fields);
+        else
+          for (Table* table : tables)
+            wildcard_fields(table, fields);
         for (Field field : fields)
           expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
       }
@@ -492,6 +495,8 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   std::vector<Table *> tables;
   std::unordered_map<std::string, Table *> table_map;
 
+  std::vector<Table *> raw_tables;
+
   Table *default_table = nullptr;
  
   for (auto iter = select_stmt->table_alias_.begin(); iter != select_stmt->table_alias_.end(); iter ++) {
@@ -525,8 +530,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
       return RC::INVALID_ARGUMENT;
     }
 
-    if (table_map.find(table_name) != table_map.end())
+    auto iter = table_map.find(table_name);
+    if (iter != table_map.end()) {
+      raw_tables.push_back(iter->second);
       continue;
+    }
     Table *table = db->find_table(table_name);
     if (nullptr == table) {      
       LOG_WARN("no such table. db=%s, table_name=%s", db->name(), table_name);
@@ -536,6 +544,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
       return RC::INVALID_ARGUMENT;
 
     tables.push_back(table);
+    raw_tables.push_back(table);
     table_map.insert(std::pair<std::string, Table *>(table_name, table));
     table_alias_copy.insert(std::pair<std::string, std::string>(table_name, table_name));
   }
@@ -870,8 +879,11 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     if (iter->attribute_name == "*") {      
       if (iter->func == NONE) {
         std::vector<Field> fields;
-        for (Table* table : tables)
-          wildcard_fields(table, fields);
+        if (iter->relation_name != "")
+          wildcard_fields(table_map[iter->relation_name] ,fields);
+        else
+          for (Table* table : raw_tables)
+            wildcard_fields(table, fields);
         for (Field field : fields)
           expressions.emplace_back(std::move(std::unique_ptr<Expression>(new FieldExpr(field))));
       }

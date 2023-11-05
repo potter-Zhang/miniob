@@ -111,7 +111,40 @@ void SessionStage::handle_request(StageEvent *event)
     pos = str.find('-', pos + 2); // 跳过已插入的空格
   }
   sql_event.set_sql(str.c_str());*/
+  
+  std::string str = sql_event.sql();
+  if (str.substr(0, 6) == "select") {
+     std::stringstream formatted_str;
+  bool inside = false;
+  for (int i = 0; i < str.size(); i++) {
+    switch (str[i])
+    {
+    case '\'':
+      inside = !inside;
+      formatted_str << str[i];
+      /* code */
+      break;
+    case '\"':
+      inside = !inside;
+      formatted_str << str[i];
+      break;
+    case '-':
+      if (inside) {
+        formatted_str << str[i];
+      } else {
+        formatted_str <<  str[i] << ' ';
+      }
+      break;
+    
+    default:
+      formatted_str << str[i];
+      break;
+    }
+  }
+  sql_event.set_sql(formatted_str.str().c_str());
 
+  }
+ 
   RC rc = handle_sql(&sql_event);
   if (rc != RC::SUCCESS)
     sev->sql_result()->set_return_code(rc);
