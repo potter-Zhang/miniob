@@ -44,7 +44,7 @@ public:
 
   Tuple *current_tuple() override;
 
-  void set_predicates(std::vector<std::unique_ptr<Expression>> &&exprs);
+  void set_predicates(std::vector<std::shared_ptr<Expression>> &exprs);
 
 private:
   // 与TableScanPhysicalOperator代码相同，可以优化
@@ -67,5 +67,5 @@ private:
   bool left_inclusive_ = false;
   bool right_inclusive_ = false;
 
-  std::vector<std::unique_ptr<Expression>> predicates_;
+  std::vector<std::shared_ptr<Expression>> predicates_;
 };

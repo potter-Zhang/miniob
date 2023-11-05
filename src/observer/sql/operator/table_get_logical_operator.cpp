@@ -18,7 +18,7 @@ TableGetLogicalOperator::TableGetLogicalOperator(Table *table, const std::vector
     : table_(table), fields_(fields), readonly_(readonly)
 {}
 
-void TableGetLogicalOperator::set_predicates(std::vector<std::unique_ptr<Expression>> &&exprs)
+void TableGetLogicalOperator::set_predicates(std::vector<std::shared_ptr<Expression>> &exprs)
 {
-  predicates_ = std::move(exprs);
+  predicates_ = exprs;
 }

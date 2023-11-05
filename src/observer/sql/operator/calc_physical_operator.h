@@ -20,8 +20,8 @@ See the Mulan PSL v2 for more details. */
 class CalcPhysicalOperator : public PhysicalOperator
 {
 public:
-  CalcPhysicalOperator(std::vector<std::unique_ptr<Expression>> &&expressions)
-    : expressions_(std::move(expressions)), tuple_(expressions_)
+  CalcPhysicalOperator(std::vector<std::shared_ptr<Expression>> &expressions)
+    : expressions_(expressions), tuple_(expressions_)
   {}
 
   virtual ~CalcPhysicalOperator() = default;
@@ -72,13 +72,13 @@ public:
     return &tuple_;
   }
 
-  const std::vector<std::unique_ptr<Expression>> &expressions() const
+  const std::vector<std::shared_ptr<Expression>> &expressions() const
   {
     return expressions_;
   }
 
 private:
-  std::vector<std::unique_ptr<Expression>> expressions_;
+  std::vector<std::shared_ptr<Expression>> expressions_;
   ExpressionTuple tuple_;
   bool emitted_ = false;
 };

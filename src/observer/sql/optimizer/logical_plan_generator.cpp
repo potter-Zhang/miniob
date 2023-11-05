@@ -90,7 +90,7 @@ RC LogicalPlanGenerator::create(Stmt *stmt, unique_ptr<LogicalOperator> &logical
 
 RC LogicalPlanGenerator::create_plan(CalcStmt *calc_stmt, std::unique_ptr<LogicalOperator> &logical_operator)
 {
-  logical_operator.reset(new CalcLogicalOperator(std::move(calc_stmt->expressions())));
+  logical_operator.reset(new CalcLogicalOperator(calc_stmt->expressions()));
   return RC::SUCCESS;
 }
 
@@ -130,7 +130,7 @@ RC LogicalPlanGenerator::create_plan(
 
 
   unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));
-  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(std::move(select_stmt->expressions())));
+  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(select_stmt->expressions()));
   if (predicate_oper) {
     if (table_oper) {
       predicate_oper->add_child(std::move(table_oper));
@@ -145,15 +145,15 @@ RC LogicalPlanGenerator::create_plan(
   unique_ptr<LogicalOperator> group_oper;
   int group_by_begin = select_stmt->group_by_begin();
   int attr_having_begin = select_stmt->attr_having_begin();
-  std::unique_ptr<Expression> expression;
+  std::shared_ptr<Expression> expression;
   rc = get_expressions_from_filter_stmt(select_stmt->filter_stmt(), expression, having_begin);
   if (rc != RC::SUCCESS) {
     LOG_WARN("failed to create having's expression. rc=%s", strrc(rc));
     return rc;
   }
   if (group_by_begin > -1){
-    group_oper = unique_ptr<GroupLogicalOperator>(new GroupLogicalOperator(
-      all_fields, std::move(expression), group_by_begin, attr_having_begin));
+    group_oper = make_unique<GroupLogicalOperator>(
+      all_fields, std::move(expression), group_by_begin, attr_having_begin);
   }
 
   unique_ptr<LogicalOperator> agg_oper;
@@ -228,26 +228,26 @@ RC LogicalPlanGenerator::create_plan(
 RC LogicalPlanGenerator::create_plan(
     FilterStmt *filter_stmt, unique_ptr<LogicalOperator> &logical_operator)
 {
-  std::vector<unique_ptr<Expression>> cmp_exprs;
+  std::vector<shared_ptr<Expression>> cmp_exprs;
   std::vector<unique_ptr<LogicalOperator>> sub_queries;
   const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
   for (const FilterUnit *filter_unit : filter_units) {
     const FilterObj &filter_obj_left = filter_unit->left();
     const FilterObj &filter_obj_right = filter_unit->right();
 
-    unique_ptr<Expression> left;
+    shared_ptr<Expression> left;
     if (filter_obj_left.is_attr == 1) {
       left.reset(static_cast<Expression *>(new FieldExpr(filter_obj_left.field)));
     } else if (filter_obj_left.is_attr == 0) {
       left.reset(static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
     } else if (filter_obj_left.is_attr == 4) {
-      left.reset(static_cast<Expression *>(filter_obj_left.expr));
+      left = filter_obj_left.expr_;
     }
     else {
       left.reset(static_cast<Expression *>(new EmptyExpr()));
     }
 
-    unique_ptr<Expression> right;
+    shared_ptr<Expression> right;
     if (filter_obj_right.is_attr == 1) {
       right.reset(static_cast<Expression *>(new FieldExpr(filter_obj_right.field)));
     } else if (filter_obj_right.is_attr == 0) {
@@ -258,20 +258,21 @@ RC LogicalPlanGenerator::create_plan(
       sub_queries.push_back(std::move(sub_logical_operator));
       right.reset(static_cast<Expression *>(new EmptyExpr()));
     } else if (filter_obj_right.is_attr == 4) {
-      right.reset(static_cast<Expression *>(filter_obj_right.expr));
+      right = filter_obj_right.expr_;
     }
     else {
       right.reset(static_cast<Expression *>(new CollectionExpr(filter_obj_right.values)));
     }
     
-    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), std::move(left), std::move(right));
+    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), left, right);
     cmp_exprs.emplace_back(cmp_expr);
   }
 
   unique_ptr<PredicateLogicalOperator> predicate_oper;
   if (!cmp_exprs.empty()) {
-    unique_ptr<ConjunctionExpr> conjunction_expr(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
-    predicate_oper = unique_ptr<PredicateLogicalOperator>(new PredicateLogicalOperator(std::move(conjunction_expr)));
+    shared_ptr<ConjunctionExpr> conjunction_expr(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
+   
+    predicate_oper = make_unique<PredicateLogicalOperator>(conjunction_expr);
   }
 
   if (!sub_queries.empty()) {
@@ -290,7 +291,7 @@ RC LogicalPlanGenerator::create_plan(
 {
   if (limit == -1)
     return create_plan(filter_stmt, logical_operator);
-  std::vector<unique_ptr<Expression>> cmp_exprs;
+  std::vector<shared_ptr<Expression>> cmp_exprs;
   std::vector<unique_ptr<LogicalOperator>> sub_queries;
   const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
   int i = 0;
@@ -301,7 +302,7 @@ RC LogicalPlanGenerator::create_plan(
     const FilterObj &filter_obj_left = filter_unit->left();
     const FilterObj &filter_obj_right = filter_unit->right();
 
-    unique_ptr<Expression> left;
+    shared_ptr<Expression> left;
     if (filter_obj_left.is_attr == 1) {
       left.reset(static_cast<Expression *>(new FieldExpr(filter_obj_left.field)));
     } else if (filter_obj_right.is_attr == 0) {
@@ -310,7 +311,7 @@ RC LogicalPlanGenerator::create_plan(
       left.reset(static_cast<Expression *>(new EmptyExpr()));
     }
 
-    unique_ptr<Expression> right;
+    shared_ptr<Expression> right;
     if (filter_obj_right.is_attr == 1) {
       right.reset(static_cast<Expression *>(new FieldExpr(filter_obj_right.field)));
     } else if (filter_obj_right.is_attr == 0) {
@@ -324,14 +325,15 @@ RC LogicalPlanGenerator::create_plan(
       right.reset(static_cast<Expression *>(new CollectionExpr(filter_obj_right.values)));
     }
     
-    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), std::move(left), std::move(right));
+    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_unit->comp(), left, right);
     cmp_exprs.emplace_back(cmp_expr);
   }
 
   unique_ptr<PredicateLogicalOperator> predicate_oper;
   if (!cmp_exprs.empty()) {
-    unique_ptr<ConjunctionExpr> conjunction_expr(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
-    predicate_oper = unique_ptr<PredicateLogicalOperator>(new PredicateLogicalOperator(std::move(conjunction_expr)));
+    shared_ptr<ConjunctionExpr> conjunction_expr(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
+    
+    predicate_oper = make_unique<PredicateLogicalOperator>(conjunction_expr);
   }
 
   if (!sub_queries.empty()) {
@@ -427,9 +429,9 @@ RC LogicalPlanGenerator::create_plan(UpdateStmt *update_stmt, unique_ptr<Logical
 }
 
 RC LogicalPlanGenerator::get_expressions_from_filter_stmt(
-    FilterStmt *filter_stmt, std::unique_ptr<Expression> &expression, int start)
+    FilterStmt *filter_stmt, std::shared_ptr<Expression> &expression, int start)
 {
-  std::vector<unique_ptr<Expression>> cmp_exprs;
+  std::vector<shared_ptr<Expression>> cmp_exprs;
   const std::vector<FilterUnit *> &filter_units = filter_stmt->filter_units();
   if (start == -1)
     start = filter_units.size(); //让expression为空
@@ -438,19 +440,19 @@ RC LogicalPlanGenerator::get_expressions_from_filter_stmt(
     const FilterObj &filter_obj_left = filter_units[i]->left();
     const FilterObj &filter_obj_right = filter_units[i]->right();
 
-    unique_ptr<Expression> left(filter_obj_left.is_attr
+    shared_ptr<Expression> left(filter_obj_left.is_attr
                                          ? static_cast<Expression *>(new FieldExpr(filter_obj_left.field))
                                          : static_cast<Expression *>(new ValueExpr(filter_obj_left.value)));
 
-    unique_ptr<Expression> right(filter_obj_right.is_attr
+    shared_ptr<Expression> right(filter_obj_right.is_attr
                                           ? static_cast<Expression *>(new FieldExpr(filter_obj_right.field))
                                           : static_cast<Expression *>(new ValueExpr(filter_obj_right.value)));
 
-    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_units[i]->comp(), std::move(left), std::move(right));
+    ComparisonExpr *cmp_expr = new ComparisonExpr(filter_units[i]->comp(), left, right);
     cmp_exprs.emplace_back(cmp_expr);
   }
 
-  expression = unique_ptr<ConjunctionExpr>(new ConjunctionExpr(ConjunctionExpr::Type::AND, cmp_exprs));
+  expression = make_shared<ConjunctionExpr>(ConjunctionExpr::Type::AND, cmp_exprs);
   return RC::SUCCESS;
 }
 

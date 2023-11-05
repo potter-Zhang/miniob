@@ -12,10 +12,10 @@
 class TransformLogicalOperator : public LogicalOperator
 {
 public:
-  TransformLogicalOperator(std::vector<std::unique_ptr<Expression>> &&expressions)
+  TransformLogicalOperator(std::vector<std::shared_ptr<Expression>> &expressions)
       
   {
-    expressions_.swap(expressions);
+    expressions_ = expressions;
   }
   virtual ~TransformLogicalOperator() = default;
 

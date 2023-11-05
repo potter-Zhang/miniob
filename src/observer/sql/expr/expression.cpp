@@ -36,7 +36,7 @@ RC ValueExpr::get_value(const Tuple &tuple, Value &value) const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-CastExpr::CastExpr(unique_ptr<Expression> child, AttrType cast_type)
+CastExpr::CastExpr(shared_ptr<Expression> child, AttrType cast_type)
     : child_(std::move(child)), cast_type_(cast_type)
 {}
 
@@ -86,8 +86,8 @@ RC CastExpr::try_get_value(Value &value) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ComparisonExpr::ComparisonExpr(CompOp comp, unique_ptr<Expression> left, unique_ptr<Expression> right)
-    : comp_(comp), left_(std::move(left)), right_(std::move(right))
+ComparisonExpr::ComparisonExpr(CompOp comp, shared_ptr<Expression> &left, shared_ptr<Expression> &right)
+    : comp_(comp), left_(left), right_(right)
 {}
 
 ComparisonExpr::~ComparisonExpr()
@@ -286,7 +286,7 @@ RC ComparisonExpr::get_value(const Tuple &tuple, Value &value, std::vector<Value
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ConjunctionExpr::ConjunctionExpr(Type type, vector<unique_ptr<Expression>> &children)
+ConjunctionExpr::ConjunctionExpr(Type type, vector<shared_ptr<Expression>> &children)
     : conjunction_type_(type), children_(std::move(children))
 {}
 
@@ -299,7 +299,7 @@ RC ConjunctionExpr::get_value(const Tuple &tuple, Value &value) const
   }
 
   Value tmp_value;
-  for (const unique_ptr<Expression> &expr : children_) {
+  for (const shared_ptr<Expression> &expr : children_) {
     rc = expr->get_value(tuple, tmp_value);
     if (rc != RC::SUCCESS) {
       LOG_WARN("failed to get value by child expression. rc=%s", strrc(rc));
@@ -322,8 +322,8 @@ RC ConjunctionExpr::get_value(const Tuple &tuple, Value &value) const
 ArithmeticExpr::ArithmeticExpr(ArithmeticExpr::Type type, Expression *left, Expression *right)
     : arithmetic_type_(type), left_(left), right_(right)
 {}
-ArithmeticExpr::ArithmeticExpr(ArithmeticExpr::Type type, unique_ptr<Expression> left, unique_ptr<Expression> right)
-    : arithmetic_type_(type), left_(std::move(left)), right_(std::move(right))
+ArithmeticExpr::ArithmeticExpr(ArithmeticExpr::Type type, shared_ptr<Expression> &left, shared_ptr<Expression> &right)
+    : arithmetic_type_(type), left_(left), right_(right)
 {}
 
 AttrType ArithmeticExpr::value_type() const

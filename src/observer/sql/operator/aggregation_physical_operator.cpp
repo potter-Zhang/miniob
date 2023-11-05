@@ -139,15 +139,15 @@ RC AggregationPhysicalOperator::do_aggregation()
       bool flag = true; //判断having是否接受
       if (attr_having_begin != -1) {
         if (expression) {
-          std::vector<std::unique_ptr<Expression>> &expressions = expression->children();
+          std::vector<std::shared_ptr<Expression>> &expressions = expression->children();
           for (int i = group_by_begin; i < values.size(); i ++){ //having_funcs起始位置在正常的values值的末尾+1处
             ComparisonExpr* comp = static_cast<ComparisonExpr *>(expressions[i - group_by_begin].get()); //保证从0开始
             CompOp op = comp->comp();
             if (comp->right()->type() == ExprType::FIELD){
               assert(comp->left()->type() == ExprType::VALUE);
-              std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
-              std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
-              ComparisonExpr temp(op, std::move(left), std::move(right));
+              std::shared_ptr<Expression> left = std::shared_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
+              std::shared_ptr<Expression> right = std::shared_ptr<ValueExpr>(new ValueExpr(values[i]));
+              ComparisonExpr temp(op, left, right);
               Value value;
               temp.get_value(*tuple, value);
               if (!value.get_boolean()){
@@ -158,9 +158,9 @@ RC AggregationPhysicalOperator::do_aggregation()
             else{
               assert(comp->left()->type() == ExprType::FIELD);
               assert(comp->right()->type() == ExprType::VALUE);
-              std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
-              std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[i]));
-              ComparisonExpr temp(op, std::move(left), std::move(right));
+              std::shared_ptr<Expression> right = std::shared_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
+              std::shared_ptr<Expression> left = std::shared_ptr<ValueExpr>(new ValueExpr(values[i]));
+              ComparisonExpr temp(op, left, right);
               Value value;
               temp.get_value(*tuple, value);
               if (!value.get_boolean()){
@@ -176,9 +176,9 @@ RC AggregationPhysicalOperator::do_aggregation()
           CompOp op = comp->comp();
           if (comp->right()->type() == ExprType::FIELD){
             assert(comp->left()->type() == ExprType::VALUE);
-            std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
-            std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));//having_funcs起始位置在正常的values值的末尾+1处
-            ComparisonExpr temp(op, std::move(left), std::move(right));
+            std::shared_ptr<Expression> left = std::shared_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->left().get())->get_value()));
+            std::shared_ptr<Expression> right = std::shared_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));//having_funcs起始位置在正常的values值的末尾+1处
+            ComparisonExpr temp(op, left, right);
             Value value;
             temp.get_value(*tuple, value);
             if (!value.get_boolean()){
@@ -189,9 +189,9 @@ RC AggregationPhysicalOperator::do_aggregation()
           else{
             assert(comp->left()->type() == ExprType::FIELD);
             assert(comp->right()->type() == ExprType::VALUE);
-            std::unique_ptr<Expression> right = std::unique_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
-            std::unique_ptr<Expression> left = std::unique_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));
-            ComparisonExpr temp(op, std::move(left), std::move(right));
+            std::shared_ptr<Expression> right = std::shared_ptr<ValueExpr>(new ValueExpr(static_cast<ValueExpr*>(comp->right().get())->get_value()));
+            std::shared_ptr<Expression> left = std::shared_ptr<ValueExpr>(new ValueExpr(values[group_by_begin]));
+            ComparisonExpr temp(op, left, right);
             Value value;
             temp.get_value(*tuple, value);
             if (!value.get_boolean()){
@@ -318,10 +318,14 @@ RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std:
                 values[i].set_int(values[i].get_int() + 1);
             }
           } break;
-          case AggregationFunc::AVGFUN: {
+          case AggregationFunc::AVGFUN: {            
             if (!(value.nullable() && value.is_null())){
               (*iter_avg_num) ++;
               iter_avg_num ++;
+              if (values[i].nullable() && values[i].is_null()) {
+                values[i] = value;
+                continue;
+              }
               switch (value.attr_type()) {
                 // INTS时，最后的结果放在Value.float_value_
                 case AttrType::INTS: {
@@ -339,6 +343,10 @@ RC AggregationPhysicalOperator::do_aggregation_(std::vector<Value> &values, std:
           } break;
           case AggregationFunc::SUMFUN: {
             if (!(value.nullable() && value.is_null())){
+              if (values[i].nullable() && values[i].is_null()) {
+                values[i] = value;
+                continue;
+              }
               switch (value.attr_type()) {
                 // INTS时，最后的结果放在Value.float_value_
                 case AttrType::INTS: {

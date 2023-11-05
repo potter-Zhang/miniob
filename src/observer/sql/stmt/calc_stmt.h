@@ -52,11 +52,11 @@ public:
   }
 
 public:
-  std::vector<std::unique_ptr<Expression>> &expressions()
+  std::vector<std::shared_ptr<Expression>> &expressions()
   {
     return expressions_;
   }
 
 private:
-  std::vector<std::unique_ptr<Expression>> expressions_;
+  std::vector<std::shared_ptr<Expression>> expressions_;
 };

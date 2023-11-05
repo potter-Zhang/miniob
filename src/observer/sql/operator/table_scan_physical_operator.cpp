@@ -73,16 +73,16 @@ string TableScanPhysicalOperator::param() const
   return table_->name();
 }
 
-void TableScanPhysicalOperator::set_predicates(vector<unique_ptr<Expression>> &&exprs)
+void TableScanPhysicalOperator::set_predicates(vector<shared_ptr<Expression>> &exprs)
 {
-  predicates_ = std::move(exprs);
+  predicates_ = exprs;
 }
 
 RC TableScanPhysicalOperator::filter(RowTuple &tuple, bool &result)
 {
   RC rc = RC::SUCCESS;
   Value value;
-  for (unique_ptr<Expression> &expr : predicates_) {
+  for (shared_ptr<Expression> &expr : predicates_) {
     rc = expr->get_value(tuple, value);
     if (rc != RC::SUCCESS) {
       return rc;

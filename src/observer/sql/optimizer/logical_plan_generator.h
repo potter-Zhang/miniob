@@ -46,5 +46,5 @@ private:
   RC create_plan(DeleteStmt *delete_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(ExplainStmt *explain_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
   RC create_plan(UpdateStmt *update_stmt, std::unique_ptr<LogicalOperator> &logical_operator);
-  RC get_expressions_from_filter_stmt(FilterStmt *filter_stmt, std::unique_ptr<Expression> &expression, int start);
+  RC get_expressions_from_filter_stmt(FilterStmt *filter_stmt, std::shared_ptr<Expression> &expression, int start);
 };

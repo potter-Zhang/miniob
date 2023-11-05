@@ -28,7 +28,7 @@ public:
   GroupPhysicalOperator()
   {}
 
-  GroupPhysicalOperator(std::unique_ptr<Expression> expr, int group_by_begin, int attr_having_begin);
+  GroupPhysicalOperator(std::shared_ptr<Expression> expr, int group_by_begin, int attr_having_begin);
 
   virtual ~GroupPhysicalOperator();
 
@@ -66,11 +66,11 @@ public:
     return attr_having_begin_;
   }
   
-  std::unique_ptr<Expression> &expression()
+  std::shared_ptr<Expression> &expression()
   {
     return expression_;
   }
-  const std::unique_ptr<Expression> &expression() const
+  const std::shared_ptr<Expression> &expression() const
   {
     return expression_;
   }
@@ -83,7 +83,7 @@ private:
   groups_map_type groups_;
   int group_by_begin_ = -1;
   int attr_having_begin_ = -1;
-  std::unique_ptr<Expression> expression_;
+  std::shared_ptr<Expression> expression_;
   std::vector<Field> fields_;
   groups_map_type::iterator iter_;
 };

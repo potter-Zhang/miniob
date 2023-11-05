@@ -30,7 +30,7 @@ public:
   RC rewrite(std::unique_ptr<LogicalOperator> &oper, bool &change_made) override;
 
 private:
-  RC rewrite_expression(std::unique_ptr<Expression> &expr, bool &change_made);
+  RC rewrite_expression(std::shared_ptr<Expression> &expr, bool &change_made);
 
 private:
   std::vector<std::unique_ptr<ExpressionRewriteRule>> expr_rewrite_rules_;

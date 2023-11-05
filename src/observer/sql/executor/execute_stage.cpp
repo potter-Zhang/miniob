@@ -86,7 +86,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
 
       std::unordered_map<int, std::string> exp_map;
       int exp_pos = 0;
-      for (unique_ptr<Expression> &expression : trans_oper->expressions()) {
+      for (shared_ptr<Expression> &expression : trans_oper->expressions()) {
         if (expression == nullptr) {
           exp_pos ++;
           continue;
@@ -142,7 +142,7 @@ RC ExecuteStage::handle_request_with_physical_operator(SQLStageEvent *sql_event)
 
     case StmtType::CALC: {
       CalcPhysicalOperator *calc_operator = static_cast<CalcPhysicalOperator *>(physical_operator.get());
-      for (const unique_ptr<Expression> & expr : calc_operator->expressions()) {
+      for (const shared_ptr<Expression> & expr : calc_operator->expressions()) {
         schema.append_cell(expr->name().c_str());
       }
     } break;

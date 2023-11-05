@@ -27,12 +27,12 @@ RC PredicateRewriteRule::rewrite(std::unique_ptr<LogicalOperator> &oper, bool &c
     return RC::SUCCESS;
   }
 
-  std::vector<std::unique_ptr<Expression>> &expressions = child_oper->expressions();
+  std::vector<std::shared_ptr<Expression>> &expressions = child_oper->expressions();
   if (expressions.size() != 1) {
     return RC::SUCCESS;
   }
 
-  std::unique_ptr<Expression> &expr = expressions.front();
+  std::shared_ptr<Expression> &expr = expressions.front();
   if (expr->type() != ExprType::VALUE) {
     return RC::SUCCESS;
   }

@@ -116,7 +116,7 @@ RC PhysicalPlanGenerator::create(LogicalOperator &logical_operator, unique_ptr<P
 
 RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, unique_ptr<PhysicalOperator> &oper)
 {
-  vector<unique_ptr<Expression>> &predicates = table_get_oper.predicates();
+  vector<shared_ptr<Expression>> &predicates = table_get_oper.predicates();
   // 看看是否有可以用于索引查找的表达式
   Table *table = table_get_oper.table();
 
@@ -131,8 +131,8 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
         continue;
       }
 
-      unique_ptr<Expression> &left_expr = comparison_expr->left();
-      unique_ptr<Expression> &right_expr = comparison_expr->right();
+      shared_ptr<Expression> &left_expr = comparison_expr->left();
+      shared_ptr<Expression> &right_expr = comparison_expr->right();
       // 左右比较的一边最少是一个值
       if (left_expr->type() != ExprType::VALUE && right_expr->type() != ExprType::VALUE) {
         continue;
@@ -179,12 +179,12 @@ RC PhysicalPlanGenerator::create_plan(TableGetLogicalOperator &table_get_oper, u
           &value, true /*left_inclusive*/, 
           &value, true /*right_inclusive*/);
           
-    index_scan_oper->set_predicates(std::move(predicates));
+    index_scan_oper->set_predicates(predicates);
     oper = unique_ptr<PhysicalOperator>(index_scan_oper);
     LOG_TRACE("use index scan");
   } else {
     auto table_scan_oper = new TableScanPhysicalOperator(table, table_get_oper.readonly());
-    table_scan_oper->set_predicates(std::move(predicates));
+    table_scan_oper->set_predicates(predicates);
     oper = unique_ptr<PhysicalOperator>(table_scan_oper);
     LOG_TRACE("use table scan");
   }
@@ -207,11 +207,11 @@ RC PhysicalPlanGenerator::create_plan(PredicateLogicalOperator &pred_oper, uniqu
     return rc;
   }
 
-  vector<unique_ptr<Expression>> &expressions = pred_oper.expressions();
+  vector<shared_ptr<Expression>> &expressions = pred_oper.expressions();
   ASSERT(expressions.size() == 1, "predicate logical operator's children should be 1");
 
-  unique_ptr<Expression> expression = std::move(expressions.front());
-  oper = unique_ptr<PhysicalOperator>(new PredicatePhysicalOperator(std::move(expression)));
+  shared_ptr<Expression> expression = std::move(expressions.front());
+  oper = unique_ptr<PhysicalOperator>(new PredicatePhysicalOperator(expression));
   if (children_opers.size() == 2) {
     LogicalOperator &brother_oper = *children_opers[1];
     unique_ptr<PhysicalOperator> brother_phy_oper;
@@ -279,9 +279,9 @@ RC PhysicalPlanGenerator::create_plan(TransformLogicalOperator &trans_oper, uniq
     return rc;
   }
 
-  vector<unique_ptr<Expression>> &expressions = trans_oper.expressions();
+  vector<shared_ptr<Expression>> &expressions = trans_oper.expressions();
 
-  oper = unique_ptr<PhysicalOperator>(new TransformPhysicalOperator(std::move(expressions)));
+  oper = make_unique<TransformPhysicalOperator>(expressions);
   
   if (child_phy_oper) {
     oper->add_child(std::move(child_phy_oper));
@@ -378,10 +378,10 @@ RC PhysicalPlanGenerator::create_plan(GroupLogicalOperator &group_oper, std::uni
   const std::vector<Field>& fields = group_oper.fields();
   int group_by_begin = group_oper.group_by_begin();
   int attr_having_begin = group_oper.attr_having_begin();
-  unique_ptr<Expression> &expression = group_oper.expressions()[0];
+  shared_ptr<Expression> &expression = group_oper.expressions()[0];
 
-  unique_ptr<GroupPhysicalOperator> group_physical_oper = unique_ptr<GroupPhysicalOperator>(
-    new GroupPhysicalOperator(std::move(expression), group_by_begin, attr_having_begin));
+  unique_ptr<GroupPhysicalOperator> group_physical_oper = make_unique<GroupPhysicalOperator>(
+   expression, group_by_begin, attr_having_begin);
   for (Field field : fields)
     group_physical_oper->add_field(field);
   group_physical_oper->add_child(std::move(child_physical_oper));
@@ -487,7 +487,7 @@ RC PhysicalPlanGenerator::create_plan(JoinLogicalOperator &join_oper, unique_ptr
 RC PhysicalPlanGenerator::create_plan(CalcLogicalOperator &logical_oper, std::unique_ptr<PhysicalOperator> &oper)
 {
   RC rc = RC::SUCCESS;
-  CalcPhysicalOperator *calc_oper = new CalcPhysicalOperator(std::move(logical_oper.expressions()));
+  CalcPhysicalOperator *calc_oper = new CalcPhysicalOperator(logical_oper.expressions());
   oper.reset(calc_oper);
   return rc;
 }

@@ -135,11 +135,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_left(filter_obj);
   } else if (condition.left_is_attr == 4) {
     FilterObj filter_obj;
-    RC rc = set_up_expression(db, default_table, tables, condition.left_expr);
+    std::shared_ptr<Expression> left_expr(condition.left_expr);
+    RC rc = set_up_expression(db, default_table, tables, left_expr);
     if (OB_FAIL(rc)) {
       return rc;
     }
-    filter_obj.init_expr(condition.left_expr);
+    filter_obj.init_expr(left_expr);
     filter_unit->set_left(filter_obj);
   }
 
@@ -171,11 +172,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_right(filter_obj);
   } else if (condition.right_is_attr == 4) {
     FilterObj filter_obj;
-    RC rc = set_up_expression(db, default_table, tables, condition.right_expr);
+    std::shared_ptr<Expression> right_expr(condition.right_expr);
+    RC rc = set_up_expression(db, default_table, tables, right_expr);
     if (OB_FAIL(rc)) {
       return rc;
     }
-    filter_obj.init_expr(condition.right_expr);
+    filter_obj.init_expr(right_expr);
     filter_unit->set_right(filter_obj);
   } else {
     FilterObj filter_obj;
@@ -221,11 +223,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_left(filter_obj);
   } else if (condition.left_is_attr == 4) {
     FilterObj filter_obj;
-    RC rc = set_up_expression(db, default_table, tables, condition.left_expr);
+    std::shared_ptr<Expression> left_expr(condition.left_expr);
+    RC rc = set_up_expression(db, default_table, tables, left_expr);
     if (OB_FAIL(rc)) {
       return rc;
     }
-    filter_obj.init_expr(condition.left_expr);
+    filter_obj.init_expr(left_expr);
     filter_unit->set_left(filter_obj);
   }
 
@@ -257,11 +260,12 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     filter_unit->set_right(filter_obj);
   } else if (condition.right_is_attr == 4) {
     FilterObj filter_obj;
-    RC rc = set_up_expression(db, default_table, tables, condition.right_expr);
+    std::shared_ptr<Expression> right_expr(condition.right_expr);
+    RC rc = set_up_expression(db, default_table, tables, right_expr);
     if (OB_FAIL(rc)) {
       return rc;
     }
-    filter_obj.init_expr(condition.right_expr);
+    filter_obj.init_expr(right_expr);
     filter_unit->set_right(filter_obj);
   }
   else {
@@ -295,40 +299,38 @@ RC FilterStmt::add_filter_unit(Db *db, Table *default_table, std::unordered_map<
 
   return rc;
 }
-
-RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr) {
-  if (expr->type() == ExprType::FIELD) {
-    RC rc;
-    FieldExpr *field_expr = static_cast<FieldExpr *>(expr);
-    Table *table = nullptr;
-    const FieldMeta *field = nullptr;
-    rc = get_table_and_field(db, default_table, tables, field_expr->rel(), table, field);
-    if (rc != RC::SUCCESS) {
-      LOG_WARN("cannot find attr");
+RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, std::shared_ptr<Expression>& expr)
+  {
+     if (expr->type() == ExprType::FIELD) {
+      RC rc;
+      FieldExpr &field_expr = dynamic_cast<FieldExpr &>(*expr);
+      rc = field_expr.get_table_and_field(db, default_table, tables);
+      if (rc != RC::SUCCESS) {
+        
+        return rc;
+      }
+      //field_expr->set_table_field(table, field);
       return rc;
     }
-    field_expr->set_table_field(table, field);
-    return rc;
-  }
-  if (expr->type() == ExprType::ARITHMETIC) {
-    ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
-    if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->left().get()))) {
-      return RC::INTERNAL;
-    }
-    if (a_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
-      if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->right().get()))) {
+    if (expr->type() == ExprType::ARITHMETIC) {
+      ArithmeticExpr &comp_expr = dynamic_cast<ArithmeticExpr &>(*expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr.left()))) {
         return RC::INTERNAL;
       }
-    return RC::SUCCESS;
-  }
-  if (expr->type() == ExprType::FUNCTION) {
-    FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
-    if (OB_FAIL(set_up_expression(db, default_table, tables, f_expr->expr()))) {
-      return RC::INTERNAL;
+      if (comp_expr.arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+        if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr.right()))) {
+          return RC::INTERNAL;
+        }
+      return RC::SUCCESS;
     }
-   
+
+    if (expr->type() == ExprType::FUNCTION) {
+      FunctionExpr &func_expr = dynamic_cast<FunctionExpr &>(*expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, func_expr.expr()))) {
+        return RC::INTERNAL;
+      }
+      return RC::SUCCESS;
+    }
     return RC::SUCCESS;
+    
   }
-  return RC::SUCCESS;
-  
-}

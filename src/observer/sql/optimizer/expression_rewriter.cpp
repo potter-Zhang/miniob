@@ -28,8 +28,8 @@ RC ExpressionRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bool &cha
   RC rc = RC::SUCCESS;
 
   bool sub_change_made = false;
-  std::vector<std::unique_ptr<Expression>> &expressions = oper->expressions();
-  for (std::unique_ptr<Expression> &expr : expressions) {
+  std::vector<std::shared_ptr<Expression>> &expressions = oper->expressions();
+  for (std::shared_ptr<Expression> &expr : expressions) {
     if (expr == nullptr)
       continue;;
     rc = rewrite_expression(expr, sub_change_made);
@@ -60,7 +60,7 @@ RC ExpressionRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bool &cha
   return rc;
 }
 
-RC ExpressionRewriter::rewrite_expression(std::unique_ptr<Expression> &expr, bool &change_made)
+RC ExpressionRewriter::rewrite_expression(std::shared_ptr<Expression> &expr, bool &change_made)
 {
   RC rc = RC::SUCCESS;
 
@@ -87,14 +87,14 @@ RC ExpressionRewriter::rewrite_expression(std::unique_ptr<Expression> &expr, boo
     } break;
 
     case ExprType::CAST: {
-      std::unique_ptr<Expression> &child_expr = (static_cast<CastExpr *>(expr.get()))->child();
+      std::shared_ptr<Expression> &child_expr = (static_cast<CastExpr *>(expr.get()))->child();
       rc = rewrite_expression(child_expr, change_made);
     } break;
 
     case ExprType::COMPARISON: {
       auto comparison_expr = static_cast<ComparisonExpr *>(expr.get());
-      std::unique_ptr<Expression> &left_expr = comparison_expr->left();
-      std::unique_ptr<Expression> &right_expr = comparison_expr->right();
+      std::shared_ptr<Expression> &left_expr = comparison_expr->left();
+      std::shared_ptr<Expression> &right_expr = comparison_expr->right();
 
       bool left_change_made = false;
       rc = rewrite_expression(left_expr, left_change_made);
@@ -115,8 +115,8 @@ RC ExpressionRewriter::rewrite_expression(std::unique_ptr<Expression> &expr, boo
 
     case ExprType::CONJUNCTION: {
       auto conjunction_expr = static_cast<ConjunctionExpr *>(expr.get());
-      std::vector<std::unique_ptr<Expression>> &children = conjunction_expr->children();
-      for (std::unique_ptr<Expression> &child_expr : children) {
+      std::vector<std::shared_ptr<Expression>> &children = conjunction_expr->children();
+      for (std::shared_ptr<Expression> &child_expr : children) {
         bool sub_change_made = false;
         rc = rewrite_expression(child_expr, sub_change_made);
         if (rc != RC::SUCCESS) {

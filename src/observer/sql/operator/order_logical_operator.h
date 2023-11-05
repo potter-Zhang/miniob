@@ -23,11 +23,11 @@ public:
     return LogicalOperatorType::ORDER;
   }
 
-  std::vector<std::unique_ptr<Expression>> &expressions()
+  std::vector<std::shared_ptr<Expression>> &expressions()
   {
     return expressions_;
   }
-  const std::vector<std::unique_ptr<Expression>> &expressions() const
+  const std::vector<std::shared_ptr<Expression>> &expressions() const
   {
     return expressions_;
   }

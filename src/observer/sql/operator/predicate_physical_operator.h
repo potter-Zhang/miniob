@@ -27,7 +27,7 @@ class FilterStmt;
 class PredicatePhysicalOperator : public PhysicalOperator
 {
 public:
-  PredicatePhysicalOperator(std::unique_ptr<Expression> expr);
+  PredicatePhysicalOperator(std::shared_ptr<Expression> expr);
 
   virtual ~PredicatePhysicalOperator() = default;
 
@@ -43,6 +43,6 @@ public:
   Tuple *current_tuple() override;
 
 private:
-  std::unique_ptr<Expression> expression_;
+  std::shared_ptr<Expression> expression_;
   std::vector<Value> values_;
 };

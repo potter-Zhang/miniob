@@ -88,26 +88,26 @@ FunctionExpr *create_function_expression(FunctionExpr::Type type,
   return f_expr;
 }
 
-void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
+void field_extract(std::shared_ptr<Expression> expr, RelAttrSqlNode &rel_attr_node)
 {
   if (expr->type() == ExprType::FIELD) {
-    FieldExpr *f_expr = static_cast<FieldExpr *>(expr);
+    FieldExpr &f_expr = dynamic_cast<FieldExpr &>(*expr);
    
-    rel_attr_node = f_expr->rel();
+    rel_attr_node = f_expr.rel();
     rel_attr_node.column_alias = expr->name();
     //std::cout << rel_attr_node.attribute_name << std::endl;
     return;
   }
   if (expr->type() == ExprType::ARITHMETIC) {
-    ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
-    field_extract(a_expr->left().get(), rel_attr_node);
-    if (a_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
-      field_extract(a_expr->right().get(), rel_attr_node);
+    ArithmeticExpr &a_expr = dynamic_cast<ArithmeticExpr &>(*expr);
+    field_extract(a_expr.left(), rel_attr_node);
+    if (a_expr.arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+      field_extract(a_expr.right(), rel_attr_node);
     return;
   }
   if (expr->type() == ExprType::FUNCTION) {
-    FunctionExpr *f_expr = static_cast<FunctionExpr *>(expr);
-    field_extract(f_expr->expr(), rel_attr_node);
+    FunctionExpr &f_expr = dynamic_cast<FunctionExpr &>(*expr);
+    field_extract(f_expr.expr(), rel_attr_node);
     return;
   }
 }
@@ -934,7 +934,7 @@ select_attr:
       for (auto &expr : *$1) {
         RelAttrSqlNode rel_attr_node;
         //std::cout << "field ex" << std::endl;
-        field_extract(expr, rel_attr_node);
+        field_extract(std::shared_ptr<Expression>(expr), rel_attr_node);
         rel_attr_node.expr = expr;
         $$->emplace_back(rel_attr_node);
       }

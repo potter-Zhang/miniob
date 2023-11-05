@@ -36,13 +36,13 @@ RC PredicatePushdownRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bo
 
   auto table_get_oper = static_cast<TableGetLogicalOperator *>(child_oper.get());
 
-  std::vector<std::unique_ptr<Expression>> &predicate_oper_exprs = oper->expressions();
+  std::vector<std::shared_ptr<Expression>> &predicate_oper_exprs = oper->expressions();
   if (predicate_oper_exprs.size() != 1) {
     return rc;
   }
 
-  std::unique_ptr<Expression> &predicate_expr = predicate_oper_exprs.front();
-  std::vector<std::unique_ptr<Expression>> pushdown_exprs;
+  std::shared_ptr<Expression> &predicate_expr = predicate_oper_exprs.front();
+  std::vector<std::shared_ptr<Expression>> pushdown_exprs;
   rc = get_exprs_can_pushdown(predicate_expr, pushdown_exprs);
   if (rc != RC::SUCCESS) {
     LOG_WARN("failed to get exprs can pushdown. rc=%s", strrc(rc));
@@ -60,7 +60,7 @@ RC PredicatePushdownRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bo
 
   if (!pushdown_exprs.empty()) {
     change_made = true;
-    table_get_oper->set_predicates(std::move(pushdown_exprs));
+    table_get_oper->set_predicates(pushdown_exprs);
   }
   return rc;
 }
@@ -72,7 +72,7 @@ RC PredicatePushdownRewriter::rewrite(std::unique_ptr<LogicalOperator> &oper, bo
  *                       pushdown_exprs 只会增加，不要做清理操作
  */
 RC PredicatePushdownRewriter::get_exprs_can_pushdown(
-    std::unique_ptr<Expression> &expr, std::vector<std::unique_ptr<Expression>> &pushdown_exprs)
+    std::shared_ptr<Expression> &expr, std::vector<std::shared_ptr<Expression>> &pushdown_exprs)
 {
   RC rc = RC::SUCCESS;
   if (expr->type() == ExprType::CONJUNCTION) {
@@ -82,7 +82,7 @@ RC PredicatePushdownRewriter::get_exprs_can_pushdown(
       return rc;
     }
 
-    std::vector<std::unique_ptr<Expression>> &child_exprs = conjunction_expr->children();
+    std::vector<std::shared_ptr<Expression>> &child_exprs = conjunction_expr->children();
     for (auto iter = child_exprs.begin(); iter != child_exprs.end();) {
       // 对每个子表达式，判断是否可以下放到table get 算子
       // 如果可以的话，就从当前孩子节点中删除他
@@ -108,8 +108,8 @@ RC PredicatePushdownRewriter::get_exprs_can_pushdown(
       return rc;
     }
 
-    std::unique_ptr<Expression> &left_expr = comparison_expr->left();
-    std::unique_ptr<Expression> &right_expr = comparison_expr->right();
+    std::shared_ptr<Expression> &left_expr = comparison_expr->left();
+    std::shared_ptr<Expression> &right_expr = comparison_expr->right();
     // 比较操作的左右两边只要有一个是取列字段值的并且另一边也是取字段值或常量，就pushdown
     if (left_expr->type() != ExprType::FIELD && right_expr->type() != ExprType::FIELD) {
       return rc;

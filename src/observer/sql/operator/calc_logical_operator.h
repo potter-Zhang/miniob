@@ -26,10 +26,10 @@ See the Mulan PSL v2 for more details. */
 class CalcLogicalOperator : public LogicalOperator
 {
 public:
-  CalcLogicalOperator(std::vector<std::unique_ptr<Expression>> &&expressions)
+  CalcLogicalOperator(std::vector<std::shared_ptr<Expression>> &expressions)
       
   {
-    expressions_.swap(expressions);
+    expressions_ = expressions;
   }
   virtual ~CalcLogicalOperator() = default;
 

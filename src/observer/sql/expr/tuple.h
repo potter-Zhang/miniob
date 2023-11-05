@@ -306,7 +306,7 @@ private:
 class ExpressionTuple : public Tuple 
 {
 public:
-  ExpressionTuple(std::vector<std::unique_ptr<Expression>> &expressions)
+  ExpressionTuple(std::vector<std::shared_ptr<Expression>> &expressions)
     : expressions_(expressions)
   {
   }
@@ -332,7 +332,7 @@ public:
 
   RC find_cell(const TupleCellSpec &spec, Value &cell) const override
   {
-    for (const std::unique_ptr<Expression> &expr : expressions_) {
+    for (const std::shared_ptr<Expression> &expr : expressions_) {
       if (0 == strcmp(spec.alias(), expr->name().c_str())) {
         return expr->try_get_value(cell);
       }
@@ -342,7 +342,7 @@ public:
 
 
 private:
-  const std::vector<std::unique_ptr<Expression>> &expressions_;
+  const std::vector<std::shared_ptr<Expression>> &expressions_;
 };
 
 /**

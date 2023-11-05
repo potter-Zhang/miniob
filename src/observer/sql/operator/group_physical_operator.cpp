@@ -18,8 +18,8 @@ See the Mulan PSL v2 for more details. */
 #include "storage/table/table.h"
 #include "group_physical_operator.h"
 
-GroupPhysicalOperator::GroupPhysicalOperator(std::unique_ptr<Expression> expr, int group_by_begin, int attr_having_begin): 
-  expression_(std::move(expr)), group_by_begin_(group_by_begin), attr_having_begin_(attr_having_begin) {}
+GroupPhysicalOperator::GroupPhysicalOperator(std::shared_ptr<Expression> expr, int group_by_begin, int attr_having_begin): 
+  expression_(expr), group_by_begin_(group_by_begin), attr_having_begin_(attr_having_begin) {}
 GroupPhysicalOperator::~GroupPhysicalOperator() 
 {
   /*for (Field field : fields_)

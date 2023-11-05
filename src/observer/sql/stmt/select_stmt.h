@@ -90,12 +90,12 @@ public:
   {
     return column_alias_;
   }
-  std::vector<std::unique_ptr<Expression>> &expressions() 
+  std::vector<std::shared_ptr<Expression>> &expressions() 
   {
     return expressions_;
   }
 
-  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr);
+  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, std::shared_ptr<Expression> &expr);
   
  
 
@@ -110,5 +110,5 @@ private:
   int having_begin_ = -1;
   int attr_having_begin_ = -1;
   int order_by_begin_ = -1;
-  std::vector<std::unique_ptr<Expression>> expressions_;
+  std::vector<std::shared_ptr<Expression>> expressions_;
 };

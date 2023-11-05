@@ -32,7 +32,7 @@ struct FilterObj
   Value value;
   SelectStmt *select_stmt_;
   std::vector<Value> values;
-  Expression *expr;
+  std::shared_ptr<Expression> expr_;
 
   void init_attr(const Field &field)
   {
@@ -51,9 +51,9 @@ struct FilterObj
     this->values = values;
   }
 
-  void init_expr(Expression *expr) {
+  void init_expr(std::shared_ptr<Expression> &expr) {
     is_attr = 4;
-    this->expr = expr;
+    this->expr_ = std::move(expr);
   }
 
   void init_expr(Expression *expr, SelectStmt *select_stmt)
@@ -142,7 +142,7 @@ public:
       const ConditionSqlNode *conditions, int condition_num);
 
   
-  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr);
+  static RC set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, std::shared_ptr<Expression> &expr);
   
 private:
   std::vector<FilterUnit *> filter_units_;  // 默认当前都是AND关系

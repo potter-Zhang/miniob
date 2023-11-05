@@ -30,7 +30,7 @@ class GroupLogicalOperator : public LogicalOperator
 {
 public:
   GroupLogicalOperator(const std::vector<Field> &fields);
-  GroupLogicalOperator(const std::vector<Field> &fields, std::unique_ptr<Expression> expression, int group_by_begin, int attr_having_begin);
+  GroupLogicalOperator(const std::vector<Field> &fields, std::shared_ptr<Expression> expression, int group_by_begin, int attr_having_begin);
   virtual ~GroupLogicalOperator() = default;
 
   LogicalOperatorType type() const override
@@ -38,11 +38,11 @@ public:
     return LogicalOperatorType::GROUP;
   }
 
-  std::vector<std::unique_ptr<Expression>> &expressions()
+  std::vector<std::shared_ptr<Expression>> &expressions()
   {
     return expressions_;
   }
-  const std::vector<std::unique_ptr<Expression>> &expressions() const
+  const std::vector<std::shared_ptr<Expression>> &expressions() const
   {
     return expressions_;
   }

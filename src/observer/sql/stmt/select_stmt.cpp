@@ -419,7 +419,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
 
 
-  std::vector<std::unique_ptr<Expression>> expressions;
+  std::vector<std::shared_ptr<Expression>> expressions;
   for (auto iter = select_sql.attributes.rbegin(); iter != select_sql.attributes.rend(); iter ++) {
     if (iter->attribute_name == "*") {      
       if (iter->func == NONE) {
@@ -452,7 +452,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
       continue;
     if (static_cast<FieldExpr *>(expr.get())->rel().attribute_name == "")
       continue;
-    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
+    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr))) {
       return RC::INTERNAL;
     }
   }
@@ -894,7 +894,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
     }
   }
 
-  std::vector<std::unique_ptr<Expression>> expressions;
+  std::vector<std::shared_ptr<Expression>> expressions;
   for (auto iter = select_sql.attributes.rbegin(); iter != select_sql.attributes.rend(); iter ++) {
     if (iter->attribute_name == "*") {      
       if (iter->func == NONE) {
@@ -927,7 +927,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
       continue;
     if (static_cast<FieldExpr *>(expr.get())->rel().attribute_name == "")
       continue;
-    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr.get()))) {
+    if (OB_FAIL(set_up_expression(db, default_table, &table_map, expr))) {
       return RC::INTERNAL;
     }
   }
@@ -949,14 +949,12 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   return RC::SUCCESS;
 }
 
-RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, Expression *expr)
+RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_map<std::string, Table *> *tables, std::shared_ptr<Expression>& expr)
   {
      if (expr->type() == ExprType::FIELD) {
       RC rc;
-      FieldExpr *field_expr = static_cast<FieldExpr *>(expr);
-      Table *table = nullptr;
-      const FieldMeta *field = nullptr;
-      rc = field_expr->get_table_and_field(db, default_table, tables);
+      FieldExpr &field_expr = dynamic_cast<FieldExpr &>(*expr);
+      rc = field_expr.get_table_and_field(db, default_table, tables);
       if (rc != RC::SUCCESS) {
         
         return rc;
@@ -965,20 +963,20 @@ RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
       return rc;
     }
     if (expr->type() == ExprType::ARITHMETIC) {
-      ArithmeticExpr *comp_expr = static_cast<ArithmeticExpr *>(expr);
-      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
+      ArithmeticExpr &comp_expr = dynamic_cast<ArithmeticExpr &>(*expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr.left()))) {
         return RC::INTERNAL;
       }
-      if (comp_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
-        if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+      if (comp_expr.arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+        if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr.right()))) {
           return RC::INTERNAL;
         }
       return RC::SUCCESS;
     }
 
     if (expr->type() == ExprType::FUNCTION) {
-      FunctionExpr *func_expr = static_cast<FunctionExpr *>(expr);
-      if (OB_FAIL(set_up_expression(db, default_table, tables, func_expr->expr()))) {
+      FunctionExpr &func_expr = dynamic_cast<FunctionExpr &>(*expr);
+      if (OB_FAIL(set_up_expression(db, default_table, tables, func_expr.expr()))) {
         return RC::INTERNAL;
       }
       return RC::SUCCESS;
