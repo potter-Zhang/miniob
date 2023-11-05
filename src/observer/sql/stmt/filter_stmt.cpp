@@ -328,5 +328,6 @@ RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
    
     return RC::SUCCESS;
   }
+  return RC::SUCCESS;
   
 }
