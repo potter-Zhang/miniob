@@ -969,9 +969,10 @@ RC SelectStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
       if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->left().get()))) {
         return RC::INTERNAL;
       }
-      if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
-        return RC::INTERNAL;
-      }
+      if (comp_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+        if (OB_FAIL(set_up_expression(db, default_table, tables, comp_expr->right().get()))) {
+          return RC::INTERNAL;
+        }
       return RC::SUCCESS;
     }
 

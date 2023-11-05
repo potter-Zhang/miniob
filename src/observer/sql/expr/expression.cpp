@@ -418,10 +418,12 @@ RC ArithmeticExpr::get_value(const Tuple &tuple, Value &value) const
     LOG_WARN("failed to get value of left expression. rc=%s", strrc(rc));
     return rc;
   }
-  rc = right_->get_value(tuple, right_value);
-  if (rc != RC::SUCCESS) {
-    LOG_WARN("failed to get value of right expression. rc=%s", strrc(rc));
-    return rc;
+  if (arithmetic_type_ != ArithmeticExpr::Type::NEGATIVE) {
+    rc = right_->get_value(tuple, right_value);
+    if (rc != RC::SUCCESS) {
+      LOG_WARN("failed to get value of right expression. rc=%s", strrc(rc));
+      return rc;
+    }
   }
   return calc_value(left_value, right_value, value);
 }
@@ -512,6 +514,7 @@ RC FunctionExpr::date_format(Value &value) const
   int date = date_t.value();
   int day = date % 100;
   int last_digit_of_day = day % 10;
+  int second_digit_of_day = day / 10;
   date /= 100;
   int month = date % 100;
   date /= 100;
@@ -538,11 +541,11 @@ RC FunctionExpr::date_format(Value &value) const
       break;
     case 'D': {
       std::string tmp;
-      if (last_digit_of_day == 1) 
+      if (last_digit_of_day == 1 && second_digit_of_day != 1) 
         tmp = "st";
-      else if (last_digit_of_day == 2)
+      else if (last_digit_of_day == 2 && second_digit_of_day != 1)
         tmp = "nd";
-      else if (last_digit_of_day == 3)
+      else if (last_digit_of_day == 3 && second_digit_of_day != 1)
         tmp = "rd";
       else 
         tmp = "th";

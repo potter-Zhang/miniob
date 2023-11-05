@@ -101,7 +101,8 @@ void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
   if (expr->type() == ExprType::ARITHMETIC) {
     ArithmeticExpr *a_expr = static_cast<ArithmeticExpr *>(expr);
     field_extract(a_expr->left().get(), rel_attr_node);
-    field_extract(a_expr->right().get(), rel_attr_node);
+    if (a_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+      field_extract(a_expr->right().get(), rel_attr_node);
     return;
   }
   if (expr->type() == ExprType::FUNCTION) {

@@ -315,9 +315,10 @@ RC FilterStmt::set_up_expression(Db *db, Table *default_table, std::unordered_ma
     if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->left().get()))) {
       return RC::INTERNAL;
     }
-    if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->right().get()))) {
-      return RC::INTERNAL;
-    }
+    if (a_expr->arithmetic_type() != ArithmeticExpr::Type::NEGATIVE)
+      if (OB_FAIL(set_up_expression(db, default_table, tables, a_expr->right().get()))) {
+        return RC::INTERNAL;
+      }
     return RC::SUCCESS;
   }
   if (expr->type() == ExprType::FUNCTION) {
