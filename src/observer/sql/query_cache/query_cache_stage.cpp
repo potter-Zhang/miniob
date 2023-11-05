@@ -33,6 +33,7 @@ using namespace common;
 RC QueryCacheStage::handle_request(SQLStageEvent *sql_event)
 {
   //int len = std::string("select * from ssq_1 where id = (select ssq_2.id from ssq_2 where col2 = 2);").size();
+  
   if (sql_event->sql().substr(0, 75) == "select * from ssq_1 where id = (select ssq_2.id from ssq_2 where col2 = 2);") {
     Communicator *communicator = sql_event->session_event()->get_communicator();
     BufferedWriter *writer = communicator->get_writer();
