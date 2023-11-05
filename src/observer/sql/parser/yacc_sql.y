@@ -261,6 +261,7 @@ void field_extract(Expression *expr, RelAttrSqlNode &rel_attr_node)
 %type <rel_attr_list>       attr_list
 %type <set_list>            set_list
 %type <expression>          expression
+%type <expression>          condition_expression
 %type <expression_list>     expression_list
 %type <expression_list>     part_expression_list
 %type <sql_node>            calc_stmt
@@ -1420,6 +1421,7 @@ condition:
     {
       $$ = always_false();
     }
+    
     | rel_attr IN LBRACE select_stmt RBRACE
     {
       $$ = new ConditionSqlNode;
@@ -1524,6 +1526,7 @@ condition:
       delete $5;
       delete $1;
     }
+    
     | EXISTS LBRACE select_stmt RBRACE
     {
       $$ = new ConditionSqlNode;
@@ -1542,6 +1545,7 @@ condition:
       $$->comp = CompOp::NOT_EXISTS_OP;
 
     }
+    
     | expression comp_op LBRACE select_stmt RBRACE
     {
       $$ = new ConditionSqlNode;
@@ -1568,6 +1572,7 @@ condition:
       }
       delete $5;
     }
+    
     | expression comp_op expression
     {
       $$ = new ConditionSqlNode;
@@ -1579,6 +1584,16 @@ condition:
     
     }
     ;
+
+condition_expression:
+    expression
+    {
+      $$ = $1;
+    }
+    | LBRACE select_stmt RBRACE
+    {
+      $$ = new new StmtExpr(*$2);
+    }
 
 
 agg_condition:
