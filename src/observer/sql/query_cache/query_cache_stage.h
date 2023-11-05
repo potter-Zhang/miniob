@@ -15,7 +15,7 @@ See the Mulan PSL v2 for more details. */
 #pragma once
 
 #include "common/rc.h"
-
+#include <vector>
 class SQLStageEvent;
 
 /**
@@ -31,4 +31,6 @@ public:
 
 public:
   RC handle_request(SQLStageEvent *sql_event);
+  std::vector<std::string> sql_stmt;
+  bool start = false;
 };

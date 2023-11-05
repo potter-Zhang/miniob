@@ -88,6 +88,11 @@ public:
     return addr_.c_str();
   }
 
+  BufferedWriter *get_writer()
+  {
+    return writer_;
+  }
+
 protected:
   Session *session_ = nullptr;
   struct event read_event_;
