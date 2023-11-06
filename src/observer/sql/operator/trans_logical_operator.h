@@ -12,10 +12,17 @@
 class TransformLogicalOperator : public LogicalOperator
 {
 public:
-  TransformLogicalOperator(std::vector<std::unique_ptr<Expression>> &&expressions)
+  TransformLogicalOperator(std::vector<std::unique_ptr<Expression>> &expressions)
       
   {
     expressions_.swap(expressions);
+    for (int i = 0; i < expressions_.size(); i++) {
+      ArithmeticExpr &arithmetic = dynamic_cast<ArithmeticExpr &>(*expressions_[i]);
+      FieldExpr &field = dynamic_cast<FieldExpr &>(*arithmetic.left());
+      if (field.field().field_name() == nullptr) {
+        std::cout << "FUCK" << std::endl;
+      }
+    }
   }
   virtual ~TransformLogicalOperator() = default;
 
