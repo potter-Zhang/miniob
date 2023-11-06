@@ -16,13 +16,7 @@ public:
       
   {
     expressions_.swap(expressions);
-    for (int i = 0; i < expressions_.size(); i++) {
-      ArithmeticExpr &arithmetic = dynamic_cast<ArithmeticExpr &>(*expressions_[i]);
-      FieldExpr &field = dynamic_cast<FieldExpr &>(*arithmetic.left());
-      if (field.field().field_name() == nullptr) {
-        std::cout << "FUCK" << std::endl;
-      }
-    }
+    
   }
   virtual ~TransformLogicalOperator() = default;
 
