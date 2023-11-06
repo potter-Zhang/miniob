@@ -375,15 +375,23 @@ RC ArithmeticExpr::calc_value(const Value &left_value, const Value &right_value,
     case Type::DIV: {
       if (target_type == AttrType::INTS) {
         if (right_value.get_int() == 0) {
+          value.set_nullable(true);
+          value.set_is_null(true);
+          value.set_length(4);
+          value.get_data();
           // NOTE: 设置为整数最大值是不正确的。通常的做法是设置为NULL，但是当前的miniob没有NULL概念，所以这里设置为整数最大值。
-          value.set_int(numeric_limits<int>::max());
+          //value.set_int(numeric_limits<int>::max());
         } else {
           value.set_int(left_value.get_int() / right_value.get_int());
         }
       } else {
         if (right_value.get_float() > -EPSILON && right_value.get_float() < EPSILON) {
           // NOTE: 设置为浮点数最大值是不正确的。通常的做法是设置为NULL，但是当前的miniob没有NULL概念，所以这里设置为浮点数最大值。
-          value.set_float(numeric_limits<float>::max());
+          value.set_nullable(true);
+          value.set_is_null(true);
+          value.set_length(4);
+          value.get_data();
+          //value.set_float(numeric_limits<float>::max());
         } else {
           value.set_float(left_value.get_float() / right_value.get_float());
         }
