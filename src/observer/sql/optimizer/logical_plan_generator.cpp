@@ -130,7 +130,7 @@ RC LogicalPlanGenerator::create_plan(
 
 
   unique_ptr<LogicalOperator> project_oper(new ProjectLogicalOperator(all_fields));
-  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(std::move(select_stmt->expressions())));
+  unique_ptr<LogicalOperator> trans_oper(new TransformLogicalOperator(select_stmt->expressions()));
   if (predicate_oper) {
     if (table_oper) {
       predicate_oper->add_child(std::move(table_oper));
