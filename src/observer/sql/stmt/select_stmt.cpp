@@ -721,7 +721,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
   FilterStmt *filter_stmt = nullptr;
   RC rc = FilterStmt::create(db,
       default_table,
-      &table_map_local,
+      &table_map,
       select_sql.conditions.data(),
       static_cast<int>(select_sql.conditions.size()),
       filter_stmt, table_alias_copy);
@@ -740,7 +740,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt, std:
 
   rc = filter_stmt->add_filter_unit(db,
         default_table,
-        &table_map_local,
+        &table_map,
         select_sql.having_conditions.data(),
         static_cast<int>(select_sql.having_conditions.size()));
   if(rc != RC::SUCCESS) {
